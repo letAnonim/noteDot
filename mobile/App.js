@@ -12,16 +12,28 @@ export default class App extends Component{
   constructor(props){
     super(props);
     this.state={
-      chatMessage:''
+      chatMessage:'',
+      chatMessages:[]
     }
   }
   
   
   componentDidMount(){
-    const socket = io('http://192.168.1.1:3000')
+    this.socket = io('http://192.168.88.166:3000');
+    this.socket.on('chat message', msg=>{
+      this.setState({chatMessages: [...this.state.chatMessages, msg]})
+    })
+  }
+
+  submitChatMesage(){
+    this.socket.emit('chat message', this.state.chatMessage);
+    this.setState({chatMessage:''})
   }
   
   render(){
+  const ChatMessages = this.state.chatMessages.map(message=>{return(
+    <Text style={{color:'white'}}key={Date.now()}>{message}</Text>)
+  })
     return (
       <View style={styles.mainContainer}>
         <View>
@@ -35,7 +47,7 @@ export default class App extends Component{
             this.setState({chatMessage})
           }}/>
         </View>
-        
+        {ChatMessages}
       </View>
     )
   } 

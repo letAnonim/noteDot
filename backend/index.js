@@ -2,10 +2,14 @@ const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io').listen(server);
-const port = 3000;
+const port = 300||process.env.PORT
 
 io.on('connection', socket=>{
     console.log('a user was connected!!')
+    socket.on('chat message', msg=>{
+        console.log(msg);
+        io.emit('chat message', msg)
+    })
 })
 
 server.listen(port, ()=>{
