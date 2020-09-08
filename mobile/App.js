@@ -19,7 +19,7 @@ export default class App extends Component{
   
   
   componentDidMount(){
-    this.socket = io('http://192.168.88.166:3000');
+    this.socket = io('http://192.168.88.166:5432');
     this.socket.on('chat message', msg=>{
       this.setState({chatMessages: [...this.state.chatMessages, msg]})
     })
