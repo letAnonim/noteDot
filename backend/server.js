@@ -1,99 +1,88 @@
-const express = require('express');
-const app = express();
-const server = require('http').createServer(app);
-const io = require('socket.io').listen(server);
-const port = 6666
-const cors = require("cors");
-const pool = require("./db");
 
-//middleware
-app.use(cors());
-app.use(express.json()); //req.body
+const { MongoClient } = require("mongodb");
+ 
+// Replace the following with your Atlas connection string                                                                                                                                        
 
-//ROUTES//
+const url = "mongodb+srv://superUser:194519@cluster0.aynw0.mongodb.net/test?retryWrites=true&w=majority";
 
-//create a User
+const client = new MongoClient(url);
 
-// app.post("/users", async (req, res) => {
-//   try {
-//     const { description } = req.body;
-//     const newUser = await pool.query(
-//       "INSERT INTO users (name, password, age ) VALUES($1) RETURNING *",
-//       [description]
-//     );
+const dbName = "NoteDot";
+                      
+ async function run() {
+    try {
+         await client.connect();
+         console.log("Connected correctly to server");
+         const db = client.db(dbName);
 
-//     res.json(newUser.rows[0]);
-//   } catch (err) {
-//     console.error(err.message);
-//   }
+         // Use the collection "people"
+         const col = db.collection("Users");
+
+         // Construct a document                                                                                                                                                              
+         let personDocument = {
+             "name": { "first": "Alan", "last": "Turing" },
+             "birth": new Date(1912, 5, 23), // June 23, 1912                                                                                                                                 
+             "death": new Date(1954, 5, 7),  // June 7, 1954                                                                                                                                  
+             "contribs": [ "Turing machine", "Turing test", "Turingery" ],
+             "views": 1250000
+         }
+
+         // Insert a single document, wait for promise so we can read it back
+         const p = await col.insertOne(personDocument);
+         // Find one document
+         const myDoc = await col.findOne();
+         // Print to the console
+         console.log(myDoc);
+
+        } catch (err) {
+         console.log(err.stack);
+     }
+ 
+     finally {
+        await client.close();
+    }
+}
+
+run().catch(console.dir);
+
+
+
+
+
+
+
+
+
+
+// const express = require("express");
+// const app = express();
+
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+
+
+// const mongoose = require("mongoose");
+// const MongoClient = require('mongodb').MongoClient;
+
+// mongoose.connection.on("error", (err) => {
+//   console.log("Mongoose Connection ERROR: " + err.message);
 // });
 
-//get all todos
-
-app.get("/users", async (req, res) => {
-  try {
-    const allUsers = await pool.query("SELECT * FROM users");
-    res.json(allUsers.rows);
-  } catch (err) {
-    console.error(err.message);
-  }
-});
-
-//get a User
-
-// app.get("/users/:id", async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const User = await pool.query("SELECT * FROM users WHERE todo_id = 1$", [
-//       id
-//     ]);
-//     res.json(User.rows[0]);
-//   } catch (err) {
-//     console.error(err.message);
-//   }
+// mongoose.connection.once("open", () => {
+//   console.log("MongoDB Connected!");
 // });
 
-//update a todo
+// const uri = "mongodb+srv://superUser:<password>@cluster0.aynw0.mongodb.net/<dbname>?retryWrites=true&w=majority";
+// const client = new MongoClient(uri, { 
+//   useUnifiedTopology: true,
+//   useNewUrlParser: true });
 
-// app.put("/users/:id", async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { description } = req.body;
-//     const updateTodo = await pool.query(
-//       "UPDATE todo SET description = $1 WHERE todo_id = $2",
-//       [description, id]
-//     );
-
-//     res.json("Todo was updated!");
-//   } catch (err) {
-//     console.error(err.message);
-//   }
+// client.connect(err => {
+//   const collection = client.db("test").collection("devices");
+//   // perform actions on the collection object
+//   client.close();
 // });
 
-// //delete a todo
-
-// app.delete("/users/:id", async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const deleteTodo = await pool.query("DELETE FROM todo WHERE todo_id = $1", [
-//       id
-//     ]);
-//     res.json("Todo was deleted!");
-//   } catch (err) {
-//     console.log(err.message);
-//   }
+// app.listen(6666, () => {
+//   console.log("Server listening on port 8000");
 // });
-
-
-
-// io.on('connection', socket=>{
-//     console.log('a user was connected!!')
-//     socket.on('chat message', msg=>{
-//         console.log(msg);
-//         io.emit('chat message', msg)
-//     })
-// })
-
-app.listen(port, ()=>{
-    console.log('server is running on port:'+ port)
-})
