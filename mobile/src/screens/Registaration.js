@@ -16,12 +16,11 @@ import {
 } from 'react-native';
 import {RadioButton} from 'react-native-paper'
 import {styles} from '../styles';
-import firestore from '@react-native-firebase/firestore'
 import { ScrollView } from 'react-native-gesture-handler';
-
+import socketIO from 'socket.io-client';
+import io from 'socket.io-client'
 
 export default function Registration({navigation}){
-    const db = firestore().collection('users');
     const [users, setUsers] = useState([]);
     async function addUser(name, email, password) {
         await db.add({
@@ -52,21 +51,21 @@ export default function Registration({navigation}){
     const [emailValue, setEmailValue] = useState('')
     const [passwordValue, setPasswordValue] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-    useEffect(() => {
-        return db.onSnapshot(querySnapshot => {
-          const list = [];
-          querySnapshot.forEach(doc => {
-            const {name, email, password} = doc.data();
-            list.push({
-              id: doc.id,
-              name: doc.data().name,
-              email: doc.data().email,
-              password: doc.data(). password
-            });
-        });
-        setUsers(list)
-        });
-    }, []);
+    // useEffect(() => {
+    //     return db.onSnapshot(querySnapshot => {
+    //       const list = [];
+    //       querySnapshot.forEach(doc => {
+    //         const {name, email, password} = doc.data();
+    //         list.push({
+    //           id: doc.id,
+    //           name: doc.data().name,
+    //           email: doc.data().email,
+    //           password: doc.data(). password
+    //         });
+    //     });
+    //     setUsers(list)
+    //     });
+    // }, []);
     // const confirmAlert =(id)=>{
     //     Alert.alert(
     //         'This note will be deleted!!',

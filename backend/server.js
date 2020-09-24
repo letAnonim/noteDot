@@ -1,88 +1,108 @@
 
-const { MongoClient } = require("mongodb");
- 
-// Replace the following with your Atlas connection string                                                                                                                                        
-
-const url = "mongodb+srv://superUser:194519@cluster0.aynw0.mongodb.net/test?retryWrites=true&w=majority";
-
-const client = new MongoClient(url);
-
-const dbName = "NoteDot";
-                      
- async function run() {
-    try {
-         await client.connect();
-         console.log("Connected correctly to server");
-         const db = client.db(dbName);
-
-         // Use the collection "people"
-         const col = db.collection("Users");
-
-         // Construct a document                                                                                                                                                              
-         let personDocument = {
-             "name": { "first": "Alan", "last": "Turing" },
-             "birth": new Date(1912, 5, 23), // June 23, 1912                                                                                                                                 
-             "death": new Date(1954, 5, 7),  // June 7, 1954                                                                                                                                  
-             "contribs": [ "Turing machine", "Turing test", "Turingery" ],
-             "views": 1250000
-         }
-
-         // Insert a single document, wait for promise so we can read it back
-         const p = await col.insertOne(personDocument);
-         // Find one document
-         const myDoc = await col.findOne();
-         // Print to the console
-         console.log(myDoc);
-
-        } catch (err) {
-         console.log(err.stack);
-     }
- 
-     finally {
-        await client.close();
-    }
-}
-
-run().catch(console.dir);
+// mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true});
 
 
+// io.on('connection', socket => {
+  //   console.log('client connected on websocket!');
+  //   socket.on('disconnect', ()=>{
+    //     console.log('client disconnected from websocket!');
+    //   });
+    //   socket.emit('message', 'some message text')
+    // });
+    // async function getData() {
+      //   try {
+        //         await client.connect();
+        //         console.log("Connected correctly to server");
+    //         const db = client.db('NoteDot');
+    //         const col = db.collection("Users");
+    //         //  const p = await col.insertMany(personDocument);
+    //         users = await col.find().toArray()
+    //       } catch (err) {
+      //         console.log(err.stack);
+      //     }
+      //     finally {
+        //       io.on('connection', socket=>{
+          //         socket.emit('users', users);
+          
+          //       })
+          //       // console.log(myDoc)
+          //       await client.close();
+          //   }
+          // }
+          // getData().catch(console.dir);
+          // async function setNotes() {
+            //   try {
+              //         await client.connect();
+              //           console.log("Connected correctly to server");
+              //           const db = client.db('NoteDot');
+              //           const col = db.collection("Notes");
+              //           io.on('connection', socket=>{
+                //             socket.on('notes',msg => {
+                  //               col.insertMany(msg)
+    //             }) 
+    //           })
+    //          const p = await col.insertMany();
+    //         // notes = await col.find().toArray()
+    //       } catch (err) {
+      //         console.log(err.stack);
+      
+      //     }
+      //     finally {
+        
+        //       // console.log(myDoc)
+        //       await client.close();
+        //   }
+        // }
+        // setNotes().catch(console.dir);
+        
+        
+        
+        
+//-----------------------------------------------------------------//
+const MONGODB_URL = "mongodb+srv://superUser:194519@cluster0.aynw0.mongodb.net/NoteDot?retryWrites=true&w=majority";
+const express = require("express");
+const app = express();
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const server = require('http').Server(app)
+const io = require('socket.io')(server);
+app.use(cors());
+const port = process.env.PORT || 6666;
+app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(bodyParser.json());
+const mongoose = require("mongoose");
+mongoose.Promise = global.Promise;
 
-
-
-
-
-
-
-// const express = require("express");
-// const app = express();
-
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
-
-
-// const mongoose = require("mongoose");
-// const MongoClient = require('mongodb').MongoClient;
-
-// mongoose.connection.on("error", (err) => {
-//   console.log("Mongoose Connection ERROR: " + err.message);
-// });
-
-// mongoose.connection.once("open", () => {
-//   console.log("MongoDB Connected!");
-// });
-
-// const uri = "mongodb+srv://superUser:<password>@cluster0.aynw0.mongodb.net/<dbname>?retryWrites=true&w=majority";
-// const client = new MongoClient(uri, { 
-//   useUnifiedTopology: true,
-//   useNewUrlParser: true });
-
-// client.connect(err => {
-//   const collection = client.db("test").collection("devices");
-//   // perform actions on the collection object
-//   client.close();
-// });
-
-// app.listen(6666, () => {
-//   console.log("Server listening on port 8000");
-// });
+mongoose
+.connect(MONGODB_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => {
+    console.log("Successfully connected to the database");
+    server.listen(port, () => {
+      console.log("Server is listening on port" + port);
+    });
+  })
+  .catch((err) => {
+    console.log("Could not connect to the database. Exiting now...", err);
+    process.exit();
+  });
+  
+  require('./routes').setUpRouter(app);
+  require('./sockets.js')(io);
+  // const webBuildFolderName = "build";
+  // app.use(express.static(webBuildFolderName));
+  // app.get("*", (req, res) => {
+    //   res.sendFile(
+      //     path.resolve(__dirname, `../${webBuildFolderName}`, "index.html")
+      //   );
+      // });
+      
+      
+      
+      
+      
+      
+      

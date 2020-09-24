@@ -17,30 +17,29 @@ import {
 } from 'react-native';
 import {RadioButton} from 'react-native-paper'
 import {styles} from '../../styles';
-import firestore from '@react-native-firebase/firestore'
 import { ScrollView } from 'react-native-gesture-handler';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
+// import socketIO from 'socket.io-client';
+// import io from 'socket.io-client'
 
 export default function Notes({route,navigation}){
     const { aUser } = route.params;
-    const db = firestore().collection('users');
-    const dbUser = db.doc(aUser.id).collection('notes')
     const [notes, setNotes] = useState([])
-    async function addNote(title, color) {    
-        await dbUser.add({
+    function addNote(title, color) {    
+            notes.push({
             title: title,
             color: color,
             text: '',
-            connectedUsers:[aUser.id]
-        });
+            connectedUsers:[{id:aUser._id, role: 'creator'}]
+        })
     }
     const pressHandler=()=>{
         addNote(titleValue, colorValue );
         setTitleValue('')
     }
     const pressSearch = () =>{
-        console.log(db.doc(aUse))
+        console.log(db.doc(aUser))
     }  
    
     const [modalCreateVisible, setModalCreateVisible] = useState(false);
@@ -50,20 +49,13 @@ export default function Notes({route,navigation}){
     const [noteIdValue, setNoteIdValue] = useState('')
 
     useEffect(() => {
-        return dbUser.onSnapshot(querySnapshot => {
-          const list = [];
-          querySnapshot.forEach(doc => {
-            const { title, color, text, connectedUsers} = doc.data();
-            list.push({
-              id: doc.id,
-              title: doc.data().title,
-              color: doc.data().color,
-              text: doc.data(). text,
-              connectedUsers: doc.data().connectedUsers
-            });
-        });
-        setNotes(list)
-        });
+        const socket = socketIO('http://192.168.1.102:6666', {      
+        transports: ['websocket'], jsonp: false });   
+            socket.connect();  
+            // socket.on('message', msg=>{
+            // console.log(msg)
+            // });
+            socket.emit('notes', notes)
     }, []);
     const confirmAlert =(id)=>{
         Alert.alert(

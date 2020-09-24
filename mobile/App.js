@@ -1,82 +1,54 @@
+import 'react-native-gesture-handler';
+import React, {Component} from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
-import React, { Component , useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-} from 'react-native';
+// import {
+//   View,
+//   Text,
+//   TouchableOpacity,
+//   Image,
+// } from 'react-native';
 
-export default function App() {
-  const [users, setUsers] = useState([]);
 
-  // //delete todo function
+import Authorisation from './src/screens/Authorisation'
+import Registration from './src/screens/Registaration';
+import Home from './src/screens/Home';
+import Chat from './src/screens/Chat';
+import Note from './src/screens/Note';
+const Stack = createStackNavigator();
+import socketIO from 'socket.io-client';
 
-  // const deleteTodo = async id => {
-  //   try {
-  //     const deleteTodo = await fetch(`http://localhost:6000/todos/${id}`, {
-  //       method: "DELETE"
-  //     });
+export default class App extends Component {
+  render(){  
+    return (
+      <NavigationContainer>
+        <Stack.Navigator
+        screenOptions={{
+          headerShown: false
+        }}>
+          <Stack.Screen 
+            name ='authorisation' 
+            component={Authorisation}
+          />
+          <Stack.Screen 
+            name ='registration' 
+            component={Registration}
+          />
+          <Stack.Screen 
+            name ='home' 
+            component={Home}
+          />
+          <Stack.Screen
+            name ='chat'
+            component={Chat}
+          />
+          <Stack.Screen
+            name ='note'
+            component={Note}
+          />
 
-  //     setTodos(todos.filter(todo => todo.todo_id !== id));
-  //   } catch (err) {
-  //     console.error(err.message);
-  //   }
-  // };
-
-  const getUsers = async () => {
-    try {
-      const response = await fetch("http://192.168.1.102:6666/users");
-      const jsonData = await response.json();
-
-      setUsers(jsonData);
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
-
-  useEffect(() => {
-    getUsers();
-  }, []);
-
-  console.log(users);
-  
-  return (
-    <View style={styles.mainContainer}>
-      <View>
-        <Text style={styles.mainText}>Header text</Text>
-        <TextInput
-        style={styles.mainInput}
-        autoCorrect={false}
-        // value={this.state.chatMessage}
-        // onSubmitEditing={()=> this.submitChatMesage()}
-        // onChangeText={chatMessage=>{
-        //   this.setState({chatMessage})
-        // }}
-      
-        />
-      </View>
-    </View>
-  )
-
-};
-
-const styles = StyleSheet.create({
-  mainContainer:{
-    flex:1,
-    backgroundColor:'black'
-  },
-  mainText:{
-    color:'white',
-    fontSize:20,
-    fontWeight:'bold'
-  },
-  mainInput:{
-    height:40,
-    borderColor:'white',
-    borderWidth:2,
-    color:'white',
-    fontSize:17
-  }
-});
-
+        </Stack.Navigator>
+      </NavigationContainer>
+  )}
+}

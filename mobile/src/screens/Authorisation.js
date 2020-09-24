@@ -16,28 +16,24 @@ import {
 } from 'react-native';
 import {RadioButton} from 'react-native-paper'
 import {styles} from '../styles';
-import firestore from '@react-native-firebase/firestore'
 import { ScrollView } from 'react-native-gesture-handler';
-
+import socketIO from 'socket.io-client';
+import io from 'socket.io-client'
 
 export default function Authorisation({navigation}){
-    const db = firestore().collection('users');
-    const [users, setUsers] = useState([])
+    const [users, setUsers] = useState([]);
+    
     useEffect(() => {
-        return db.onSnapshot(querySnapshot => {
-          const list = [];
-          querySnapshot.forEach(doc => {
-            const {name, email, password} = doc.data();
-            list.push({
-              id: doc.id,
-              name: doc.data().name,
-              email: doc.data().email,
-              password: doc.data(). password
-            });
-        });
-        setUsers(list)
-        });
+        const socket = socketIO('http://192.168.1.102:6666', {      
+        transports: ['websocket'], jsonp: false });   
+            socket.connect();  
+            socket.emit('getUsers');
+            socket.on('users', msg=>{
+                setUsers(msg)
+            })
+
     }, []);
+    console.log('users from outside', users)
 
     const pressHandler=()=>{
         if(loginValue!=''&&passwordValue!=''){

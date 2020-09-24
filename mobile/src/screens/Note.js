@@ -15,7 +15,6 @@ import {
     TouchableHighlight
 } from 'react-native';
 import {styles} from '../styles'
-import firestore from '@react-native-firebase/firestore'
 import '../img/paperBackground.png'
 // import { TextInput } from 'react-native-paper';
 
@@ -23,20 +22,19 @@ import '../img/paperBackground.png'
 export default function Note({route, navigation}){
     const { aNote } = route.params;
     const { User } = route.params;
-    const db = firestore().collection('users');
-    const dbUser = db.doc(User.id).collection('notes');
+
     const[modalUsersVisible, setModalUsersVisible]=useState(false)
     const [text, setText] = useState(`${aNote.text}`)
-    async function addNote(text) {
-        await dbUser.doc(aNote.id).update({
-            text: text
-        });
+    // async function addNote(text) {
+    //     await dbUser.doc(aNote.id).update({
+    //         text: text
+    //     });
         
-    }
-    const pressHendler=()=>{
-        setText(text);
-        addNote(text);
-    }
+    // }
+    // const pressHendler=()=>{
+    //     setText(text);
+    //     addNote(text);
+    // }
     // useEffect(() => {
     //     return dbUser.doc(aNote.id).onSnapshot(querySnapshot => {
     //         setTextValue(querySnapshot.data().text)

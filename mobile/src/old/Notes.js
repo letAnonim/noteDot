@@ -10,19 +10,8 @@ import {
 
 
 export default function Notes(){
-    // const Notes = [note, setNotes] = useState([])
-    // const addNote = (title)=>{
-    //     const NewNote = {
-    //         id: Date.now().toString(),
-    //         title: title
-    //     }
-    // setNotes(prev=>[
-    //     ...prev,{
-    //         id:Date.now().toString(),
-    //         title
-    //     }]
-    //     )  
-    // }
+    const [notes, setNotes] = useState([])
+  
     // const [value, setValue] = useState('')
     return(
         <View style={styles.body}>
