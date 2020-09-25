@@ -1,7 +1,5 @@
 import 'react-native-gesture-handler';
 import React, {Component, useState, useEffect} from 'react';
-// import { NavigationContainer } from '@react-navigation/native';
-// import { createStackNavigator } from '@react-navigation/stack';
 import {
     TextInput,
     View,
@@ -49,7 +47,7 @@ export default function Notes({route,navigation}){
     const [noteIdValue, setNoteIdValue] = useState('')
 
     useEffect(() => {
-        const socket = socketIO('http://192.168.1.102:6666', {      
+        const socket = socketIO('http://192.168.1.104:6666', {      
         transports: ['websocket'], jsonp: false });   
             socket.connect();  
             // socket.on('message', msg=>{

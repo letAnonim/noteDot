@@ -82,7 +82,7 @@ mongoose
 .then(() => {
     console.log("Successfully connected to the database");
     server.listen(port, () => {
-      console.log("Server is listening on port" + port);
+      console.log("Server is listening on port: " + port);
     });
   })
   .catch((err) => {
