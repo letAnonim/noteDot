@@ -1,10 +1,10 @@
-const Users = require('../models/users.model.js');
+const Notes = require('../models/notes.model.js');
 
 //create new user
 exports.create = (req, res)=>{кі
-  const user = new Users({
-    name: req.body.name,
-    age: req.body.age,
+  const note = new Notes({
+    title: req.body.title,
+    color: req.body.color,
     password: req.body.password,
     notes: req.body.notes,
   });

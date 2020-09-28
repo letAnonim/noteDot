@@ -17,20 +17,17 @@ import {
 import {RadioButton} from 'react-native-paper'
 import {styles} from '../styles';
 import { ScrollView } from 'react-native-gesture-handler';
-import socketIO from 'socket.io-client';
-import io from 'socket.io-client'
+import socketIOClient from 'socket.io-client';
 
 export default function Registration({navigation}){
+    const socket = socketIOClient('http://192.168.1.105:6666', {      
+    transports: ['websocket'], jsonp: false });   
     const [users, setUsers] = useState([]);
-    async function addUser(name, email, password) {
-        await db.add({
-            name: name,
-            email: email,
-            password: password,
-        })
+    async function addUser(name, age, password) {
+        socket.emit('regUser',{name, age, password} )
     }
     const pressHandler=()=>{
-        if(nameValue == ''||emailValue ==''||passwordValue == ''||confirmPassword==''){
+        if(nameValue == ''||ageValue ==''||passwordValue == ''||confirmPassword==''){
             alert('pleace fill all fields')
         }
         else if(users.map((item)=>{return (item.name==nameValue)}).includes(true)){
@@ -42,40 +39,22 @@ export default function Registration({navigation}){
             setConfirmPassword('')
         }
         else{
-            addUser(nameValue, emailValue, passwordValue );
+            addUser(nameValue, ageValue, passwordValue );
             navigation.navigate('authorisation')
-        }
-        
+        } 
     }  
     const [nameValue, setNameValue] = useState('')
-    const [emailValue, setEmailValue] = useState('')
+    const [ageValue, setAgeValue] = useState('')
     const [passwordValue, setPasswordValue] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-    // useEffect(() => {
-    //     return db.onSnapshot(querySnapshot => {
-    //       const list = [];
-    //       querySnapshot.forEach(doc => {
-    //         const {name, email, password} = doc.data();
-    //         list.push({
-    //           id: doc.id,
-    //           name: doc.data().name,
-    //           email: doc.data().email,
-    //           password: doc.data(). password
-    //         });
-    //     });
-    //     setUsers(list)
-    //     });
-    // }, []);
-    // const confirmAlert =(id)=>{
-    //     Alert.alert(
-    //         'This note will be deleted!!',
-    //         'Are you sure?',
-    //         [
-    //             {text: "Cancel", style: "cancel"},
-    //             { text: "OK", onPress: () => firestore().collection("notes").doc(id).delete()}
-    //         ]
-    //     )
-    // }
+    useEffect(() => {
+            socket.connect();  
+            socket.emit('getUsers');
+            socket.on('users', msg=>{
+                setUsers(msg)
+            })
+    }, []);
+
     return(
         <View style={{flex:1}}>
             <ImageBackground source={require('../img/paperShadowBackground.png')} style={styles.image}>
@@ -95,14 +74,14 @@ export default function Registration({navigation}){
                         ></TextInput>
                     </View>
                     <View style={styles.logRow}>
-                        <Text style={styles.rowText}>gmail:</Text>
+                        <Text style={styles.rowText}>age:</Text>
                         <TextInput style={styles.rowInput}
                             keyboardType="email-address"
                             allowFontScaling={false}
                             autoCapitalize='none'
                             autoCorrect={false} 
-                            value={emailValue}
-                            onChangeText={setEmailValue} 
+                            value={ageValue}
+                            onChangeText={setAgeValue} 
                         ></TextInput>
                     </View>
                     <View style={styles.logRow}>

@@ -17,24 +17,23 @@ import {
 import {RadioButton} from 'react-native-paper'
 import {styles} from '../styles';
 import { ScrollView } from 'react-native-gesture-handler';
-import socketIO from 'socket.io-client';
+import socketIOClient from 'socket.io-client';
 import io from 'socket.io-client'
 
 export default function Authorisation({navigation}){
+    const socket = socketIOClient('http://192.168.1.105:6666', {      
+    transports: ['websocket'], jsonp: false });   
     const [users, setUsers] = useState([]);
     
     useEffect(() => {
-        const socket = socketIO('http://192.168.1.102:6666', {      
-        transports: ['websocket'], jsonp: false });   
-            socket.connect();  
-            socket.emit('getUsers');
-            socket.on('users', msg=>{
-                setUsers(msg)
-            })
-
+        socket.connect();  
+        socket.emit('getUsers');
+        socket.on('users', msg=>{
+            setUsers(msg)
+        })
     }, []);
-    console.log('users from outside', users)
 
+    
     const pressHandler=()=>{
         if(loginValue!=''&&passwordValue!=''){
             if(users.map((item)=>{return (item.name==loginValue)}).includes(true)){
@@ -99,7 +98,7 @@ export default function Authorisation({navigation}){
                         <Button title='Register!'
                         color='orange'
                         onPress={()=>{          
-                           navigation.navigate('registration')
+                           navigation.navigate('registration', {aUsers: users})
                         }}
                         />
                     </View>

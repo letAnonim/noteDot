@@ -18,14 +18,21 @@ import {styles} from '../../styles';
 import { ScrollView } from 'react-native-gesture-handler';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-// import socketIO from 'socket.io-client';
+import socketIOClient from 'socket.io-client';
 // import io from 'socket.io-client'
 
 export default function Notes({route,navigation}){
+    const socket = socketIOClient('http://192.168.1.105:6666', {      
+    transports: ['websocket'], jsonp: false });   
     const { aUser } = route.params;
     const [notes, setNotes] = useState([])
     function addNote(title, color) {    
-            notes.push({
+        socket.emit('addNote', {title: title,
+            color: color,
+            text: '',
+            connectedUsers:[aUser._id]
+        })
+        notes.push({
             title: title,
             color: color,
             text: '',
@@ -47,21 +54,27 @@ export default function Notes({route,navigation}){
     const [noteIdValue, setNoteIdValue] = useState('')
 
     useEffect(() => {
-        const socket = socketIO('http://192.168.1.104:6666', {      
-        transports: ['websocket'], jsonp: false });   
-            socket.connect();  
-            // socket.on('message', msg=>{
-            // console.log(msg)
-            // });
-            socket.emit('notes', notes)
+        socket.emit('getNotes', aUser._id);
+        socket.on('notes', data=>{  
+            console.log(aUser._id);
+            console.log('data',data);
+            setNotes(data)
+        })
+        socket.on('not', data=>{console.log(data)})
     }, []);
-    const confirmAlert =(id)=>{
+    console.log(notes)
+    const confirmAlert =id=>{
         Alert.alert(
             'This note will be deleted!!',
             'Are you sure?',
             [
                 {text: "Cancel", style: "cancel"},
-                { text: "OK", onPress: () => dbUser.doc(id).delete()}
+                { text: "OK", onPress: () =>{
+                    socket.emit('deleteNote', id)
+                    socket.on('note', data=>{
+                        console.log(data)
+                    })
+                }}
             ]
         )
     }
@@ -193,7 +206,7 @@ export default function Notes({route,navigation}){
             <View style={styles.section2}>
                 {(notes[0] !== undefined)?(<ScrollView>{notes.map(note=>{
                     return ( 
-                        <View key={note.id}>
+                        <View key={note._id}>
                             <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note, User:aUser,})}} style={styles.noteListContaiter}>
                                 <View style={{flex:1,backgroundColor:`rgba(${note.color}, 0.5)`, 
                                 borderLeftWidth:12, 
@@ -207,7 +220,7 @@ export default function Notes({route,navigation}){
                                     </View>
                                     <View style={styles.deleteButtonRow}>
                                         <TouchableOpacity onPress={()=>{
-                                            confirmAlert(note.id)
+                                            confirmAlert(note._id)
                                         }}><Image style={styles.deleteSmallButton} source={require('../../img/delete.png')} /></TouchableOpacity>
                                     </View>                     
                                 </View>
