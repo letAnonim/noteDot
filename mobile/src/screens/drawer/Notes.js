@@ -22,12 +22,13 @@ import socketIOClient from 'socket.io-client';
 // import io from 'socket.io-client'
 
 export default function Notes({route,navigation}){
-    const socket = socketIOClient('http://192.168.1.105:6666', {      
-    transports: ['websocket'], jsonp: false });   
+    // const socket = socketIOClient('http://192.168.1.105:6666', {      
+    // transports: ['websocket'], jsonp: false });   
     const { aUser } = route.params;
+    const { Asocket } = route.params;
     const [notes, setNotes] = useState([])
     function addNote(title, color) {    
-        socket.emit('addNote', {title: title,
+        Asocket.emit('addNote', {title: title,
             color: color,
             text: '',
             connectedUsers:[aUser._id]
@@ -44,25 +45,23 @@ export default function Notes({route,navigation}){
         setTitleValue('')
     }
     const pressSearch = () =>{
-        console.log(db.doc(aUser))
+        console.log(noteIdValue)
     }  
    
     const [modalCreateVisible, setModalCreateVisible] = useState(false);
     const [modalSearchVisible, setModalSearchVisible] = useState(false);
-    const [titleValue, setTitleValue] = useState('')
+    const [titleValue, setTitleValue] = useState('');
     const [colorValue, setColorValue] = useState('250, 228, 60');
-    const [noteIdValue, setNoteIdValue] = useState('')
-
+    const [noteIdValue, setNoteIdValue] = useState('');
     useEffect(() => {
-        socket.emit('getNotes', aUser._id);
-        socket.on('notes', data=>{  
-            console.log(aUser._id);
-            console.log('data',data);
+        Asocket.emit('getNotes', aUser._id);
+        Asocket.on('notes', data=>{  
+            // console.log(aUser._id);
+            // console.log('data',data);
             setNotes(data)
         })
-        socket.on('not', data=>{console.log(data)})
-    }, []);
-    console.log(notes)
+    }, [notes]);
+
     const confirmAlert =id=>{
         Alert.alert(
             'This note will be deleted!!',
@@ -70,9 +69,9 @@ export default function Notes({route,navigation}){
             [
                 {text: "Cancel", style: "cancel"},
                 { text: "OK", onPress: () =>{
-                    socket.emit('deleteNote', id)
-                    socket.on('note', data=>{
-                        console.log(data)
+                    Asocket.emit('deleteNote', id)
+                    Asocket.on('deleteResponse', message=>{
+                        console.log(message)
                     })
                 }}
             ]
@@ -159,9 +158,8 @@ export default function Notes({route,navigation}){
                         <TouchableHighlight
                             style={styles.openButton}
                             onPress={() => {
-                                pressSearch()
-                                // (!noteIdValue)?(Alert.alert('Pleace write the id!!')
-                                // ):(pressSearch(),setModalSearchVisible(!modalCreateVisible))
+                                (!noteIdValue)?(Alert.alert('Pleace write the id!!')
+                                ):(pressSearch(),setModalSearchVisible(!modalCreateVisible))
                                 }}>  
                             <Text style={styles.textStyle}>Connect to note!</Text>
                         </TouchableHighlight>

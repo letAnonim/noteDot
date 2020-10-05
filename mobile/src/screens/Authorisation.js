@@ -21,7 +21,10 @@ import socketIOClient from 'socket.io-client';
 import io from 'socket.io-client'
 
 export default function Authorisation({navigation}){
-    const socket = socketIOClient('http://192.168.1.105:6666', {      
+    // useEffect(()=>{
+
+    // })
+    const socket = socketIOClient('http://10.10.10.10:6666', {      
     transports: ['websocket'], jsonp: false });   
     const [users, setUsers] = useState([]);
     
@@ -41,8 +44,9 @@ export default function Authorisation({navigation}){
                 if(users[index].password == passwordValue){
                     navigation.navigate('home',{
                         screen: 'notes',
-                        params: { aUser:users[index]},
-                        aUser:  users[index]
+                        params: { aUser:users[index], Asocket: socket},
+                        // aUser:  users[index], 
+                        // socket: socket
                     })
                 }
                 else {
@@ -98,7 +102,7 @@ export default function Authorisation({navigation}){
                         <Button title='Register!'
                         color='orange'
                         onPress={()=>{          
-                           navigation.navigate('registration', {aUsers: users})
+                           navigation.navigate('registration', {aUsers: users, socket: socket})
                         }}
                         />
                     </View>

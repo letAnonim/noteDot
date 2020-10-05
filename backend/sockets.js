@@ -47,8 +47,8 @@ module.exports = io =>{
       })
       socket.on('deleteNote', noteId=>{
         try{
-          Notes.deleteOne({_id:noteId})
-          
+          db('NoteDot').collection("notes").deleteOne({_id:noteId})
+          socket.emit('deleteResponse', `A note with id: ${noteId} was deleted`)
           // .findOne({_id: noteId})
             // .exec((err, note)=>{
             //   if(!err){

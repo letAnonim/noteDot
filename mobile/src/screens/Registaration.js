@@ -19,12 +19,11 @@ import {styles} from '../styles';
 import { ScrollView } from 'react-native-gesture-handler';
 import socketIOClient from 'socket.io-client';
 
-export default function Registration({navigation}){
-    const socket = socketIOClient('http://192.168.1.105:6666', {      
-    transports: ['websocket'], jsonp: false });   
+export default function Registration({route, navigation}){
+    const { Asocket } = route.params;
     const [users, setUsers] = useState([]);
     async function addUser(name, age, password) {
-        socket.emit('regUser',{name, age, password} )
+        Asocket.emit('regUser',{name, age, password} )
     }
     const pressHandler=()=>{
         if(nameValue == ''||ageValue ==''||passwordValue == ''||confirmPassword==''){
@@ -48,9 +47,9 @@ export default function Registration({navigation}){
     const [passwordValue, setPasswordValue] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     useEffect(() => {
-            socket.connect();  
-            socket.emit('getUsers');
-            socket.on('users', msg=>{
+            Asocket.connect();  
+            Asocket.emit('getUsers');
+            Asocket.on('users', msg=>{
                 setUsers(msg)
             })
     }, []);
