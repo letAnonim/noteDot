@@ -1,4 +1,4 @@
-package com.mobile;
+package com.notedot;
 
 import android.app.Application;
 import android.content.Context;
