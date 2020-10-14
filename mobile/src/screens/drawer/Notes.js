@@ -45,8 +45,34 @@ export default function Notes({route,navigation}){
         setTitleValue('')
     }
     const pressSearch = () =>{
-        console.log(noteIdValue)
+        console.log(noteIdValue);
+        Asocket.emit('findNote', noteIdValue, aUser._id);
+        Asocket.on('connectToNote',noteInfo=>{
+            console.log(noteInfo)
+        })
     }  
+    const returnDate = timestamp =>{
+        let date = new Date(timestamp)
+        let now = new Date()
+        let minutes = date.getMinutes();
+        let hours = date.getHours();
+        let day = date.getDay();
+        let month = date.getMonth();
+        let year = date.getFullYear()
+
+        let returnHours = (hours<10)?(`0${hours}:`):(`${hours}:`)
+        let returnMinutes = (minutes<10)?(`0${minutes}`):(minutes)
+
+        if(day == now.getDay()&&month == now.getMonth()&&year==now.getFullYear()){
+            return returnHours+returnMinutes
+        }
+        else{
+            let returnDay = (day<10)?(`0${day}/`):(`${day}/${year}`)
+            let returnMonth = (month<10)?(`0${month}/${year}`):(`${month}/${year}`);
+            return returnDay+returnMonth+' at '+returnHours+returnMinutes
+        } 
+    
+    }
    
     const [modalCreateVisible, setModalCreateVisible] = useState(false);
     const [modalSearchVisible, setModalSearchVisible] = useState(false);
@@ -212,8 +238,15 @@ export default function Notes({route,navigation}){
                             }}>
                                     <View style={styles.noteInfoRow}>
                                         <View style={{flex:1}}>
-                                            <Text   style={{margin:3,fontSize:18}}><Text style={{fontSize:19,fontWeight:'bold'}}>Title:</Text> {note.title}</Text>
-                                            <Text>text:{note.text}</Text>
+                                            <Text   style={{margin:3,fontSize:18, color:'black'}}><Text style={{fontSize:19,fontWeight:'bold'}}>Title:</Text> {note.title}</Text>
+                                        </View>
+                                        <View style={{flex:1, alignItems:'flex-end', marginRight:2}}>
+                                            <Text >Last updated: {returnDate(note.updatedAt)}</Text>
+                                        </View>
+                                    </View>
+                                    <View style={{margin:2}}>
+                                        <View style={{flex:1}}>
+                                            <Text style={{fontSize:15}}>Text:{note.text}</Text>
                                         </View>
                                     </View>
                                     <View style={styles.deleteButtonRow}>

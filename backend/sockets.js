@@ -61,6 +61,20 @@ module.exports = io =>{
         }
         
       }) 
-      socket.emit('not', Notes)
+      socket.on('findNote', (noteId, userId)=>{
+        try{
+          Notes
+          .findOne({title:noteId})
+          .update({connectedUsers:[userId]})
+          .exec((err, note)=>{
+              if(!err){
+                socket.emit('connectToNote', note)
+              }
+            })
+        }catch(err){
+          console.error(err)
+        }
+      })
+
     })
   }

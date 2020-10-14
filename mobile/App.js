@@ -18,8 +18,12 @@ import Chat from './src/screens/Chat';
 import Note from './src/screens/Note';
 const Stack = createStackNavigator();
 import socketIO from 'socket.io-client';
+import SplashScreen from 'react-native-splash-screen';
 
 export default class App extends Component {
+  componentDidMount() {
+    SplashScreen.hide()
+  }
   render(){  
     return (
       <NavigationContainer>
