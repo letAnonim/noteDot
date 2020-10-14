@@ -22,7 +22,7 @@ import '../img/paperBackground.png'
 export default function Note({route, navigation}){
     const { aNote } = route.params;
     const { User } = route.params;
-
+    const { socket } = route.params;
     const[modalUsersVisible, setModalUsersVisible]=useState(false)
     const [text, setText] = useState(`${aNote.text}`)
     // async function addNote(text) {
@@ -80,7 +80,7 @@ export default function Note({route, navigation}){
                         </TouchableOpacity><TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{pressHendler()}}>
                             <Image style={styles.addSmallButton} source={require('../img/edit.png')}/>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{navigation.navigate('chat', {aNote:aNote})}}>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{navigation.navigate('chat', {aNote:aNote, aUser:User, Asocket: socket})}}>
                             <Image style={styles.addSmallButton} source={require('../img/chat.png')}/>
                         </TouchableOpacity>
                         

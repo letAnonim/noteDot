@@ -1,5 +1,6 @@
 const Users = require('./models/users.model.js');
 const Notes = require('./models/notes.model.js');
+const Messages = require('./models/messages.model.js');
 const { ObjectId } = require('mongodb');
 module.exports = io =>{ 
     io.on('connection', socket=>{
@@ -47,7 +48,7 @@ module.exports = io =>{
       })
       socket.on('deleteNote', noteId=>{
         try{
-          db('NoteDot').collection("notes").deleteOne({_id:noteId})
+          Notes.deleteOne({_id:noteId})
           socket.emit('deleteResponse', `A note with id: ${noteId} was deleted`)
           // .findOne({_id: noteId})
             // .exec((err, note)=>{
@@ -75,6 +76,12 @@ module.exports = io =>{
           console.error(err)
         }
       })
-
+      socket.on('newMessage', data=>{
+        try{
+          Messages.create(data)
+        }catch(err){
+          console.error(err)
+        }
+      })
     })
   }

@@ -231,7 +231,7 @@ export default function Notes({route,navigation}){
                 {(notes[0] !== undefined)?(<ScrollView>{notes.map(note=>{
                     return ( 
                         <View key={note._id}>
-                            <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note, User:aUser,})}} style={styles.noteListContaiter}>
+                            <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note, User:aUser, socket:Asocket})}} style={styles.noteListContaiter}>
                                 <View style={{flex:1,backgroundColor:`rgba(${note.color}, 0.5)`, 
                                 borderLeftWidth:12, 
                                 borderLeftColor:`rgba(${note.color}, 1)`

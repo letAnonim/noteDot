@@ -1,7 +1,6 @@
 import React from 'react'
 import { StyleSheet  
   } from 'react-native';
-import { color } from 'react-native-reanimated';
 export const styles = StyleSheet.create({
     body:{
       flex: 1
@@ -255,6 +254,43 @@ export const styles = StyleSheet.create({
     profileLogo:{
       height:40,
       width:40,
+    },
+    chatMessagesContainer:{
+      flex:1,
+      justifyContent:'flex-end',
+      alignItems:'center',
+      maxWidth:'100%',
+      maxWidth: '100%',
+      
+    },
+    chatInputContainer:{
+      flex:1,
+      alignItems:'flex-start',
+      justifyContent:'center',
+      flexDirection:'row',
+      maxHeight: 60,
+      maxWidth: "100%",
+      backgroundColor: 'black'
+    },
+    messageInput:{
+      flex:1,
+      borderTopRightRadius:10,
+      borderBottomRightRadius:10,
+      backgroundColor:'rgba(255,255,255, 0.5)',
+      minWidth:'80%',
+      alignItems:'flex-start',
+      borderColor:'orange',
+      borderLeftWidth:8,
+      fontSize:20,
+      padding:2,
+      paddingLeft:10,
+      margin: 8
+    },
+    sendSmallButton:{
+      maxHeight:30,
+      maxWidth:30,
+      margin:8,
+      marginRight:3
     }
 
   });

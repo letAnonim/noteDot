@@ -24,7 +24,7 @@ export default function Authorisation({navigation}){
     // useEffect(()=>{
 
     // })
-    const socket = socketIOClient('http://192.168.1.102:6666', {      
+    const socket = socketIOClient('http://192.168.1.101:6666', {      
     transports: ['websocket'], jsonp: false });   
     const [users, setUsers] = useState([]);
     
@@ -102,7 +102,7 @@ export default function Authorisation({navigation}){
                         <Button title='Register!'
                         color='orange'
                         onPress={()=>{          
-                           navigation.navigate('registration', {aUsers: users, socket: socket})
+                           navigation.navigate('registration', {aUsers: users, Asocket: socket})
                         }}
                         />
                     </View>
