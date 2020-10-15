@@ -76,12 +76,26 @@ module.exports = io =>{
           console.error(err)
         }
       })
-      socket.on('newMessage', data=>{
+      socket.on('addMessage', data=>{
         try{
-          Messages.create(data)
+          Messages
+            .create(data)
         }catch(err){
           console.error(err)
         }
       })
+      
+      // socket.on('newMessage', data=>{
+      //   try{
+      //     Messages.create(data).exec((err)=>{
+      //       if(!err){
+      //         socket.emit('info', 'note was added')
+      //         console.log('note was added');
+      //       }
+      //     })
+      //   }catch(err){
+      //     console.error(err)
+      //   }
+      // })
     })
   }

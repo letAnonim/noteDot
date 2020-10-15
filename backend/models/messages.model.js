@@ -8,4 +8,4 @@ const Messages = mongoose.Schema({
         timestamps: true
     }
 );
-module.exports = mongoose.model('Messages', Mess);
+module.exports = mongoose.model('Messages', Messages);

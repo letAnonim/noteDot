@@ -263,15 +263,6 @@ export const styles = StyleSheet.create({
       maxWidth: '100%',
       
     },
-    chatInputContainer:{
-      flex:1,
-      alignItems:'flex-start',
-      justifyContent:'center',
-      flexDirection:'row',
-      maxHeight: 60,
-      maxWidth: "100%",
-      backgroundColor: 'black'
-    },
     messageInput:{
       flex:1,
       borderTopRightRadius:10,
@@ -284,7 +275,7 @@ export const styles = StyleSheet.create({
       fontSize:20,
       padding:2,
       paddingLeft:10,
-      margin: 8
+      margin: 6
     },
     sendSmallButton:{
       maxHeight:30,
