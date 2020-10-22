@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Image, 
   TextInput, 
   ScrollView
+
 } from 'react-native';
 import {styles} from '../styles'
 
@@ -17,8 +18,8 @@ export default function Chat({route, navigation}){
     const { Asocket } = route.params;
     const [messageValue, setMessageValue] = useState('')
     const [messages, setMessages] = useState([])
-    Asocket.on('info', mes=>{
-        console.log(mes)
+    Asocket.on('ToNote', mes=>{
+        
     })
     useEffect(() => {
         Asocket.emit('getMessages', aNote._id);
@@ -29,21 +30,25 @@ export default function Chat({route, navigation}){
     function addMessage(text, author) {    
         Asocket.emit('addMessage', {
             text: text,
-            author:author
+            author:author,
+            port:aNote._id
         })
         messages.push({
             text:text,
-            author:author
+            author:author,
+            port:aNote._id
         })
     }
     const pressHandler=()=>{
-        addMessage(messageValue, aUser.name);
+        addMessage(messageValue, aUser._id);
         setMessageValue('')
     }
-    
+    const scrollViewRef = useRef();
+
     return(
-        <ImageBackground source={require('../img/paperBackground.png')} style={styles.image, {flex:1, flexDirection:'column'}}>
-            <View style={{backgroundColor:`rgba(${aNote.color}, 1)`, 
+        <ImageBackground source={require('../img/paperBackground.png')} style={styles.image}>
+            <View style={{
+                backgroundColor:`rgba(${aNote.color}, 1)`, 
                 height:50,
                 flexDirection:'row'}}>
                 <View style={styles.nawbarContainerLeft}>
@@ -62,31 +67,37 @@ export default function Chat({route, navigation}){
                 </View> */}
             </View>
             <View style={styles.chatMessagesContainer}>
-                {(messages[0] !== undefined)?(<ScrollView>{messages.map(mes=>{
+                {(messages[0] !== undefined)?(<ScrollView
+                    ref={scrollViewRef}
+                    onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
+                    {messages.map(mes=>{
                     return ( 
-                        <View key={mes._id} >
-                                <TouchableOpacity  onPress={()=>{}}>
-                                <View style={{flex:1,backgroundColor:'#f5ff99', 
-                                }}>
-                                    <Text>{mes.text}</Text>
+                        <View key={mes._id} style={{flex:1}}>
+                            {(mes.author==aUser._id)?(<TouchableOpacity  onPress={()=>{}}>
+                                <View style={styles.messageOvner}>
+                                    <Text style={{fontSize:30, }}>{mes.text}</Text>
+                                </View>
+                            </TouchableOpacity>):(<TouchableOpacity  onPress={()=>{}}>
+                                <View style={styles.messageSender}>
+                                    <Text style={{fontSize:30, }}>{mes.text}</Text>
                                 </View>
                             </TouchableOpacity>
+                                
+                            )}
                         </View>    
                     )
                     })}</ScrollView>):(
                     <View style={styles.addnoteBigButtonContainer}>
-                        <TouchableOpacity  onPress={()=>{}}>
-                            <Image style={styles.addBigButton} source={require('../img/add.png')}/>
-                        </TouchableOpacity>
+                        <Image style={styles.addBigButton} source={require('../img/add.png')}/>
                     </View>
                 )} 
             </View>
             <View style={{
                 flex:1,
                 alignItems:'flex-start',
-                justifyContent:'center',
+                // justifyContent:'center',
                 flexDirection:'row',
-                maxHeight: 50,
+                maxHeight: 60,
                 maxWidth: "100%",
                 backgroundColor: `rgba(${aNote.color}, 1)`}}>
                 <TextInput style={styles.messageInput}
@@ -97,7 +108,7 @@ export default function Chat({route, navigation}){
                             placeholder='Type message here...'
                             onChangeText={setMessageValue}
                 ></TextInput>
-                <TouchableOpacity  style={{flex:1, alignItems:'flex-end'}}onPress={()=>{pressHandler()}}>
+                <TouchableOpacity  style={{flex:1, alignItems:'flex-end', justifyContent:'center'}}onPress={()=>{pressHandler()}}>
                     <Image style={styles.sendSmallButton} source={require('../img/upload.png')}/>
                 </TouchableOpacity>
             </View>

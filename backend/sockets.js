@@ -62,16 +62,19 @@ module.exports = io =>{
         }
         
       }) 
-      socket.on('findNote', (noteId, userId)=>{
+      socket.on('findNote', async(userId, noteId)=>{
+        let arr = []
         try{
-          Notes
-          .findOne({title:noteId})
-          .update({connectedUsers:[userId]})
-          .exec((err, note)=>{
-              if(!err){
-                socket.emit('connectToNote', note)
-              }
-            })
+          await Notes
+          .findById(noteId, (err, note)=>{
+            if(!err){
+              if(note == null){socket.emit('ToNote', false)}
+              else{arr = [ ...note.connectedUsers, userId ];
+                console.log(arr)
+                socket.emit('ToNote', arr)}
+              }})
+            console.log('1'+arr)
+          await Notes.findByIdAndUpdate(noteId, {connectedUsers:arr})
         }catch(err){
           console.error(err)
         }
@@ -84,18 +87,17 @@ module.exports = io =>{
           console.error(err)
         }
       })
-      
-      // socket.on('newMessage', data=>{
-      //   try{
-      //     Messages.create(data).exec((err)=>{
-      //       if(!err){
-      //         socket.emit('info', 'note was added')
-      //         console.log('note was added');
-      //       }
-      //     })
-      //   }catch(err){
-      //     console.error(err)
-      //   }
-      // })
+      socket.on('getMessages',noteId=>{
+        try{Messages
+          .find({port:noteId})
+          .exec((err, messages)=>{
+            if(!err){
+                socket.emit('messages', messages)
+            }
+        })
+        }catch(err){
+          console.error(err)
+        }
+      })
     })
   }

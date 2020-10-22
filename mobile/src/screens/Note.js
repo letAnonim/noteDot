@@ -25,6 +25,7 @@ export default function Note({route, navigation}){
     const { socket } = route.params;
     const[modalUsersVisible, setModalUsersVisible]=useState(false)
     const [text, setText] = useState(`${aNote.text}`)
+    const [conUsers, setConUsers] = useState([User])
     // async function addNote(text) {
     //     await dbUser.doc(aNote.id).update({
     //         text: text
@@ -40,7 +41,6 @@ export default function Note({route, navigation}){
     //         setTextValue(querySnapshot.data().text)
     //       }); 
     // });
-
     return(
         <View style={styles.mainNoteContainer}>
         {/*////////////////////////////////modalUsers//////////////////////////////////////*/}
@@ -50,14 +50,18 @@ export default function Note({route, navigation}){
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
                         <Text style={styles.modalText}>Users:</Text> 
-                        
-                        <TouchableHighlight>
-                            <Text style={styles.textStyle}>{User.name}</Text>
-                        </TouchableHighlight>
+                       <View>
+                            {conUsers.map(user=>{
+                            return(<View key={user.name} style={{flexDirection:'row'}}>
+                                <Text>Name:{user.name}, </Text>
+                                <Text>Age:{user.age}</Text>
+                            </View>)
+                            })}
+                       </View>
                         <TouchableHighlight
                             style={styles.closeButton}
                             onPress={() => {
-                                setmodalUsersVisible(!modalUsersVisible)}}>  
+                                setModalUsersVisible(!modalUsersVisible)}}>  
                             <Text style={styles.textStyle}>close</Text>
                         </TouchableHighlight>
                     </View>

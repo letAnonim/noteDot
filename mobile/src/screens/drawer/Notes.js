@@ -46,10 +46,13 @@ export default function Notes({route,navigation}){
     }
     const pressSearch = () =>{
         console.log(noteIdValue);
-        Asocket.emit('findNote', noteIdValue, aUser._id);
-        Asocket.on('connectToNote',noteInfo=>{
+        Asocket.emit('findNote', aUser._id, noteIdValue);
+        Asocket.on('ToNote',noteInfo=>{
             console.log(noteInfo)
         })
+        // let a = ['fgfg', 'fdgfdg']
+        // let b = ['fgggggggggg', 'fdgfdg']
+        // console.log([...a, 'dfdf']) 
     }  
     const returnDate = timestamp =>{
         let date = new Date(timestamp)
@@ -216,16 +219,6 @@ export default function Notes({route,navigation}){
                         </TouchableOpacity>
                     </View>
                  </View> 
-                {/* <View style={styles.section1__input}>
-                    <TextInput style={styles.input} 
-                        placeholder='search note...'        
-                    />
-                </View> */}
-                {/* <View style={styles.section1__button}>
-                    <Button title='create' color="orange" onPress={()=>{
-                        setModalCreateVisible(!modalCreateVisible)
-                    }}/>
-                </View>  */}
             </View>
             <View style={styles.section2}>
                 {(notes[0] !== undefined)?(<ScrollView>{notes.map(note=>{

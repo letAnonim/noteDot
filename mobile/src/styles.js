@@ -230,9 +230,6 @@ export const styles = StyleSheet.create({
       fontSize:19,
       flex:1, 
       textAlignVertical: 'top',
-      
-      // justifyContent:'flex-end', 
-      // alignItems:'flex-start',
     },
     smallButton:{
       height:30,
@@ -257,10 +254,9 @@ export const styles = StyleSheet.create({
     },
     chatMessagesContainer:{
       flex:1,
-      justifyContent:'flex-end',
-      alignItems:'center',
       maxWidth:'100%',
-      maxWidth: '100%',
+      // flexDirection:'column-reverse',
+      // alignItems:'flex-end'
       
     },
     messageInput:{
@@ -275,13 +271,74 @@ export const styles = StyleSheet.create({
       fontSize:20,
       padding:2,
       paddingLeft:10,
-      margin: 6
+      margin: 5,
+      height:45
     },
     sendSmallButton:{
       maxHeight:30,
       maxWidth:30,
       margin:8,
       marginRight:3
+    },
+    talkBubble: {
+      backgroundColor: 'transparent'
+    },
+    talkBubbleSquare: {
+      width: 120,
+      height: 80,
+      backgroundColor: 'red',
+      borderRadius: 10
+    },
+    talkBubbleTriangle: {
+      position: 'absolute',
+      left: -26,
+      top: 26,
+      width: 0,
+      height: 0,
+      borderTopColor: 'transparent',
+      borderTopWidth: 13,
+      borderRightWidth: 26,
+      borderRightColor: 'red',
+      borderBottomWidth: 13,
+      borderBottomColor: 'transparent' 
+    },
+    messageOvner:{
+      flex:1,
+      backgroundColor:'#7DFF8D',
+      padding:4,
+      alignSelf:'flex-end',
+      margin:5, 
+      maxWidth:'80%',
+      borderBottomLeftRadius: 20,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 1,
+      },
+      shadowOpacity: 0.55,
+      shadowRadius: 1.78,
+      elevation: 10,
+    },
+    messageSender:{
+      flex:1,
+      backgroundColor:'#53D2FC',
+      padding:2,
+      alignSelf:'flex-start',
+      margin:5, 
+      maxWidth:'80%',
+      borderBottomRightRadius:15,
+      borderTopRightRadius: 15,
+      borderTopLeftRadius: 15,
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 1,
+      },
+      shadowOpacity: 0.55,
+      shadowRadius: 1.78,
+      elevation: 10,
     }
 
   });
