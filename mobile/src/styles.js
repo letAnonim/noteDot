@@ -171,7 +171,6 @@ export const styles = StyleSheet.create({
       width: '97%',
       margin: 2,
       marginLeft:5
-      
     },
     mainNoteContainer:{
       flex: 1,

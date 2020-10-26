@@ -74,7 +74,6 @@ export default function Notes({route,navigation}){
             let returnMonth = (month<10)?(`0${month}/${year}`):(`${month}/${year}`);
             return returnDay+returnMonth+' at '+returnHours+returnMinutes
         } 
-    
     }
    
     const [modalCreateVisible, setModalCreateVisible] = useState(false);
@@ -85,8 +84,6 @@ export default function Notes({route,navigation}){
     useEffect(() => {
         Asocket.emit('getNotes', aUser._id);
         Asocket.on('notes', data=>{  
-            // console.log(aUser._id);
-            // console.log('data',data);
             setNotes(data)
         })
     }, [notes]);
@@ -100,7 +97,10 @@ export default function Notes({route,navigation}){
                 { text: "OK", onPress: () =>{
                     Asocket.emit('deleteNote', id)
                     Asocket.on('deleteResponse', message=>{
-                        console.log(message)
+                        Asocket.emit('getNotes', aUser._id);
+                        Asocket.on('notes', data=>{  
+                            setNotes(data)
+                        })
                     })
                 }}
             ]
@@ -226,27 +226,31 @@ export default function Notes({route,navigation}){
                         <View key={note._id}>
                             <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note, User:aUser, socket:Asocket})}} style={styles.noteListContaiter}>
                                 <View style={{flex:1,backgroundColor:`rgba(${note.color}, 0.5)`, 
-                                borderLeftWidth:12, 
-                                borderLeftColor:`rgba(${note.color}, 1)`
-                            }}>
-                                    <View style={styles.noteInfoRow}>
-                                        <View style={{flex:1}}>
-                                            <Text   style={{margin:3,fontSize:18, color:'black'}}><Text style={{fontSize:19,fontWeight:'bold'}}>Title:</Text> {note.title}</Text>
+                                    borderLeftWidth:12, 
+                                    borderLeftColor:`rgba(${note.color}, 1)`
+                                }}>
+                                    <View style={{flex:1, flexDirection:'row'}}>
+                                        <View style={{flex:1, flexDirection:'column'}}>     
+                                            <Text   style={{margin:3,fontSize:18, color:'black', width:180}}  numberOfLines={1}>
+                                                <Text style={{fontSize:19,fontWeight:'bold',}}  numberOfLines={1}>Title:</Text> 
+                                                {note.title}
+                                            </Text>           
+                                            <View style={{marginLeft:3, flex:1, flexDirection:'column'}}>
+                                                <Text style={{fontSize:17, maxWidth:200}} numberOfLines={1}>Text:{note.text}</Text>
+                                                <Text style={{fontSize:15, maxWidth:200}} numberOfLines={1}>Number of users:{note.connectedUsers.length} </Text>
+                                            </View>
                                         </View>
-                                        <View style={{flex:1, alignItems:'flex-end', marginRight:2}}>
-                                            <Text >Last updated: {returnDate(note.updatedAt)}</Text>
+                                        <View>
+                                            <View style={{flex:1, alignItems:'flex-end', marginRight:2}}>
+                                                <Text style={{width:140}}>Last updated: {returnDate(note.updatedAt)}</Text>
+                                            </View>
+                                            <View style={styles.deleteButtonRow}>
+                                                <TouchableOpacity onPress={()=>{
+                                                    confirmAlert(note._id)
+                                                }}><Image style={styles.deleteSmallButton} source={require('../../img/delete.png')} /></TouchableOpacity>
+                                            </View>                     
                                         </View>
                                     </View>
-                                    <View style={{margin:2}}>
-                                        <View style={{flex:1}}>
-                                            <Text style={{fontSize:15}}>Text:{note.text}</Text>
-                                        </View>
-                                    </View>
-                                    <View style={styles.deleteButtonRow}>
-                                        <TouchableOpacity onPress={()=>{
-                                            confirmAlert(note._id)
-                                        }}><Image style={styles.deleteSmallButton} source={require('../../img/delete.png')} /></TouchableOpacity>
-                                    </View>                     
                                 </View>
                             </TouchableOpacity>
                         </View>    

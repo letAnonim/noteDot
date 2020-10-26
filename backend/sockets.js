@@ -48,8 +48,9 @@ module.exports = io =>{
       })
       socket.on('deleteNote', noteId=>{
         try{
-          Notes.deleteOne({_id:noteId})
-          socket.emit('deleteResponse', `A note with id: ${noteId} was deleted`)
+          Notes.findByIdAndDelete(noteId, (err)=>{if(!err){
+            socket.emit('deleteResponse', `A note with id: ${noteId} was deleted`)
+          }})
           // .findOne({_id: noteId})
             // .exec((err, note)=>{
             //   if(!err){
@@ -70,13 +71,14 @@ module.exports = io =>{
             if(!err){
               if(note == null){socket.emit('ToNote', false)}
               else{arr = [ ...note.connectedUsers, userId ];
-                console.log(arr)
+                // console.log(arr)
                 socket.emit('ToNote', arr)}
               }})
-            console.log('1'+arr)
+
           await Notes.findByIdAndUpdate(noteId, {connectedUsers:arr})
+          await Users.findById()
         }catch(err){
-          console.error(err)
+          // console.error(err)
         }
       })
       socket.on('addMessage', data=>{
@@ -97,6 +99,35 @@ module.exports = io =>{
         })
         }catch(err){
           console.error(err)
+        }
+      })
+
+      socket.on('saveNoteText', (text, noteId)=>{
+        try {
+          Notes
+            .findByIdAndUpdate(noteId, {text:text})
+            .exec((err, note)=>{
+              if(!err){
+                console.log(noteId, note)  
+              }
+          })
+        } catch (error) {
+          console.error(error)
+        }
+      })
+
+      socket.on('getNote', noteId=>{
+        try {
+          Notes
+            .findById(noteId)
+            .exec((err, note)=>{
+              if(!err){
+                console.log(noteId, note)  
+                socket.emit('aNote', note)
+              }
+          })
+        } catch (error) {
+          console.error(error)
         }
       })
     })

@@ -24,7 +24,7 @@ export default function Authorisation({navigation}){
     // useEffect(()=>{
 
     // })
-    const socket = socketIOClient('http://192.168.1.101:6666', {      
+    const socket = socketIOClient('http://192.168.1.103:6666', {      
     transports: ['websocket'], jsonp: false });   
     const [users, setUsers] = useState([]);
     

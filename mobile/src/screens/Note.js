@@ -24,23 +24,27 @@ export default function Note({route, navigation}){
     const { User } = route.params;
     const { socket } = route.params;
     const[modalUsersVisible, setModalUsersVisible]=useState(false)
-    const [text, setText] = useState(`${aNote.text}`)
+    const [note, setNote] = useState(aNote)
+    const [text, setText] = useState(`${note.text}`)
     const [conUsers, setConUsers] = useState([User])
-    // async function addNote(text) {
-    //     await dbUser.doc(aNote.id).update({
-    //         text: text
-    //     });
+    
+    
+    function addNoteText(text) {
+        socket.emit('saveNoteText', text, note._id)
         
-    // }
-    // const pressHendler=()=>{
-    //     setText(text);
-    //     addNote(text);
-    // }
-    // useEffect(() => {
-    //     return dbUser.doc(aNote.id).onSnapshot(querySnapshot => {
-    //         setTextValue(querySnapshot.data().text)
-    //       }); 
-    // });
+    }
+    const pressHendler=()=>{
+        addNoteText(text);
+        setText(text);
+    }
+    useEffect(() => {
+        socket.emit('getNote', note._id);
+        socket.on('aNote', data=>{  
+            console.log(data);
+            
+            // setNotes(data)
+        })
+    }, [note]);
     return(
         <View style={styles.mainNoteContainer}>
         {/*////////////////////////////////modalUsers//////////////////////////////////////*/}
@@ -69,14 +73,14 @@ export default function Note({route, navigation}){
             </Modal>
             {/*///////////////////////////////modalUsers//////////////////////////////////////*/}
             <ImageBackground source={require('../img/paperBackground.png')} style={styles.image}>
-                <View style={{backgroundColor:`rgba(${aNote.color}, 1)`, 
+                <View style={{backgroundColor:`rgba(${note.color}, 1)`, 
                     height:50,
                     flexDirection:'row'}}>
                     <View style={styles.nawbarContainerLeft}>
-                        <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{navigation.navigate('notes',{aNote:aNote})}}>
+                        <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{navigation.navigate('notes')}}>
                             <Image style={styles.addSmallButton} source={require('../img/menu.png')}/>
                         </TouchableOpacity>
-                        <Text style={styles.nawbarTitle}>{aNote.title}</Text>   
+                        <Text style={styles.nawbarTitle} numberOfLines={1}>{note.title}</Text>   
                     </View>
                     <View style={styles.nawbarContainerRight}>
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{setModalUsersVisible(!modalUsersVisible)}}>
@@ -84,13 +88,13 @@ export default function Note({route, navigation}){
                         </TouchableOpacity><TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{pressHendler()}}>
                             <Image style={styles.addSmallButton} source={require('../img/edit.png')}/>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{navigation.navigate('chat', {aNote:aNote, aUser:User, Asocket: socket})}}>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{navigation.navigate('chat', {aNote:note, aUser:User, Asocket: socket})}}>
                             <Image style={styles.addSmallButton} source={require('../img/chat.png')}/>
                         </TouchableOpacity>
                         
                     </View>
                  </View> 
-                    <View style={{backgroundColor: `rgba(${aNote.color},0.2)`, 
+                    <View style={{backgroundColor: `rgba(${note.color},0.2)`, 
                         maxWidth:'100%', 
                         flex:1,
                         justifyContent:'center',

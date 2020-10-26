@@ -27,8 +27,8 @@ export default function Chat({route, navigation}){
             setMessages(data)
         })
     }, [messages]);
-    function addMessage(text, author) {    
-        Asocket.emit('addMessage', {
+     async function addMessage(text, author) {    
+        await Asocket.emit('addMessage', {
             text: text,
             author:author,
             port:aNote._id
@@ -44,7 +44,27 @@ export default function Chat({route, navigation}){
         setMessageValue('')
     }
     const scrollViewRef = useRef();
+    const returnDate = timestamp =>{
+        let date = new Date(timestamp)
+        let now = new Date()
+        let minutes = date.getMinutes();
+        let hours = date.getHours();
+        // let day = date.getDay();
+        // let month = date.getMonth();
+        // let year = date.getFullYear()
 
+        let returnHours = (hours<10)?(`0${hours}:`):(`${hours}:`)
+        let returnMinutes = (minutes<10)?(`0${minutes}`):(minutes)
+        return returnHours + returnMinutes
+        // if(day == now.getDay()&&month == now.getMonth()&&year==now.getFullYear()){
+        //     return returnHours+returnMinutes
+        // }
+        // else{
+        //     let returnDay = (day<10)?(`0${day}/`):(`${day}/${year}`)
+        //     let returnMonth = (month<10)?(`0${month}/${year}`):(`${month}/${year}`);
+        //     return returnDay+returnMonth+' at '+returnHours+returnMinutes
+        // } 
+    }
     return(
         <ImageBackground source={require('../img/paperBackground.png')} style={styles.image}>
             <View style={{
@@ -72,23 +92,27 @@ export default function Chat({route, navigation}){
                     onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
                     {messages.map(mes=>{
                     return ( 
-                        <View key={mes._id} style={{flex:1}}>
+                        <View key={Math.random()} style={{flex:1}}>
                             {(mes.author==aUser._id)?(<TouchableOpacity  onPress={()=>{}}>
                                 <View style={styles.messageOvner}>
-                                    <Text style={{fontSize:30, }}>{mes.text}</Text>
+                                    <Text style={{fontSize:25, }}>{mes.text}</Text>
+                                    <Text style={{flex:1,alignSelf:'flex-end', fontSize:10}}>{returnDate(mes.updatedAt)}</Text>
                                 </View>
+                                
                             </TouchableOpacity>):(<TouchableOpacity  onPress={()=>{}}>
                                 <View style={styles.messageSender}>
-                                    <Text style={{fontSize:30, }}>{mes.text}</Text>
+                                    <Text style={{fontSize:25, }}>{mes.text}</Text>
+                                    <Text style={{flex:1,fontSize:10}}>{returnDate(mes.updatedAt)}</Text>
                                 </View>
-                            </TouchableOpacity>
                                 
+                            </TouchableOpacity>   
                             )}
                         </View>    
                     )
                     })}</ScrollView>):(
                     <View style={styles.addnoteBigButtonContainer}>
-                        <Image style={styles.addBigButton} source={require('../img/add.png')}/>
+                        <Image style={styles.addBigButton} source={require('../img/chat.png')}/>
+                        <Text>No messages here yet...</Text>
                     </View>
                 )} 
             </View>

@@ -14,8 +14,8 @@ import {DrawerContent} from './DrawerContent'
 import Note from './Note';
 
 
-export default function Home({route,navigation}){
-  const { aUser } = route.params;
+export default function Home(){
+  // const { aUser } = route.params;
   const Drawer = createDrawerNavigator();
   return(
     <Drawer.Navigator drawerContent={props=><DrawerContent {...props}/>}>
