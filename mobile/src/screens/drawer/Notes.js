@@ -1,14 +1,12 @@
 import 'react-native-gesture-handler';
-import React, {Component, useState, useEffect} from 'react';
+import React, { useState, useEffect} from 'react';
 import {
     TextInput,
     View,
     TouchableOpacity,
-    Button,
     Image,
     Modal,
     TouchableHighlight,
-    StyleSheet,
     Text,
     Alert, 
     ImageBackground
@@ -16,9 +14,9 @@ import {
 import {RadioButton} from 'react-native-paper'
 import {styles} from '../../styles';
 import { ScrollView } from 'react-native-gesture-handler';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
-import socketIOClient from 'socket.io-client';
+// import { createDrawerNavigator } from '@react-navigation/drawer';
+// import { NavigationContainer } from '@react-navigation/native';
+// import socketIOClient from 'socket.io-client';
 // import io from 'socket.io-client'
 
 export default function Notes({route,navigation}){
@@ -223,7 +221,7 @@ export default function Notes({route,navigation}){
             <View style={styles.section2}>
                 {(notes[0] !== undefined)?(<ScrollView>{notes.map(note=>{
                     return ( 
-                        <View key={note._id}>
+                        <View key={Math.random()} style={{flex:1}}>
                             <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note, User:aUser, socket:Asocket})}} style={styles.noteListContaiter}>
                                 <View style={{flex:1,backgroundColor:`rgba(${note.color}, 0.5)`, 
                                     borderLeftWidth:12, 

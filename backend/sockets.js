@@ -106,11 +106,11 @@ module.exports = io =>{
         try {
           Notes
             .findByIdAndUpdate(noteId, {text:text})
-            .exec((err, note)=>{
-              if(!err){
-                console.log(noteId, note)  
-              }
-          })
+            // .exec((err, note)=>{
+            //   if(!err){
+            //     console.log(noteId, note)  
+            // }
+          // })
         } catch (error) {
           console.error(error)
         }
@@ -120,12 +120,12 @@ module.exports = io =>{
         try {
           Notes
             .findById(noteId)
-            .exec((err, note)=>{
-              if(!err){
-                console.log(noteId, note)  
-                socket.emit('aNote', note)
-              }
-          })
+          //   .exec((err, note)=>{
+          //     if(!err){
+          //       console.log(noteId, note)  
+          //       socket.emit('aNote', note)
+          //     }
+          // })
         } catch (error) {
           console.error(error)
         }

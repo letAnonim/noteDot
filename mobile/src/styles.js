@@ -308,9 +308,9 @@ export const styles = StyleSheet.create({
       alignSelf:'flex-end',
       margin:5, 
       maxWidth:'80%',
-      borderBottomLeftRadius: 20,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
+      borderBottomLeftRadius: 10,
+      borderTopLeftRadius: 10,
+      borderTopRightRadius: 10,
       shadowColor: "#000",
       shadowOffset: {
         width: 0,
@@ -326,10 +326,12 @@ export const styles = StyleSheet.create({
       padding:2,
       alignSelf:'flex-start',
       margin:5, 
+      paddingEnd:10,
+      paddingLeft:10,
       maxWidth:'80%',
-      borderBottomRightRadius:15,
-      borderTopRightRadius: 15,
-      borderTopLeftRadius: 15,
+      borderBottomRightRadius:10,
+      borderTopRightRadius: 10,
+      borderTopLeftRadius: 10,
       shadowColor: "#000",
       shadowOffset: {
         width: 0,
@@ -338,7 +340,16 @@ export const styles = StyleSheet.create({
       shadowOpacity: 0.55,
       shadowRadius: 1.78,
       elevation: 10,
+    },
+    bigAvatar:{
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 6,
+      },
+      shadowOpacity: 0.39,
+      shadowRadius: 8.30,
+      elevation: 13,
     }
-
   });
   

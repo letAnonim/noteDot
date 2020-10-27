@@ -9,6 +9,7 @@ import {
   ScrollView
 
 } from 'react-native';
+// import usersModel from '../../../backend/models/users.model';
 import {styles} from '../styles'
 
 
@@ -27,20 +28,22 @@ export default function Chat({route, navigation}){
             setMessages(data)
         })
     }, [messages]);
-     async function addMessage(text, author) {    
+     async function addMessage(text) {    
         await Asocket.emit('addMessage', {
             text: text,
-            author:author,
+            author:aUser._id,
+            authorName:aUser.name,
             port:aNote._id
         })
         messages.push({
             text:text,
-            author:author,
+            author:aUser._id,
+            authorName:aUser.name,
             port:aNote._id
         })
     }
     const pressHandler=()=>{
-        addMessage(messageValue, aUser._id);
+        addMessage(messageValue);
         setMessageValue('')
     }
     const scrollViewRef = useRef();
@@ -49,21 +52,21 @@ export default function Chat({route, navigation}){
         let now = new Date()
         let minutes = date.getMinutes();
         let hours = date.getHours();
-        // let day = date.getDay();
-        // let month = date.getMonth();
-        // let year = date.getFullYear()
+        let day = date.getDay();
+        let month = date.getMonth();
+        let year = date.getFullYear()
 
         let returnHours = (hours<10)?(`0${hours}:`):(`${hours}:`)
         let returnMinutes = (minutes<10)?(`0${minutes}`):(minutes)
-        return returnHours + returnMinutes
-        // if(day == now.getDay()&&month == now.getMonth()&&year==now.getFullYear()){
-        //     return returnHours+returnMinutes
-        // }
-        // else{
-        //     let returnDay = (day<10)?(`0${day}/`):(`${day}/${year}`)
-        //     let returnMonth = (month<10)?(`0${month}/${year}`):(`${month}/${year}`);
-        //     return returnDay+returnMonth+' at '+returnHours+returnMinutes
-        // } 
+        // return returnHours + returnMinutes
+        if(day == now.getDay()&&month == now.getMonth()&&year==now.getFullYear()){
+            return returnHours+returnMinutes
+        }
+        else{
+            let returnDay = (day<10)?(`0${day}/`):(`${day}/${year}`)
+            let returnMonth = (month<10)?(`0${month}/${year}`):(`${month}/${year}`);
+            return returnDay+returnMonth+' at '+returnHours+returnMinutes
+        } 
     }
     return(
         <ImageBackground source={require('../img/paperBackground.png')} style={styles.image}>
@@ -95,13 +98,14 @@ export default function Chat({route, navigation}){
                         <View key={Math.random()} style={{flex:1}}>
                             {(mes.author==aUser._id)?(<TouchableOpacity  onPress={()=>{}}>
                                 <View style={styles.messageOvner}>
-                                    <Text style={{fontSize:25, }}>{mes.text}</Text>
+                                    <Text style={{fontSize:20, }}>{mes.text}</Text>
                                     <Text style={{flex:1,alignSelf:'flex-end', fontSize:10}}>{returnDate(mes.updatedAt)}</Text>
                                 </View>
                                 
                             </TouchableOpacity>):(<TouchableOpacity  onPress={()=>{}}>
                                 <View style={styles.messageSender}>
-                                    <Text style={{fontSize:25, }}>{mes.text}</Text>
+                                     <Text style={{flex:1,alignSelf:'flex-start', fontSize:13}}>{mes.authorName}</Text>
+                                     <Text style={{fontSize:20, }}>{mes.text}</Text>
                                     <Text style={{flex:1,fontSize:10}}>{returnDate(mes.updatedAt)}</Text>
                                 </View>
                                 

@@ -40,9 +40,9 @@ export default function Note({route, navigation}){
     useEffect(() => {
         socket.emit('getNote', note._id);
         socket.on('aNote', data=>{  
-            console.log(data);
+            // console.log(data);
             
-            // setNotes(data)
+            setNote(data)
         })
     }, [note]);
     return(
