@@ -220,12 +220,8 @@ export default function Notes({route,navigation}){
             </View>
             <View style={styles.section2}>
                 {(notes[0] !== undefined)?(<ScrollView>{notes.map(note=>{
-                    return ( 
-<<<<<<< HEAD
+                    return (
                         <View key={note._id}>
-=======
-                        <View>
->>>>>>> b81af7b6b41da9b3a64650fc6a4fb7fcb38769d5
                             <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note, User:aUser, socket:Asocket})}} style={styles.noteListContaiter}>
                                 <View style={{flex:1,backgroundColor:`rgba(${note.color}, 0.5)`, 
                                     borderLeftWidth:12, 

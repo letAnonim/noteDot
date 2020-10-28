@@ -26,11 +26,12 @@ export default function Authorisation({navigation}){
     // })
     const socket = socketIOClient('http://192.168.88.82:6666', {      
     transports: ['websocket'], jsonp: false });   
-    const [users, setUsers] = useState([]);
-    
+
+    const [loginValue, setLoginValue] = useState('')
+    const [passwordValue, setPasswordValue] = useState('')
     useEffect(() => {
         socket.connect();  
-        socket.emit('getUsers');
+        
         socket.on('users', msg=>{
             setUsers(msg)
         })
@@ -39,31 +40,35 @@ export default function Authorisation({navigation}){
     
     const pressHandler=()=>{
         if(loginValue!=''&&passwordValue!=''){
-            if(users.map((item)=>{return (item.name==loginValue)}).includes(true)){
-                const index = users.map((item)=>{return (item.name==loginValue)}).indexOf(true);
-                if(users[index].password == passwordValue){
-                    navigation.navigate('home',{
-                        screen: 'notes',
-                        params: { aUser:users[index], Asocket: socket},
-                    })
-                    // navigation.navigate('home',{
-                    //     screen: 'profile',
-                    //     params: { aUser:users[index], Asocket: socket},
-                    // })
-                }
-                else {
-                    alert('Wrong login or password!');
-                    setPasswordValue('')
-                }
-            }
-            else alert('Wrong login or password!');
-            setPasswordValue('')   
+            const answer;
+            socket.emit('checkLog', loginValue, passwordValue )
+            socket.on('answerLog', data=>{answer = data})
+            
+            console.log(answer)
+            // if(users.map((item)=>{return (item.name==loginValue)}).includes(true)){
+            //     const index = users.map((item)=>{return (item.name==loginValue)}).indexOf(true);
+            //     if(users[index].password == passwordValue){
+            //         navigation.navigate('home',{
+            //             screen: 'notes',
+            //             params: { aUser:users[index], Asocket: socket},
+            //         })
+            //         // navigation.navigate('home',{
+            //         //     screen: 'profile',
+            //         //     params: { aUser:users[index], Asocket: socket},
+            //         // })
+            //     }
+            //     else {
+            //         alert('Wrong login or password!');
+            //         setPasswordValue('')
+            //     }
+            // }
+            // else alert('Wrong login or password!');
+            // setPasswordValue('')   
         }
         else alert('Pleace fill all fields!')
     }  
    
-    const [loginValue, setLoginValue] = useState('')
-    const [passwordValue, setPasswordValue] = useState('')
+    
  
     return(
         <View style={{flex:1}}>
@@ -97,7 +102,7 @@ export default function Authorisation({navigation}){
                     <View style={{margin: 20}}>
                         <Button title='Log in!'
                         color='orange'
-                        onPress={()=>pressHandler()}
+                        onPress={pressHandler}
                         />
                     </View>
                     <View style={{margin: 20}}>

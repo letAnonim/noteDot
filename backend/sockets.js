@@ -5,14 +5,20 @@ const Messages = require('./models/messages.model.js');
 module.exports = io =>{ 
     io.on('connection', socket=>{
       console.log('user connected')
-      socket.on('getUsers', ()=>{
+      socket.on('checkLog', (login, password)=>{
+        console.log(login, password)
         try{
           Users
-            .find({})
-            .exec((err, users)=>{
-                if(!err){
-                    socket.emit('users', users)
+            .findOne({name:login})
+            .exec((err, user)=>{
+              if(!err){
+                if(user != null){
+                  (user.password != password)?(socket.emit('answerLog', false)):(socket.emit('answerLog', true))
                 }
+                else{
+                  socket.emit('answerLog', false)
+                }   
+              }
             })
         }catch(err){
           console.error(err)
@@ -105,21 +111,12 @@ module.exports = io =>{
       socket.on('saveNoteText', (recivedText, noteId)=>{
         try {
           Notes
-<<<<<<< HEAD
             .findByIdAndUpdate(noteId, {text:recivedText})
-          //   .exec((err, note)=>{
-          //     if(!err){
-          //       console.log(noteId, note)  
-          //   }
-          // })
-=======
-            .findByIdAndUpdate(noteId, {text:text})
             .exec((err, note)=>{
               if(!err){
                 console.log(noteId, note)  
             }
           })
->>>>>>> b81af7b6b41da9b3a64650fc6a4fb7fcb38769d5
         } catch (error) {
           console.error(error)
         }
