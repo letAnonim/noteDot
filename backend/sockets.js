@@ -106,11 +106,11 @@ module.exports = io =>{
         try {
           Notes
             .findByIdAndUpdate(noteId, {text:recivedText})
-            .exec((err, note)=>{
-              if(!err){
-                console.log(noteId, note)  
-            }
-          })
+          //   .exec((err, note)=>{
+          //     if(!err){
+          //       console.log(noteId, note)  
+          //   }
+          // })
         } catch (error) {
           console.error(error)
         }
