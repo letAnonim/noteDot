@@ -108,7 +108,6 @@ export default function Chat({route, navigation}){
                                      <Text style={{fontSize:20, }}>{mes.text}</Text>
                                     <Text style={{flex:1,fontSize:10}}>{returnDate(mes.updatedAt)}</Text>
                                 </View>
-                                
                             </TouchableOpacity>   
                             )}
                         </View>    
