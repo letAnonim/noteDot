@@ -14,11 +14,11 @@ import {
     Alert, 
     ImageBackground
 } from 'react-native';
-import {RadioButton} from 'react-native-paper'
+// import {RadioButton} from 'react-native-paper'
 import {styles} from '../styles';
-import { ScrollView } from 'react-native-gesture-handler';
+// import { ScrollView } from 'react-native-gesture-handler';
 import socketIOClient from 'socket.io-client';
-import io from 'socket.io-client'
+// import io from 'socket.io-client'
 
 export default function Authorisation({navigation}){
     // useEffect(()=>{

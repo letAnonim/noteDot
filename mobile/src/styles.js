@@ -32,7 +32,8 @@ export const styles = StyleSheet.create({
       },
       textShadowRadius:5,
       textShadowColor:'rgba(0,0,0,0.2)',
-      color:'#E0E0E0'
+      color:'#E0E0E0',
+      width:'80%'
     },
     section1__input:{
       width: '75%',

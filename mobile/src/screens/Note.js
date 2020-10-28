@@ -11,8 +11,8 @@ import {
     ImageBackground, 
     TouchableOpacity,
     Image,
-    Modal,
-    TouchableHighlight
+    
+    
 } from 'react-native';
 import {styles} from '../styles'
 import '../img/paperBackground.png'
@@ -23,10 +23,9 @@ export default function Note({route, navigation}){
     const { aNote } = route.params;
     const { User } = route.params;
     const { socket } = route.params;
-    const[modalUsersVisible, setModalUsersVisible]=useState(false)
     const [note, setNote] = useState(aNote)
     const [text, setText] = useState(`${note.text}`)
-    const [conUsers, setConUsers] = useState([User])
+  
     
     
     function addNoteText(text) {
@@ -47,31 +46,7 @@ export default function Note({route, navigation}){
     }, [note]);
     return(
         <View style={styles.mainNoteContainer}>
-        {/*////////////////////////////////modalUsers//////////////////////////////////////*/}
-            <Modal animationType='slide'
-                transparent={true}
-                visible={modalUsersVisible}>
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        <Text style={styles.modalText}>Users:</Text> 
-                       <View>
-                            {conUsers.map(user=>{
-                            return(<View key={user.name} style={{flexDirection:'row'}}>
-                                <Text>Name:{user.name}, </Text>
-                                <Text>Age:{user.age}</Text>
-                            </View>)
-                            })}
-                       </View>
-                        <TouchableHighlight
-                            style={styles.closeButton}
-                            onPress={() => {
-                                setModalUsersVisible(!modalUsersVisible)}}>  
-                            <Text style={styles.textStyle}>close</Text>
-                        </TouchableHighlight>
-                    </View>
-                </View>
-            </Modal>
-            {/*///////////////////////////////modalUsers//////////////////////////////////////*/}
+      
             <ImageBackground source={require('../img/paperBackground.png')} style={styles.image}>
                 <View style={{backgroundColor:`rgba(${note.color}, 1)`, 
                     height:50,
@@ -83,15 +58,12 @@ export default function Note({route, navigation}){
                         <Text style={styles.nawbarTitle} numberOfLines={1}>{note.title}</Text>   
                     </View>
                     <View style={styles.nawbarContainerRight}>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{setModalUsersVisible(!modalUsersVisible)}}>
-                            <Image style={styles.addSmallButton} source={require('../img/users.png')}/>
-                        </TouchableOpacity><TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{pressHendler()}}>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{pressHendler()}}>
                             <Image style={styles.addSmallButton} source={require('../img/edit.png')}/>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{navigation.navigate('chat', {aNote:note, aUser:User, Asocket: socket})}}>
                             <Image style={styles.addSmallButton} source={require('../img/chat.png')}/>
                         </TouchableOpacity>
-                        
                     </View>
                  </View> 
                     <View style={{backgroundColor: `rgba(${note.color},0.2)`, 

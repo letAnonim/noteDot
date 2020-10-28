@@ -6,7 +6,10 @@ import {
   TouchableOpacity,
   Image, 
   TextInput, 
-  ScrollView
+  ScrollView,
+  Modal,
+  TouchableHighlight,
+  Clipboard,
 
 } from 'react-native';
 // import usersModel from '../../../backend/models/users.model';
@@ -19,9 +22,9 @@ export default function Chat({route, navigation}){
     const { Asocket } = route.params;
     const [messageValue, setMessageValue] = useState('')
     const [messages, setMessages] = useState([])
-    Asocket.on('ToNote', mes=>{
-        
-    })
+    const [modalUsersVisible, setModalUsersVisible] = useState(false)
+    const [conUsers, setConUsers] = useState([])
+  
     useEffect(() => {
         Asocket.emit('getMessages', aNote._id);
         Asocket.on('messages', data=>{  
@@ -42,6 +45,9 @@ export default function Chat({route, navigation}){
             port:aNote._id
         })
     }
+    const copyToClipboard = () => {
+        Clipboard.setString(aNote._id)
+      }
     const pressHandler=()=>{
         addMessage(messageValue);
         setMessageValue('')
@@ -70,6 +76,36 @@ export default function Chat({route, navigation}){
     }
     return(
         <ImageBackground source={require('../img/paperBackground.png')} style={styles.image}>
+              {/*////////////////////////////////modalUsers//////////////////////////////////////*/}
+              <Modal animationType='slide'
+                transparent={true}
+                visible={modalUsersVisible}>
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>Users:</Text> 
+                       <View>
+                            {conUsers.map(user=>{
+                            return(<View key={user._id} style={{flexDirection:'row'}}>
+                                <Text>Name:{user.name} </Text>
+                                <Text>Age:{user.age}</Text>
+                            </View>)
+                            })}
+                       </View>
+                       <TouchableHighlight
+                            style={styles.openButton}
+                            onPress={() => {copyToClipboard()}}>  
+                            <Text style={styles.textStyle}>Copy invite link</Text>
+                        </TouchableHighlight>
+                        <TouchableHighlight
+                            style={styles.closeButton}
+                            onPress={() => {
+                                setModalUsersVisible(!modalUsersVisible)}}>  
+                            <Text style={styles.textStyle}>close</Text>
+                        </TouchableHighlight>
+                    </View>
+                </View>
+            </Modal>
+            {/*///////////////////////////////modalUsers//////////////////////////////////////*/}
             <View style={{
                 backgroundColor:`rgba(${aNote.color}, 1)`, 
                 height:50,
@@ -80,14 +116,15 @@ export default function Chat({route, navigation}){
                     </TouchableOpacity>
                     <Text style={styles.nawbarTitle}>Chat</Text>   
                 </View>
-                {/* <View style={styles.nawbarContainerRight}>
-                    <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{pressHendler()}}>
-                        <Image style={styles.addSmallButton} source={require('../img/edit.png')}/>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{navigation.navigate('chat')}}>
-                        <Image style={styles.addSmallButton} source={require('../img/chat.png')}/>
-                    </TouchableOpacity>
-                </View> */}
+                <View style={styles.nawbarContainerRight}>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{
+                            setModalUsersVisible(!modalUsersVisible); Asocket.emit('getConnectedUsers', aNote.connectedUsers);
+                            Asocket.on('conUsers', data=>{
+                                setConUsers(data)
+                            })}}>
+                            <Image style={styles.addSmallButton} source={require('../img/users.png')}/>
+                        </TouchableOpacity>
+                    </View>
             </View>
             <View style={styles.chatMessagesContainer}>
                 {(messages[0] !== undefined)?(<ScrollView

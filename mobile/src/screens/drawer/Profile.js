@@ -10,8 +10,8 @@ import {styles} from '../../styles'
 
 
 export default function Profile({navigation, route}){
-    const { aUser } = route.params;
-    const { Asocket } = route.params;
+    const { User } = route.params;
+    const { socket } = route.params;
     return(
         <ImageBackground source={require('../../img/paperBackground.png')} style={styles.image}>
             <View style={{
@@ -32,7 +32,7 @@ export default function Profile({navigation, route}){
                     </View>
                 </View>
                 <View>
-                    <Text style={styles.mainText}>Name:{aUser.name} </Text>
+                    <Text style={styles.mainText}>Name:{User.name} </Text>
                 </View>
             </View>
         </ImageBackground>

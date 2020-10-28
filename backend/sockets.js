@@ -102,15 +102,15 @@ module.exports = io =>{
         }
       })
 
-      socket.on('saveNoteText', (text, noteId)=>{
+      socket.on('saveNoteText', (recivedText, noteId)=>{
         try {
           Notes
-            .findByIdAndUpdate(noteId, {text:text})
-            // .exec((err, note)=>{
-            //   if(!err){
-            //     console.log(noteId, note)  
-            // }
-          // })
+            .findByIdAndUpdate(noteId, {text:recivedText})
+            .exec((err, note)=>{
+              if(!err){
+                console.log(noteId, note)  
+            }
+          })
         } catch (error) {
           console.error(error)
         }
@@ -120,12 +120,17 @@ module.exports = io =>{
         try {
           Notes
             .findById(noteId)
-          //   .exec((err, note)=>{
-          //     if(!err){
-          //       console.log(noteId, note)  
-          //       socket.emit('aNote', note)
-          //     }
-          // })
+        } catch (error) {
+          console.error(error)
+        }
+      })
+      socket.on('getConnectedUsers', conUsers=>{
+        try {
+          // console.log(conUsers)
+          Users.find().where('_id').in(conUsers).exec((err, data) => {if(!err){
+            socket.emit('conUsers', data)
+          }});
+            
         } catch (error) {
           console.error(error)
         }

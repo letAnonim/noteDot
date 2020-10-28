@@ -11,11 +11,12 @@ import Notes from './drawer/Notes';
 import Profile from './drawer/Profile';
 import Settings from './drawer/Settings';
 import {DrawerContent} from './DrawerContent'
-import Note from './Note';
+// import Note from './Note';
 
 
-export default function Home({navigation}){
-  // const { aUser } = route.params;
+export default function Home({navigation, route}){
+  const { aUser } = route.params;
+  // console.log(aUser)
   const Drawer = createDrawerNavigator();
   return(
     <Drawer.Navigator drawerContent={props=><DrawerContent {...props}/>}>
