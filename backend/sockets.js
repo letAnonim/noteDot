@@ -103,6 +103,7 @@ module.exports = io =>{
       })
 
       socket.on('saveNoteText', (recivedText, noteId)=>{
+        console.log(recivedText)
         try {
           Notes
             .findByIdAndUpdate(noteId, {text:recivedText})
