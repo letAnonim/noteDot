@@ -9,7 +9,9 @@ import {
 import {styles} from '../../styles'
 
 
-export default function Profile({navigation}){
+export default function Profile({navigation, route}){
+    const { aUser } = route.params;
+    const { Asocket } = route.params;
     return(
         <ImageBackground source={require('../../img/paperBackground.png')} style={styles.image}>
             <View style={{
@@ -29,7 +31,9 @@ export default function Profile({navigation}){
                         <Image style={{width:150, height:150, borderRadius:100}} source={require('../../img/defaultUser.png')}/>
                     </View>
                 </View>
-                <Text style={styles.mainText}>Profile</Text>
+                <View>
+                    <Text style={styles.mainText}>Name:{aUser.name} </Text>
+                </View>
             </View>
         </ImageBackground>
         

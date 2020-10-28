@@ -31,11 +31,9 @@ export default function Notes({route,navigation}){
             text: '',
             connectedUsers:[aUser._id]
         })
-        notes.push({
-            title: title,
-            color: color,
-            text: '',
-            connectedUsers:[{id:aUser._id, role: 'creator'}]
+        Asocket.emit('getNotes', aUser._id);
+        Asocket.on('notes', data=>{  
+            setNotes(data)
         })
     }
     const pressHandler=()=>{
@@ -221,8 +219,8 @@ export default function Notes({route,navigation}){
             <View style={styles.section2}>
                 {(notes[0] !== undefined)?(<ScrollView>{notes.map(note=>{
                     return ( 
-                        <View key={Math.random()} style={{flex:1}}>
-                            <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note, User:aUser, socket:Asocket})}} style={styles.noteListContaiter}>
+                        <View key={note._id}>
+                            <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note, User:aUser, socket:Asocket}); console.log('pressed')}} style={styles.noteListContaiter}>
                                 <View style={{flex:1,backgroundColor:`rgba(${note.color}, 0.5)`, 
                                     borderLeftWidth:12, 
                                     borderLeftColor:`rgba(${note.color}, 1)`

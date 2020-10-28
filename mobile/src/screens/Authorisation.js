@@ -24,7 +24,7 @@ export default function Authorisation({navigation}){
     // useEffect(()=>{
 
     // })
-    const socket = socketIOClient('http://192.168.1.100:6666', {      
+    const socket = socketIOClient('http://192.168.88.82:6666', {      
     transports: ['websocket'], jsonp: false });   
     const [users, setUsers] = useState([]);
     
@@ -46,7 +46,10 @@ export default function Authorisation({navigation}){
                         screen: 'notes',
                         params: { aUser:users[index], Asocket: socket},
                     })
-                    navigation.setOptions({})
+                    // navigation.navigate('home',{
+                    //     screen: 'profile',
+                    //     params: { aUser:users[index], Asocket: socket},
+                    // })
                 }
                 else {
                     alert('Wrong login or password!');
