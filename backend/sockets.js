@@ -105,12 +105,21 @@ module.exports = io =>{
       socket.on('saveNoteText', (recivedText, noteId)=>{
         try {
           Notes
+<<<<<<< HEAD
             .findByIdAndUpdate(noteId, {text:recivedText})
           //   .exec((err, note)=>{
           //     if(!err){
           //       console.log(noteId, note)  
           //   }
           // })
+=======
+            .findByIdAndUpdate(noteId, {text:text})
+            .exec((err, note)=>{
+              if(!err){
+                console.log(noteId, note)  
+            }
+          })
+>>>>>>> b81af7b6b41da9b3a64650fc6a4fb7fcb38769d5
         } catch (error) {
           console.error(error)
         }

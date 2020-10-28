@@ -209,11 +209,11 @@ export default function Notes({route,navigation}){
                         <Text style={styles.nawbarTitle}>Notes.dot</Text>   
                     </View>
                     <View style={styles.nawbarContainerRight}>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalCreateVisible(!modalCreateVisible)}>
-                            <Image style={styles.addSmallButton} source={require('../../img/add.png')}/>
-                        </TouchableOpacity>
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalSearchVisible(!modalSearchVisible)}>
                             <Image style={styles.addSmallButton} source={require('../../img/search.png')}/>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalCreateVisible(!modalCreateVisible)}>
+                            <Image style={styles.addSmallButton} source={require('../../img/add.png')}/>
                         </TouchableOpacity>
                     </View>
                  </View> 
@@ -221,7 +221,11 @@ export default function Notes({route,navigation}){
             <View style={styles.section2}>
                 {(notes[0] !== undefined)?(<ScrollView>{notes.map(note=>{
                     return ( 
+<<<<<<< HEAD
                         <View key={note._id}>
+=======
+                        <View>
+>>>>>>> b81af7b6b41da9b3a64650fc6a4fb7fcb38769d5
                             <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note, User:aUser, socket:Asocket})}} style={styles.noteListContaiter}>
                                 <View style={{flex:1,backgroundColor:`rgba(${note.color}, 0.5)`, 
                                     borderLeftWidth:12, 
