@@ -186,7 +186,7 @@ export default function Notes({route,navigation}){
                             style={styles.openButton}
                             onPress={() => {
                                 (!noteIdValue)?(Alert.alert('Pleace write the id!!')
-                                ):(pressSearch(),setModalSearchVisible(!modalCreateVisible))
+                                ):(pressSearch(),setModalSearchVisible(!modalSearchVisible))
                                 }}>  
                             <Text style={styles.textStyle}>Connect to note!</Text>
                         </TouchableHighlight>

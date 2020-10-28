@@ -4,14 +4,8 @@ import React, {Component, useState, useEffect} from 'react';
 import {
     TextInput,
     View,
-    TouchableOpacity,
     Button,
-    Image,
-    Modal,
-    TouchableHighlight,
-    StyleSheet,
     Text,
-    Alert, 
     ImageBackground
 } from 'react-native';
 import {RadioButton} from 'react-native-paper'
@@ -21,37 +15,28 @@ import socketIOClient from 'socket.io-client';
 
 export default function Registration({route, navigation}){
     const { Asocket } = route.params;
-    const [users, setUsers] = useState([]);
-    async function addUser(name, age, password) {
-        Asocket.emit('regUser',{name, age, password} )
-    }
-    const pressHandler=()=>{
+    async function addUser() {
         if(nameValue == ''||ageValue ==''||passwordValue == ''||confirmPassword==''){
             alert('pleace fill all fields')
         }
-        else if(users.map((item)=>{return (item.name==nameValue)}).includes(true)){
-            alert('This name is occuped, choose another!')
-        }
-        else if(passwordValue!==confirmPassword){
-            alert('passwords dont match each other!!')
-            setPasswordValue(''); 
-            setConfirmPassword('')
-        }
+
         else{
-            addUser(nameValue, ageValue, passwordValue );
-            navigation.navigate('authorisation')
-        } 
-    }  
+            await Asocket.emit('regUser',{name:nameValue, age:ageValue, password:passwordValue, conPassword:confirmPassword})
+            await Asocket.on('answerReg',(data)=>{
+                if(data ==1) alert('This name is already in use!');
+                else if(data == 2) alert('Incorrect age value!');
+                else if(data == 3) alert('Passwords dont match each other!');
+                else navigation.navigate('authorisation')
+                
+            })    
+        }
+    } 
     const [nameValue, setNameValue] = useState('')
     const [ageValue, setAgeValue] = useState('')
     const [passwordValue, setPasswordValue] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     useEffect(() => {
-            Asocket.connect();  
-            Asocket.emit('getUsers');
-            Asocket.on('users', msg=>{
-                setUsers(msg)
-            })
+
     }, []);
 
     return(
@@ -108,7 +93,7 @@ export default function Registration({route, navigation}){
                     <View style={{margin: 20}}>
                         <Button title='Register!'
                         color='orange'
-                        onPress={()=>pressHandler()}
+                        onPress={addUser}
                         />
                     </View>
                     <View style={{margin: 20}}>

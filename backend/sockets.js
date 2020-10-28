@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 const Users = require('./models/users.model.js');
 const Notes = require('./models/notes.model.js');
 const Messages = require('./models/messages.model.js');
@@ -6,14 +8,17 @@ module.exports = io =>{
     io.on('connection', socket=>{
       console.log('user connected')
       socket.on('checkLog', (login, password)=>{
-        console.log(login, password)
+        // console.log(login, password)
         try{
           Users
             .findOne({name:login})
             .exec((err, user)=>{
               if(!err){
                 if(user != null){
-                  (user.password != password)?(socket.emit('answerLog', false)):(socket.emit('answerLog', true))
+                  bcrypt.compare(password, user.password).then(function(result) {
+                    (result ==false )?(socket.emit('answerLog', false)):(socket.emit('answerLog', true, user))
+                  });
+                  
                 }
                 else{
                   socket.emit('answerLog', false)
@@ -27,7 +32,30 @@ module.exports = io =>{
       socket.on('regUser', data=>{
         try{
           Users
-            .create(data)
+            .findOne({name:data.name})
+            .exec((err, user)=>{
+              if(!err){
+                if(user != null){
+                  socket.emit('answerReg', 1)
+                }
+                else if(!isFinite(data.age)){
+                  socket.emit('answerReg', 2)
+                }
+                else if(data.password != data.conPassword){
+                  socket.emit('answerReg', 3)
+                }
+                else{
+                  socket.emit('answerReg', 4)
+                  bcrypt.genSalt(saltRounds, function(err, salt) {
+                    bcrypt.hash(data.password, salt, function(err, hash) {
+                        data.password = hash
+                        Users.create(data);
+                    });
+                  });
+                }
+              }   
+            })
+        
         }catch(err){
           console.error(err)
         }
@@ -58,11 +86,11 @@ module.exports = io =>{
             socket.emit('deleteResponse', `A note with id: ${noteId} was deleted`)
           }})
           // .findOne({_id: noteId})
-            // .exec((err, note)=>{
-            //   if(!err){
-            //     socket.emit('note', note)
-            //   }
-            // })
+          //   .exec((err, note)=>{
+          //     if(!err){
+          //       socket.emit('note', note)
+          //     }
+          //   })
             
         }catch(err){
           console.error(err)
@@ -114,7 +142,7 @@ module.exports = io =>{
             .findByIdAndUpdate(noteId, {text:recivedText})
             .exec((err, note)=>{
               if(!err){
-                console.log(noteId, note)  
+                // console.log(noteId, note)  
             }
           })
         } catch (error) {

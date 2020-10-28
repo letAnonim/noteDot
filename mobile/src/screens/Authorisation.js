@@ -1,5 +1,6 @@
 import 'react-native-gesture-handler';
 import React, {Component, useState, useEffect} from 'react';
+import { NetworkInfo } from "react-native-network-info";
 
 import {
     TextInput,
@@ -21,10 +22,11 @@ import socketIOClient from 'socket.io-client';
 // import io from 'socket.io-client'
 
 export default function Authorisation({navigation}){
-    // useEffect(()=>{
 
-    // })
-    const socket = socketIOClient('http://192.168.88.82:6666', {      
+// NetworkInfo.getIPV4Address().then(ipv4Address => {
+//   console.log(ipv4Address);
+// });
+    const socket = socketIOClient('http://192.168.1.101:6666', {      
     transports: ['websocket'], jsonp: false });   
 
     const [loginValue, setLoginValue] = useState('')
@@ -40,36 +42,20 @@ export default function Authorisation({navigation}){
     
     const pressHandler=()=>{
         if(loginValue!=''&&passwordValue!=''){
-            const answer;
             socket.emit('checkLog', loginValue, passwordValue )
-            socket.on('answerLog', data=>{answer = data})
-            
-            console.log(answer)
-            // if(users.map((item)=>{return (item.name==loginValue)}).includes(true)){
-            //     const index = users.map((item)=>{return (item.name==loginValue)}).indexOf(true);
-            //     if(users[index].password == passwordValue){
-            //         navigation.navigate('home',{
-            //             screen: 'notes',
-            //             params: { aUser:users[index], Asocket: socket},
-            //         })
-            //         // navigation.navigate('home',{
-            //         //     screen: 'profile',
-            //         //     params: { aUser:users[index], Asocket: socket},
-            //         // })
-            //     }
-            //     else {
-            //         alert('Wrong login or password!');
-            //         setPasswordValue('')
-            //     }
-            // }
-            // else alert('Wrong login or password!');
-            // setPasswordValue('')   
+            socket.on('answerLog', (data, user)=>{if(data== true){
+                navigation.navigate('home',{
+                    screen: 'notes',
+                    params: { aUser:user, Asocket: socket},
+                })}
+            else{
+                alert('Wrong login or password!');
+                    setPasswordValue('')
+            } })
         }
         else alert('Pleace fill all fields!')
     }  
    
-    
- 
     return(
         <View style={{flex:1}}>
             <ImageBackground source={require('../img/paperShadowBackground.png')} style={styles.image}>
@@ -109,7 +95,7 @@ export default function Authorisation({navigation}){
                         <Button title='Register!'
                         color='orange'
                         onPress={()=>{          
-                           navigation.navigate('registration', {aUsers: users, Asocket: socket})
+                           navigation.navigate('registration', {Asocket: socket})
                         }}
                         />
                     </View>
