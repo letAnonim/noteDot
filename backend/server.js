@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
-
+// const users = require('./controllers/users.controller')
 mongoose
 .connect(MONGODB_URL, {
   useNewUrlParser: true,
@@ -33,6 +33,7 @@ mongoose
   
   require('./routes').setUpRouter(app);
   require('./sockets.js')(io);
+  // app.get("/api/users", users.findAll);
   // const webBuildFolderName = "build";
   // app.use(express.static(webBuildFolderName));
   // app.get("*", (req, res) => {

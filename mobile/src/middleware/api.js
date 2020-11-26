@@ -5,10 +5,7 @@ import User from "../stores/User";
 
 class ApiService {
   static api = axios.create({
-    baseURL:
-      process.env.NODE_ENV === "production"
-        ? window.location.origin + "/api/"
-        : "http://localhost:6666/api/",
+    baseURL:"http://localhost:6666/api/"
   });
 
   constructor() {

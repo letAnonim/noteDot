@@ -1,6 +1,8 @@
 export const GET_USERS = 'GET_USERS';
-// export const GET_USERS_SUCCESS = 'my-awesome-app/users/LOAD_SUCCESS';
-// export const GET_USERS_FAIL = 'my-awesome-app/users/LOAD_FAIL';
+export const GET_USERS_SUCCESS = 'GET_USERS_SUCCESS';
+export const GET_USERS_FAIL = 'GET_USERS_FAIL';
+export const GET_USERS_STARTED = 'GET_USERS_STARTED';
+
 
 // export const GET_REPO_INFO = 'my-awesome-app/users/INFO';
 // export const GET_REPO_INFO_SUCCESS = 'my-awesome-app/USERS/INFO_SUCCESS';

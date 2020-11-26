@@ -12,7 +12,7 @@ const rootReducer = combineReducers({
 const client = axios.create({
     baseURL: 'http://localhost:6666',
     responseType: 'json'
-  });
+});
 const store = createStore(rootReducer, compose(applyMiddleware(logger, thunk, axiosMiddleware(client))));
 
 
