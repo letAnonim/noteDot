@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const Notes = mongoose.Schema({
     title:{type:String, required: true},
     color:{type:String, required: true},
+    ovner:{type: String, require: true},
     text:{type:String},
     connectedUsers:{type: Array}
     },

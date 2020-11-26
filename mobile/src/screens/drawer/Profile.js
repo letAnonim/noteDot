@@ -4,14 +4,14 @@ import {
   Text,
   TouchableOpacity,
   Image, 
-  ImageBackground
+  ImageBackground,
+  Button
 } from 'react-native';
+
 import {styles} from '../../styles'
 
 
-export default function Profile({navigation, route}){
-    const { User } = route.params;
-    const { socket } = route.params;
+export default function Profile({navigation}){
     return(
         <ImageBackground source={require('../../img/paperBackground.png')} style={styles.image}>
             <View style={{
@@ -32,8 +32,17 @@ export default function Profile({navigation, route}){
                     </View>
                 </View>
                 <View>
-                    <Text style={styles.mainText}>Name:{User.name} </Text>
+                    <Text style={styles.mainText}>Name:Taras  </Text>
+                    <Text style={styles.mainText}>Age:20  </Text>
                 </View>
+            </View>
+            <View style={{margin:10}}>
+                <Button title='Exit from profile'
+                    color='orange'
+                    onPress={()=>{          
+                        navigation.navigate('authorisation')
+                    }}
+                />
             </View>
         </ImageBackground>
         

@@ -26,10 +26,12 @@ export default function Notes({route,navigation}){
     const { Asocket } = route.params;
     const [notes, setNotes] = useState([])
     function addNote(title, color) {    
-        Asocket.emit('addNote', {title: title,
+        Asocket.emit('addNote', {
+            title: title,
             color: color,
+            ovner: aUser._id,
             text: '',
-            connectedUsers:[aUser._id]
+            connectedUsers: [aUser._id],
         })
         Asocket.emit('getNotes', aUser._id);
         Asocket.on('notes', data=>{  
@@ -41,7 +43,7 @@ export default function Notes({route,navigation}){
         setTitleValue('')
     }
     const pressSearch = () =>{
-        console.log(noteIdValue);
+        // console.log(noteIdValue);
         Asocket.emit('findNote', aUser._id, noteIdValue);
         Asocket.on('ToNote',noteInfo=>{
             console.log(noteInfo)
@@ -184,7 +186,7 @@ export default function Notes({route,navigation}){
                             style={styles.openButton}
                             onPress={() => {
                                 (!noteIdValue)?(Alert.alert('Pleace write the id!!')
-                                ):(pressSearch(),setModalSearchVisible(!modalCreateVisible))
+                                ):(pressSearch(),setModalSearchVisible(!modalSearchVisible))
                                 }}>  
                             <Text style={styles.textStyle}>Connect to note!</Text>
                         </TouchableHighlight>
@@ -207,18 +209,18 @@ export default function Notes({route,navigation}){
                         <Text style={styles.nawbarTitle}>Notes.dot</Text>   
                     </View>
                     <View style={styles.nawbarContainerRight}>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalCreateVisible(!modalCreateVisible)}>
-                            <Image style={styles.addSmallButton} source={require('../../img/add.png')}/>
-                        </TouchableOpacity>
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalSearchVisible(!modalSearchVisible)}>
                             <Image style={styles.addSmallButton} source={require('../../img/search.png')}/>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalCreateVisible(!modalCreateVisible)}>
+                            <Image style={styles.addSmallButton} source={require('../../img/add.png')}/>
                         </TouchableOpacity>
                     </View>
                  </View> 
             </View>
             <View style={styles.section2}>
                 {(notes[0] !== undefined)?(<ScrollView>{notes.map(note=>{
-                    return ( 
+                    return (
                         <View key={note._id}>
                             <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note, User:aUser, socket:Asocket})}} style={styles.noteListContaiter}>
                                 <View style={{flex:1,backgroundColor:`rgba(${note.color}, 0.5)`, 
@@ -241,9 +243,11 @@ export default function Notes({route,navigation}){
                                                 <Text style={{width:140}}>Last updated: {returnDate(note.updatedAt)}</Text>
                                             </View>
                                             <View style={styles.deleteButtonRow}>
-                                                <TouchableOpacity onPress={()=>{
+                                                {(aUser._id == note.ovner)?(<TouchableOpacity onPress={()=>{
                                                     confirmAlert(note._id)
-                                                }}><Image style={styles.deleteSmallButton} source={require('../../img/delete.png')} /></TouchableOpacity>
+                                                }}>
+                                                    <Image style={styles.deleteSmallButton} source={require('../../img/delete.png')} />
+                                                </TouchableOpacity>):(<View/>)}
                                             </View>                     
                                         </View>
                                     </View>
