@@ -1,21 +1,20 @@
 // const auth = require("../middleware/auth");
-// 
 
 module.exports = (app) => {
-    const users = require("../controllers/users.controller");
+  const Users = require("../controllers/users.controller.js");
 
-	// Create a new client
-	app.post("/api/users", users.create);
+  // Create a new client
+  app.post("/api/users", Users.create);
 
-	// Retrieve all Users
-	app.get("/api/users", users.findAll);
+  // Retrieve all Users
+  app.get("/api/users", Users.findAll);
 
-	// Retrieve a single client with clientId
-	app.get("/api/users/:userId", users.findOne);
+  // Retrieve a single client with clientId
+  app.get("/api/users/:userId", Users.findOne);
 
-	// Update a client with clientId
-	app.put("/api/users/:userId", users.update);
+  // Update a client with clientId
+  app.put("/api/users/:userId", Users.update);
 
-	// Delete a client with clientId
-	app.delete("/api/users/:userId", users.delete);
+  // Delete a client with clientId
+  app.delete("/api/users/:userId", Users.delete);
 };

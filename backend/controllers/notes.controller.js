@@ -16,28 +16,28 @@ exports.create = (req, res)=>{кі
     .catch((err) => {
       res.status(500).send({
             message:
-            err.message || "Some error occurred while creating the Notes.",
+            err.message || "Some error occurred while creating the users.",
           });
         });  
       }
       
-      // return all Notes from the database.
+      // return all users from the database.
       exports.findAll = (req, res) => {
-        Notes.find()
-        .then((Notes) => {
-          console.log(Notes)
-          res.send(Notes);
+        Users.find()
+        .then((users) => {
+          console.log(users)
+          res.send(users);
         })
         .catch((err) => {
           res.status(500).send({
-            message: err.message || "Some error occurred while retrieving Notes.",
+            message: err.message || "Some error occurred while retrieving users.",
           });
         });
       };
       
       // find a one user with a userId
       exports.findOne = (req, res) => {
-        Notes.findById(req.params.userId)
+        Users.findById(req.params.userId)
         .then((user) => {
           if (!user) {
             return res.status(404).send({
@@ -61,7 +61,7 @@ exports.create = (req, res)=>{кі
       // Update a user identified by the userId in the request
       exports.update = (req, res) => {
         // Find user and update it with the request body
-        Notes.findByIdAndUpdate(req.params.userId, req.body, { new: true })
+        Users.findByIdAndUpdate(req.params.userId, req.body, { new: true })
         .then((user) => {
           if (!user) {
             return res.status(404).send({
@@ -84,7 +84,7 @@ exports.create = (req, res)=>{кі
     
     // Delete a user with the specified userId in the request
     exports.delete = (req, res) => {
-      Notes.findByIdAndRemove(req.params.userId)
+      Users.findByIdAndRemove(req.params.userId)
       .then((user) => {
         if (!user) {
           return res.status(404).send({

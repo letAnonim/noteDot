@@ -15,17 +15,18 @@ import {
     Alert, 
     ImageBackground
 } from 'react-native';
+// import {RadioButton} from 'react-native-paper'
 import {styles} from '../styles';
+// import { ScrollView } from 'react-native-gesture-handler';
 import socketIOClient from 'socket.io-client';
-
-import { connect } from 'react-redux'
+// import io from 'socket.io-client'
 
 export default function Authorisation({navigation}){
 
 // NetworkInfo.getIPV4Address().then(ipv4Address => {
 //   console.log(ipv4Address);
 // });
-    const socket = socketIOClient('http://192.168.1.104:6666', {      
+    const socket = socketIOClient('http://192.168.1.101:6666', {      
     transports: ['websocket'], jsonp: false });   
 
     const [loginValue, setLoginValue] = useState('')
