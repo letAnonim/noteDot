@@ -2,10 +2,10 @@ module.exports = (app) => {
     const notes = require("../controllers/notes.controller");
 
 	// Create a new client
-	// app.post("/api/notes", notes.create);
+	app.post("/api/notes", notes.create);
 
 	// Retrieve all notes
-	app.get("/notes", notes.findAll);
+	app.get("/api/notes", notes.findAll);
 
 	// Retrieve a single client with clientId
 	app.get("/api/notes/:noteId", notes.findOne);

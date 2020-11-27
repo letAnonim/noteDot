@@ -42,14 +42,6 @@ export default function usersReducer(state = initialState, action) {
     case GET_USER:
       return {...state, loading: false, user: action.user};
 
-    // case GET_USER_SUCCESS:
-    //   return { ...state, loadingProfile: false, user: action.payload.data };
-    // case GET_USER_FAIL:
-    //   return {
-    //     ...state,
-    //     loadingProfile: false,
-    //     errorUser: 'Error getting user info'
-    //   };
     default:
       return state;
   }

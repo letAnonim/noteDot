@@ -10,6 +10,7 @@ import {
 import { connect } from 'react-redux';
 import {styles} from '../../styles'
 import {getUsers, getUser} from '../../redux/actions/users.actions.js'
+import {getNotes} from '../../redux/actions/notes.actions.js'
 import{ bindActionCreators } from 'redux'
 import axios from 'axios';
 import socketIOClient from 'socket.io-client';
@@ -22,17 +23,11 @@ import socketIOClient from 'socket.io-client';
 
 class Profile extends Component{
     
-    // componentDidMount() {
-    //     this.props.getUsers();
-    //     this.props.getUser('Taras');
-    // }
     render(){   
-         const socket = socketIOClient('http://192.168.1.100:6666', {      
-        transports: ['websocket'], jsonp: false });   // async function getUsers() {
-        
-        const { users, loadingProfile, user } = this.props;
-        console.log(users, loadingProfile)
-        // console.log(user, loadingProfile)
+        //  const socket = socketIOClient('http://192.168.1.100:6666', {      
+        // transports: ['websocket'], jsonp: false }); 
+        const { users, loadingProfile} = this.props;
+        const {notes, loadingNotes} = this.props;
         return(
             <ImageBackground source={require('../../img/paperBackground.png')} style={styles.image}>
                 <View style={{
@@ -66,6 +61,15 @@ class Profile extends Component{
                         }}
                     />
                 </View>
+                <View style={{margin:10}}>
+                    <Button title='get notes'
+                        color='orange'
+                        onPress={()=>{          
+                            this.props.getNotes();
+                            console.log(notes, loadingNotes)
+                        }}
+                    />
+                </View>
             </ImageBackground>
             
         )}      
@@ -73,12 +77,13 @@ class Profile extends Component{
 
 function mapStateToProps(state){
     return {
-      users: state.users
+      users: state.users,
+      notes: state.notes
     }
   }
   
   function mapDispatchToProps(dispatch){
-    return bindActionCreators({getUsers, getUser}, dispatch)
+    return bindActionCreators({getUsers, getNotes}, dispatch)
   }
   
   

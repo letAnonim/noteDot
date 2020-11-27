@@ -25,7 +25,7 @@ exports.create = (req, res) => {
 exports.findAll = (req, res) => {
 	Users.find()
 		.then((users) => {
-			console.log(users);
+			// console.log(users);
 			res.send(users);
 		})
 		.catch((err) => {
