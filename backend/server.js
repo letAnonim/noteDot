@@ -1,6 +1,5 @@
-        
-//-----------------------------------------------------------------//
-const MONGODB_URL = "mongodb+srv://superUser:194519@cluster0.aynw0.mongodb.net/NoteDot?retryWrites=true&w=majority";
+require('dotenv').config()
+const MONGODB_URL = process.env.DATABASE;
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
@@ -8,13 +7,13 @@ const cors = require("cors");
 const server = require('http').Server(app)
 const io = require('socket.io')(server);
 app.use(cors());
-const port = process.env.PORT || 6666;
+const port = process.env.PORT || 6000;
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(bodyParser.json());
 const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
-
+// const users = require('./controllers/users.controller')
 mongoose
 .connect(MONGODB_URL, {
   useNewUrlParser: true,
@@ -34,6 +33,7 @@ mongoose
   
   require('./routes').setUpRouter(app);
   require('./sockets.js')(io);
+  // app.get("/api/users", users.findAll);
   // const webBuildFolderName = "build";
   // app.use(express.static(webBuildFolderName));
   // app.get("*", (req, res) => {
