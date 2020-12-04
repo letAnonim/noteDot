@@ -14,40 +14,51 @@ import {
 import {RadioButton} from 'react-native-paper'
 import {styles} from '../../styles';
 import { ScrollView } from 'react-native-gesture-handler';
+import {useDispatch, useSelector} from 'react-redux'
+import {getNotes} from '../../redux/actions/notes.actions'
 // import { createDrawerNavigator } from '@react-navigation/drawer';
 // import { NavigationContainer } from '@react-navigation/native';
 // import socketIOClient from 'socket.io-client';
 // import io from 'socket.io-client'
 
+
 export default function Notes({route,navigation}){
     // const socket = socketIOClient('http://192.168.1.105:6666', {      
-    // transports: ['websocket'], jsonp: false });   
-    const { aUser } = route.params;
-    const { Asocket } = route.params;
-    const [notes, setNotes] = useState([])
-    function addNote(title, color) {    
-        Asocket.emit('addNote', {
-            title: title,
-            color: color,
-            ovner: aUser._id,
-            text: '',
-            connectedUsers: [aUser._id],
-        })
-        Asocket.emit('getNotes', aUser._id);
-        Asocket.on('notes', data=>{  
-            setNotes(data)
-        })
-    }
-    const pressHandler=()=>{
+        // transports: ['websocket'], jsonp: false });  
+        const dispatch = useDispatch();
+        const resNotes = useSelector(state => state.notes) 
+        const { UserId } = route.params;
+        console.log(resNotes.notes);
+        const [notes, setNotes] = useState(resNotes.notes);
+
+        useEffect(() => {
+            dispatch(getNotes(UserId))
+            setNotes(resNotes.notes)
+        }, [notes]);
+        // setNotes(resNotes.notes)
+    function addNote(title, color) {   
+        // Asocket.emit('addNote', {
+        //     title: title,
+        //     color: color,
+        //     ovner: aUser._id,
+        //     text: '',
+        //     connectedUsers: [aUser._id],
+        // })
+        // Asocket.emit('getNotes', aUser._id);
+        // Asocket.on('notes', data=>{  
+            //     setNotes(data)
+            // })
+        }
+        const pressHandler=()=>{
         addNote(titleValue, colorValue );
         setTitleValue('')
     }
     const pressSearch = () =>{
         // console.log(noteIdValue);
-        Asocket.emit('findNote', aUser._id, noteIdValue);
-        Asocket.on('ToNote',noteInfo=>{
-            console.log(noteInfo)
-        })
+        // Asocket.emit('findNote', aUser._id, noteIdValue);
+        // Asocket.on('ToNote',noteInfo=>{
+        //     console.log(noteInfo)
+        // })
         // let a = ['fgfg', 'fdgfdg']
         // let b = ['fgggggggggg', 'fdgfdg']
         // console.log([...a, 'dfdf']) 
@@ -79,13 +90,6 @@ export default function Notes({route,navigation}){
     const [titleValue, setTitleValue] = useState('');
     const [colorValue, setColorValue] = useState('250, 228, 60');
     const [noteIdValue, setNoteIdValue] = useState('');
-    useEffect(() => {
-        Asocket.emit('getNotes', aUser._id);
-        Asocket.on('notes', data=>{  
-            setNotes(data)
-        })
-    }, [notes]);
-
     const confirmAlert =id=>{
         Alert.alert(
             'This note will be deleted!!',
@@ -93,13 +97,13 @@ export default function Notes({route,navigation}){
             [
                 {text: "Cancel", style: "cancel"},
                 { text: "OK", onPress: () =>{
-                    Asocket.emit('deleteNote', id)
-                    Asocket.on('deleteResponse', message=>{
-                        Asocket.emit('getNotes', aUser._id);
-                        Asocket.on('notes', data=>{  
-                            setNotes(data)
-                        })
-                    })
+                    // Asocket.emit('deleteNote', id)
+                    // Asocket.on('deleteResponse', message=>{
+                    //     Asocket.emit('getNotes', aUser._id);
+                    //     Asocket.on('notes', data=>{  
+                    //         setNotes(data)
+                    //     })
+                    // })
                 }}
             ]
         )
@@ -212,7 +216,10 @@ export default function Notes({route,navigation}){
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalSearchVisible(!modalSearchVisible)}>
                             <Image style={styles.addSmallButton} source={require('../../img/search.png')}/>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalCreateVisible(!modalCreateVisible)}>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=> 
+                            // dispatch(getNotes(UserId))
+                            setModalCreateVisible(!modalCreateVisible)
+                            }>
                             <Image style={styles.addSmallButton} source={require('../../img/add.png')}/>
                         </TouchableOpacity>
                     </View>
@@ -222,7 +229,7 @@ export default function Notes({route,navigation}){
                 {(notes[0] !== undefined)?(<ScrollView>{notes.map(note=>{
                     return (
                         <View key={note._id}>
-                            <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note, User:aUser, socket:Asocket})}} style={styles.noteListContaiter}>
+                            <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note, User:aUser})}} style={styles.noteListContaiter}>
                                 <View style={{flex:1,backgroundColor:`rgba(${note.color}, 0.5)`, 
                                     borderLeftWidth:12, 
                                     borderLeftColor:`rgba(${note.color}, 1)`
@@ -243,7 +250,7 @@ export default function Notes({route,navigation}){
                                                 <Text style={{width:140}}>Last updated: {returnDate(note.updatedAt)}</Text>
                                             </View>
                                             <View style={styles.deleteButtonRow}>
-                                                {(aUser._id == note.ovner)?(<TouchableOpacity onPress={()=>{
+                                                {(UserId == note.ovner)?(<TouchableOpacity onPress={()=>{
                                                     confirmAlert(note._id)
                                                 }}>
                                                     <Image style={styles.deleteSmallButton} source={require('../../img/delete.png')} />

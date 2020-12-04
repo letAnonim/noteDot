@@ -1,8 +1,8 @@
-import {GET_USER, GET_USERS, GET_USERS_SUCCESS, GET_USERS_FAIL, GET_USERS_STARTED} from '../constants'
+import {GET_USER, GET_USERS_SUCCESS, GET_USERS_FAIL, GET_USERS_STARTED} from '../constants'
 import axios from 'axios';
 import { TouchableHighlight } from 'react-native';
 const client = axios.create({
-    baseURL: 'http://192.168.1.100:6666/',
+    baseURL: 'http://192.168.1.102:6666/',
     responseType: 'json'
 });
 export function getUsers() {

@@ -8,7 +8,7 @@ module.exports = (app) => {
 	app.get("/api/notes", notes.findAll);
 
 	// Retrieve a single client with clientId
-	app.get("/api/notes/:noteId", notes.findOne);
+	app.get("/api/notes/:userId", notes.findOne);
 
 	// Update a client with clientId
 	app.put("/api/notes/:noteId", notes.update);

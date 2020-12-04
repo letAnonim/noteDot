@@ -15,7 +15,7 @@ import {DrawerContent} from './DrawerContent'
 
 
 export default function Home({navigation, route}){
-  const { aUser } = route.params;
+  // const { aUser } = route.params;
   // console.log(aUser)
   const Drawer = createDrawerNavigator();
   return(

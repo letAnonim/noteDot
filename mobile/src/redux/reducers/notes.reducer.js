@@ -1,8 +1,12 @@
 
-import { GET_NOTES, GET_NOTES_FAIL, GET_NOTES_STARTED, GET_NOTES_SUCCESS, } from '../constants';
+import { 
+    GET_NOTES_STARTED, 
+    GET_NOTES_FAIL, 
+    GET_NOTES_SUCCESS, 
+} from '../constants';
 const initialState = {loading: false, notes: [], error:null};
   // Reducers (Modifies The State And Returns A New State)
-  const noteReducer = (state = initialState, action) => {
+export default function noteReducer(state = initialState, action){
     switch (action.type) {
         case GET_NOTES_STARTED:
             return {
@@ -13,7 +17,7 @@ const initialState = {loading: false, notes: [], error:null};
             return { 
                 ...state, 
                 loading: false, 
-                notes: action.payload ,
+                notes: action.payload,
                 error:null
               };
         case GET_NOTES_FAIL:
@@ -41,14 +45,9 @@ const initialState = {loading: false, notes: [], error:null};
     //       }),
     //     }
     //   }
+    
       default: {
         return state;
       }
     }
-  };
-export default noteReducer;
-
-// export const rootReducer =  combineReducers({
-//     counter: countReducer,
-//     // theme: themeReducer
-// })
+};

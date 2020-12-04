@@ -39,6 +39,7 @@ exports.findAll = (req, res) => {
 
 // find a one user with a userId
 exports.findOne = (req, res) => {
+	console.log(req)
 	Users.findById(req.params.userId)
 		.then((user) => {
 			if (!user) {

@@ -37,23 +37,30 @@ exports.create = (req, res)=>{кі
       
       // find a one user with a userId
       exports.findOne = (req, res) => {
-        Notes.findById(req.params.userId)
-        .then((user) => {
-          if (!user) {
+        // console.log(req.params)
+        console.log(req.params.userId)
+        Notes.find({connectedUsers:req.params.userId})
+        // .exec((err, notes)=>{
+        //   if(!err){
+        //       socket.emit('notes', notes)
+        //   }
+        .then((notes) => {
+          console.log(notes)
+          if (!notes) {
             return res.status(404).send({
-              message: "User not found with id " + req.params.userId,
+              message: "Note not found with id " + req.params.userId,
             });
           }
-          res.send(user);
+          res.send(notes);
         })
         .catch((err) => {
           if (err.kind === "ObjectId") {
             return res.status(404).send({
-              message: "User not found with id " + req.params.userId,
+              message: "Note not found with id" + req.params.userId,
             });
           }
           return res.status(500).send({
-            message: "Error retrieving user with id " + req.params.userId,
+            message: "Error retrieving note with id " + req.params.userId,
           });
         });
       };
