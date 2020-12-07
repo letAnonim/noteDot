@@ -6,7 +6,6 @@ import {
     TouchableOpacity,
     Image,
     Modal,
-    TouchableHighlight,
     Text,
     Alert, 
     ImageBackground
@@ -15,7 +14,7 @@ import {RadioButton} from 'react-native-paper'
 import {styles} from '../../styles';
 import { ScrollView } from 'react-native-gesture-handler';
 import {useDispatch, useSelector} from 'react-redux'
-import {getNotes} from '../../redux/actions/notes.actions'
+import {getNotes, addNote, deleteNote} from '../../redux/actions/notes.actions'
 // import { createDrawerNavigator } from '@react-navigation/drawer';
 // import { NavigationContainer } from '@react-navigation/native';
 // import socketIOClient from 'socket.io-client';
@@ -25,32 +24,28 @@ import {getNotes} from '../../redux/actions/notes.actions'
 export default function Notes({route,navigation}){
     // const socket = socketIOClient('http://192.168.1.105:6666', {      
         // transports: ['websocket'], jsonp: false });  
-        const dispatch = useDispatch();
-        const resNotes = useSelector(state => state.notes) 
-        const { UserId } = route.params;
-        console.log(resNotes.notes);
-        const [notes, setNotes] = useState(resNotes.notes);
-
-        useEffect(() => {
-            dispatch(getNotes(UserId))
-            setNotes(resNotes.notes)
-        }, [notes]);
+    const dispatch = useDispatch();
+    const resNotes = useSelector(state => state.notes) 
+    const { UserId } = route.params;
+    // console.log(resNotes.notes);
+    const [notes, setNotes] = useState(resNotes.notes);
+    useEffect(() => {
+        dispatch(getNotes(UserId));
+        setNotes(resNotes.notes)
+    }, []);
         // setNotes(resNotes.notes)
-    function addNote(title, color) {   
-        // Asocket.emit('addNote', {
-        //     title: title,
-        //     color: color,
-        //     ovner: aUser._id,
-        //     text: '',
-        //     connectedUsers: [aUser._id],
-        // })
-        // Asocket.emit('getNotes', aUser._id);
-        // Asocket.on('notes', data=>{  
-            //     setNotes(data)
-            // })
-        }
-        const pressHandler=()=>{
-        addNote(titleValue, colorValue );
+    async function addOneNote(title, color) {   
+        await dispatch(addNote({
+            title: title,
+            color: color,
+            owner: UserId,
+            text: '',
+            connectedUsers: [UserId],
+        }))
+        dispatch(getNotes(UserId)); 
+    }
+    const pressHandler=()=>{
+        addOneNote(titleValue, colorValue );
         setTitleValue('')
     }
     const pressSearch = () =>{
@@ -97,13 +92,8 @@ export default function Notes({route,navigation}){
             [
                 {text: "Cancel", style: "cancel"},
                 { text: "OK", onPress: () =>{
-                    // Asocket.emit('deleteNote', id)
-                    // Asocket.on('deleteResponse', message=>{
-                    //     Asocket.emit('getNotes', aUser._id);
-                    //     Asocket.on('notes', data=>{  
-                    //         setNotes(data)
-                    //     })
-                    // })
+                    dispatch(deleteNote(UserId, id))
+                    dispatch(getNotes(UserId));
                 }}
             ]
         )
@@ -153,20 +143,20 @@ export default function Notes({route,navigation}){
                                 </View>
                             </RadioButton.Group>     
                         </View>
-                        <TouchableHighlight
+                        <TouchableOpacity
                             style={styles.openButton}
                             onPress={() => {
                                 (!titleValue)?(Alert.alert('Pleace write the title!!')
-                                ):(pressHandler(), setModalCreateVisible(!modalCreateVisible))
+                                ):(addOneNote(titleValue, colorValue ), setModalCreateVisible(!modalCreateVisible))
                                 }}>  
                             <Text style={styles.textStyle}>Create note!</Text>
-                        </TouchableHighlight>
-                        <TouchableHighlight
+                        </TouchableOpacity>
+                        <TouchableOpacity
                             style={styles.closeButton}
                             onPress={() => {
                                 setModalCreateVisible(!modalCreateVisible)}}>  
                             <Text style={styles.textStyle}>close</Text>
-                        </TouchableHighlight>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
@@ -186,20 +176,20 @@ export default function Notes({route,navigation}){
                         />
                         <View style={styles.modalRadioContainer}>    
                         </View>
-                        <TouchableHighlight
+                        <TouchableOpacity
                             style={styles.openButton}
                             onPress={() => {
                                 (!noteIdValue)?(Alert.alert('Pleace write the id!!')
                                 ):(pressSearch(),setModalSearchVisible(!modalSearchVisible))
                                 }}>  
                             <Text style={styles.textStyle}>Connect to note!</Text>
-                        </TouchableHighlight>
-                        <TouchableHighlight
+                        </TouchableOpacity>
+                        <TouchableOpacity
                             style={styles.closeButton}
                             onPress={() => {
                                 setModalSearchVisible(!modalSearchVisible)}}>  
                             <Text style={styles.textStyle}>close</Text>
-                        </TouchableHighlight>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
@@ -225,11 +215,12 @@ export default function Notes({route,navigation}){
                     </View>
                  </View> 
             </View>
+
             <View style={styles.section2}>
                 {(notes[0] !== undefined)?(<ScrollView>{notes.map(note=>{
                     return (
                         <View key={note._id}>
-                            <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note, User:aUser})}} style={styles.noteListContaiter}>
+                            <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note, Userid:UserId})}} style={styles.noteListContaiter}>
                                 <View style={{flex:1,backgroundColor:`rgba(${note.color}, 0.5)`, 
                                     borderLeftWidth:12, 
                                     borderLeftColor:`rgba(${note.color}, 1)`
@@ -250,7 +241,7 @@ export default function Notes({route,navigation}){
                                                 <Text style={{width:140}}>Last updated: {returnDate(note.updatedAt)}</Text>
                                             </View>
                                             <View style={styles.deleteButtonRow}>
-                                                {(UserId == note.ovner)?(<TouchableOpacity onPress={()=>{
+                                                {(UserId == note.owner)?(<TouchableOpacity onPress={()=>{
                                                     confirmAlert(note._id)
                                                 }}>
                                                     <Image style={styles.deleteSmallButton} source={require('../../img/delete.png')} />

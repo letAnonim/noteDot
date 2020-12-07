@@ -51,8 +51,8 @@ export function DrawerContent(props){
                     <DrawerItem 
                         // icon={({color, size}) => (
                         //     <Icon 
-                        //     // style={styles.smallButton} 
-                        //     // source={require('../img/defauldUser.png')}
+                        //     style={styles.smallButton} 
+                        //     source={require('../img/defauldUser.png')}
                         //     color={color}
                         //     size={size}
                         //     />

@@ -70,7 +70,7 @@ export default function Authorisatio({navigation}){
                     saveData({isLogged: true, userId: user._id})
                     navigation.navigate('home',{
                         screen: 'notes',
-                        params: { aUser:user}
+                        params: { UserId:user._id}
                     })
                 }
                 else{

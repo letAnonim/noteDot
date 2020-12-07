@@ -1,9 +1,13 @@
 import {
-  GET_NOTE,
-  GET_NOTES,
   GET_NOTES_SUCCESS,
   GET_NOTES_FAIL,
   GET_NOTES_STARTED,
+  ADD_NOTE_STARTED,
+  ADD_NOTE_SUCCESS,
+  ADD_NOTE_FAIL,
+  DELETE_NOTE_STARTED,
+  DELETE_NOTE_SUCCESS,
+  DELETE_NOTE_FAIL
 } from '../constants';
 import axios from 'axios';
 import {TouchableHighlight} from 'react-native';
@@ -56,18 +60,53 @@ export function getNotes(user) {
     }
   };
 }
-// export function getNotes(user) {
-//   const request = client.get(`/api/notes/${user}`);
-//   return (dispatch) => {
-//     request.then(({data}) => {
-//       dispatch({
-//         type: GET_NOTE,
-//         note: data,
-//       });
-//     });
-//   };
-// }
+export function addNote(note) {
+  console.log(note);
+  return async(dispatch) => {
+    dispatch(addNoteStarted());
+    try {
+      await client.post('/api/notes', note).then((res) => {
+        dispatch(addNoteSuccess(res.data));
+      })
+    } catch (err) {
+      if (err.response) {
+        console.log(err.response);
+        console.log(err.response.status);
+        console.log(err.response.headers);
+      } else if (err.request) {
+        console.log(err.request);
+      } else {
+        console.error('Error:', err.message);
+      }
+      dispatch(addNoteFail(err.message));
+    }
+    request.then(({data}) => { 
+    })
+  }
+}
 
+export function deleteNote(user, note) {
+  return async (dispatch) => {
+    dispatch(deleteNoteStarted());
+    try {
+      await client.delete(`/api/notes/${user}/${note}`).then((res) => {
+        //   console.log(res)
+        dispatch(deleteNoteSuccess(res.data));
+      });
+    } catch (err) {
+      if (err.response) {
+        console.log(err.response.data);
+        console.log(err.response.status);
+        console.log(err.response.headers);
+      } else if (err.request) {
+        console.log(err.request);
+      } else {
+        console.error('Error:', err.message);
+      }
+      dispatch(deleteNoteFail(err.message));
+    }
+  };
+}
 const getNotesSuccess = (notes) => ({
   type: GET_NOTES_SUCCESS,
   payload:notes,
@@ -81,5 +120,37 @@ const getNotesFail = (error) => ({
   type: GET_NOTES_FAIL,
   payload: {
     error,
-  },
+  }, 
+});
+
+const addNoteStarted = () => ({
+  type: ADD_NOTE_STARTED
+});
+const addNoteSuccess = notes => ({
+  type: ADD_NOTE_SUCCESS,
+  payload:notes
+});
+
+
+const addNoteFail = error => ({
+  type: ADD_NOTE_FAIL,
+  payload: {
+    error
+  }
+});
+
+const deleteNoteStarted = () => ({
+  type: DELETE_NOTE_STARTED
+});
+const deleteNoteSuccess = notes => ({
+  type: DELETE_NOTE_SUCCESS,
+  payload:notes
+});
+
+
+const deleteNoteFail = error => ({
+  type: DELETE_NOTE_FAIL,
+  payload: {
+    error
+  }
 });

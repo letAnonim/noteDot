@@ -1,18 +1,18 @@
 module.exports = (app) => {
     const notes = require("../controllers/notes.controller");
 
-	// Create a new client
-	app.post("/api/notes", notes.create);
-
 	// Retrieve all notes
 	app.get("/api/notes", notes.findAll);
-
-	// Retrieve a single client with clientId
+	
+	// Retrieve a single notes list with clientId
 	app.get("/api/notes/:userId", notes.findOne);
+	
+	// Create a new note
+	app.post("/api/notes", notes.create);
 
-	// Update a client with clientId
+	// update a note with noteId
 	app.put("/api/notes/:noteId", notes.update);
-
-	// Delete a client with clientId
-	app.delete("/api/notes/:noteId", notes.delete);
+	
+	// Delete a note with noteId
+	app.delete("/api/notes/:userId/:noteId", notes.delete);
 };
