@@ -121,8 +121,7 @@ export default function Authorisatio({navigation}){
                         <Button title='Register!'
                         color='orange'
                         onPress={()=>{        
-                            // navigation.navigate('registration', {Asocket: socket})
-                            saveData({isLogged: false, userId: null })
+                            navigation.navigate('registration', {Asocket: socket})
                         }}
                         />
                     </View>

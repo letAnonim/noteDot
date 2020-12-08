@@ -28,12 +28,14 @@ export default function Notes({route,navigation}){
     const resNotes = useSelector(state => state.notes) 
     const { UserId } = route.params;
     // console.log(resNotes.notes);
-    const [notes, setNotes] = useState(resNotes.notes);
     useEffect(() => {
         dispatch(getNotes(UserId));
-        setNotes(resNotes.notes)
-    }, []);
+        // while(resNotes.loading == true){
+        //     console.log('notes are loading')
+        // }
         // setNotes(resNotes.notes)
+    }, []);
+    // setNotes(resNotes.notes)
     async function addOneNote(title, color) {   
         await dispatch(addNote({
             title: title,
@@ -52,49 +54,50 @@ export default function Notes({route,navigation}){
         // console.log(noteIdValue);
         // Asocket.emit('findNote', aUser._id, noteIdValue);
         // Asocket.on('ToNote',noteInfo=>{
-        //     console.log(noteInfo)
-        // })
-        // let a = ['fgfg', 'fdgfdg']
-        // let b = ['fgggggggggg', 'fdgfdg']
-        // console.log([...a, 'dfdf']) 
-    }  
-    const returnDate = timestamp =>{
-        let date = new Date(timestamp)
-        let now = new Date()
-        let minutes = date.getMinutes();
-        let hours = date.getHours();
-        let day = date.getDay();
-        let month = date.getMonth();
-        let year = date.getFullYear()
-
-        let returnHours = (hours<10)?(`0${hours}:`):(`${hours}:`)
-        let returnMinutes = (minutes<10)?(`0${minutes}`):(minutes)
-
-        if(day == now.getDay()&&month == now.getMonth()&&year==now.getFullYear()){
-            return returnHours+returnMinutes
+            //     console.log(noteInfo)
+            // })
+            // let a = ['fgfg', 'fdgfdg']
+            // let b = ['fgggggggggg', 'fdgfdg']
+            // console.log([...a, 'dfdf']) 
+        }  
+        const returnDate = timestamp =>{
+            let date = new Date(timestamp)
+            let now = new Date()
+            let minutes = date.getMinutes();
+            let hours = date.getHours();
+            let day = date.getDay();
+            let month = date.getMonth();
+            let year = date.getFullYear()
+            
+            let returnHours = (hours<10)?(`0${hours}:`):(`${hours}:`)
+            let returnMinutes = (minutes<10)?(`0${minutes}`):(minutes)
+            
+            if(day == now.getDay()&&month == now.getMonth()&&year==now.getFullYear()){
+                return returnHours+returnMinutes
+            }
+            else{
+                let returnDay = (day<10)?(`0${day}/`):(`${day}/${year}`)
+                let returnMonth = (month<10)?(`0${month}/${year}`):(`${month}/${year}`);
+                return returnDay+returnMonth+' at '+returnHours+returnMinutes
+            } 
         }
-        else{
-            let returnDay = (day<10)?(`0${day}/`):(`${day}/${year}`)
-            let returnMonth = (month<10)?(`0${month}/${year}`):(`${month}/${year}`);
-            return returnDay+returnMonth+' at '+returnHours+returnMinutes
-        } 
-    }
-   
-    const [modalCreateVisible, setModalCreateVisible] = useState(false);
-    const [modalSearchVisible, setModalSearchVisible] = useState(false);
-    const [titleValue, setTitleValue] = useState('');
-    const [colorValue, setColorValue] = useState('250, 228, 60');
-    const [noteIdValue, setNoteIdValue] = useState('');
-    const confirmAlert =id=>{
-        Alert.alert(
-            'This note will be deleted!!',
-            'Are you sure?',
-            [
-                {text: "Cancel", style: "cancel"},
-                { text: "OK", onPress: () =>{
-                    dispatch(deleteNote(UserId, id))
-                    dispatch(getNotes(UserId));
-                }}
+        
+        const [modalCreateVisible, setModalCreateVisible] = useState(false);
+        const [modalSearchVisible, setModalSearchVisible] = useState(false);
+        const [titleValue, setTitleValue] = useState('');
+        const [colorValue, setColorValue] = useState('250, 228, 60');
+        const [noteIdValue, setNoteIdValue] = useState('');
+        const [notes, setNotes] = useState(resNotes.notes);
+        const confirmAlert =id=>{
+            Alert.alert(
+                'This note will be deleted!!',
+                'Are you sure?',
+                [
+                    {text: "Cancel", style: "cancel"},
+                    { text: "OK", onPress: () =>{
+                        dispatch(deleteNote(UserId, id))
+                        dispatch(getNotes(UserId));
+                    }}
             ]
         )
     }
@@ -147,7 +150,7 @@ export default function Notes({route,navigation}){
                             style={styles.openButton}
                             onPress={() => {
                                 (!titleValue)?(Alert.alert('Pleace write the title!!')
-                                ):(addOneNote(titleValue, colorValue ), setModalCreateVisible(!modalCreateVisible))
+                                ):(pressHandler(), setModalCreateVisible(!modalCreateVisible))
                                 }}>  
                             <Text style={styles.textStyle}>Create note!</Text>
                         </TouchableOpacity>

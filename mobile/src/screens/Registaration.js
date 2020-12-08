@@ -14,12 +14,11 @@ import { ScrollView } from 'react-native-gesture-handler';
 import socketIOClient from 'socket.io-client';
 
 export default function Registration({route, navigation}){
-    // const { Asocket } = route.params;
+    const { Asocket } = route.params;
     async function addUser() {
         if(nameValue == ''||ageValue ==''||passwordValue == ''||confirmPassword==''){
             alert('pleace fill all fields')
         }
-
         else{
             await Asocket.emit('regUser',{name:nameValue, age:ageValue, password:passwordValue, conPassword:confirmPassword})
             await Asocket.on('answerReg',(data)=>{
