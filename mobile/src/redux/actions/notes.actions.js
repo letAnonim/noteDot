@@ -8,11 +8,14 @@ import {
   DELETE_NOTE_STARTED,
   DELETE_NOTE_SUCCESS,
   DELETE_NOTE_FAIL,
+  FIND_NOTE_SUCCESS,
+  FIND_NOTE_STARTED,
+  FIND_NOTE_FAIL,
 } from '../constants';
 import axios from 'axios';
 import {TouchableHighlight} from 'react-native';
 const client = axios.create({
-  baseURL: 'http://192.168.1.102:6666/',
+  baseURL: 'http://192.168.1.101:6666/',
   responseType: 'json',
 });
 export function getAllNotes() {
@@ -106,6 +109,30 @@ export function deleteNote(user, note) {
     }
   };
 }
+
+export function findNote(user_id, note_id) {
+  return async (dispatch) => {
+    dispatch(findNoteStarted());
+    try {
+      await client.put(`/api/notes/${note_id}/${user_id}`).then((res) => {
+        //   console.log(res)
+        dispatch(findNoteSuccess(res.data));
+      });
+    } catch (err) {
+      if (err.response) {
+        console.log(err.response.data);
+        console.log(err.response.status);
+        console.log(err.response.headers);
+      } else if (err.request) {
+        console.log(err.request);
+      } else {
+        console.error('Error:', err.message);
+      }
+      dispatch(findNoteFail(err.message));
+    }
+  };
+}
+
 const getNotesSuccess = (notes) => ({
   type: GET_NOTES_SUCCESS,
   payload: notes,
@@ -113,6 +140,7 @@ const getNotesSuccess = (notes) => ({
 
 const getNotesStarted = () => ({
   type: GET_NOTES_STARTED,
+
 });
 
 const getNotesFail = (error) => ({
@@ -125,6 +153,7 @@ const getNotesFail = (error) => ({
 const addNoteStarted = () => ({
   type: ADD_NOTE_STARTED,
 });
+
 const addNoteSuccess = (notes) => ({
   type: ADD_NOTE_SUCCESS,
   payload: notes,
@@ -147,6 +176,22 @@ const deleteNoteSuccess = (notes) => ({
 
 const deleteNoteFail = (error) => ({
   type: DELETE_NOTE_FAIL,
+  payload: {
+    error
+  }
+});
+
+const findNoteSuccess = (notes) => ({
+  type: FIND_NOTE_SUCCESS,
+  payload: notes,
+});
+
+const findNoteStarted = () => ({
+  type: FIND_NOTE_STARTED,
+});
+
+const findNoteFail = (error) => ({
+  type: FIND_NOTE_FAIL,
   payload: {
     error,
   },

@@ -4,59 +4,82 @@ import {
     GET_NOTES_SUCCESS, 
     ADD_NOTE_STARTED,
     ADD_NOTE_SUCCESS,
-    ADD_NOTE_FAIL
+    ADD_NOTE_FAIL,
+    DELETE_NOTE_STARTED,
+    DELETE_NOTE_SUCCESS,
+    DELETE_NOTE_FAIL,
+    FIND_NOTE_STARTED,
+    FIND_NOTE_SUCCESS,
+    FIND_NOTE_FAIL
 } from '../constants';
-const initialState = {loading: false, notes: [], error:null};
+const initialState = {status:"inactive", error:null, notes: []};
   // Reducers (Modifies The State And Returns A New State)
 export default function noteReducer(state = initialState, action){
     switch (action.type) {
         case GET_NOTES_STARTED:
             return {
               ...state, 
-              loading: true,
+              status:"loading"
             };
         case GET_NOTES_SUCCESS:
             return { 
                 ...state, 
-                loading: false, 
+                status:"succeeded", 
                 notes: action.payload,
                 error:null
               };
         case GET_NOTES_FAIL:
             return { 
                 ...state, 
-                loading: false, 
+                status:"failed", 
                 error: action.payload.error 
             };
         case ADD_NOTE_STARTED: 
             return {
                 ...state
-                // notes: state.notes.concat({
-                //     title: title,
-                //     color: color,
-                //     ovner: aUser._id,
-                //     text: '',
-                //     connectedUsers: [aUser._id],
-            // })
+                
         }
         case ADD_NOTE_SUCCESS: 
             return {
                 ...state,
-                notes: state.notes.concat(action.payload)
+                notes: state.notes.concat(action.payload),
+                status:"inactive"
             }
         case ADD_NOTE_FAIL:
             return { 
                 ...state, 
+                error: action.payload.error,
+                status:"failed", 
+            };
+        case DELETE_NOTE_STARTED: 
+            return {
+                ...state,
+            }
+        case DELETE_NOTE_SUCCESS: 
+            return {
+                ...state,
+                status:"inactive"
+            }
+        case DELETE_NOTE_FAIL:
+            return { 
+                ...state, 
+                error: action.payload.error,
+                status:"failed"
+            };
+        case FIND_NOTE_STARTED: 
+            return {
+                ...state
+        }
+        case FIND_NOTE_SUCCESS: 
+            return {
+                ...state,
+                notes: state.notes.concat(action.payload)
+            }
+        case FIND_NOTE_FAIL:
+            return { 
+                ...state, 
                 error: action.payload.error 
             };
-        // case DELETENOTE: 
-        //     return {
-        //         ...state,
-        //         notes: state.notes.filter((item)=>{
-        //             item.title != key
-        //         }),
-        //     }
-    
       default: {
         return state;
       }

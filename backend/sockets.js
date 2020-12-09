@@ -110,7 +110,6 @@ module.exports = io =>{
               }})
 
           await Notes.findByIdAndUpdate(noteId, {connectedUsers:arr})
-          await Users.findById()
         }catch(err){
           // console.error(err)
         }

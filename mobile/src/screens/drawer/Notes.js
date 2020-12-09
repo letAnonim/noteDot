@@ -14,7 +14,7 @@ import {RadioButton} from 'react-native-paper'
 import {styles} from '../../styles';
 import { ScrollView } from 'react-native-gesture-handler';
 import {useDispatch, useSelector} from 'react-redux'
-import {getNotes, addNote, deleteNote} from '../../redux/actions/notes.actions'
+import {getNotes, addNote, deleteNote, findNote} from '../../redux/actions/notes.actions'
 // import { createDrawerNavigator } from '@react-navigation/drawer';
 // import { NavigationContainer } from '@react-navigation/native';
 // import socketIOClient from 'socket.io-client';
@@ -22,19 +22,22 @@ import {getNotes, addNote, deleteNote} from '../../redux/actions/notes.actions'
 
 
 export default function Notes({route,navigation}){
-    // const socket = socketIOClient('http://192.168.1.105:6666', {      
-        // transports: ['websocket'], jsonp: false });  
+
     const dispatch = useDispatch();
     const resNotes = useSelector(state => state.notes) 
+    const getStatus = useSelector(state => state.notes.status )
+    const [notes, setNotes] = useState([]);
     const { UserId } = route.params;
     // console.log(resNotes.notes);
     useEffect(() => {
-        dispatch(getNotes(UserId));
-        // while(resNotes.loading == true){
-        //     console.log('notes are loading')
-        // }
-        // setNotes(resNotes.notes)
-    }, []);
+        if(getStatus === 'inactive'){
+            dispatch(getNotes(UserId));
+            
+        } 
+        if(getStatus==='succeeded'){setNotes(resNotes.notes), console.log('fvruvrv')}
+    },[getStatus, dispatch]);   
+
+    // }, [notes]);
     // setNotes(resNotes.notes)
     async function addOneNote(title, color) {   
         await dispatch(addNote({
@@ -44,21 +47,14 @@ export default function Notes({route,navigation}){
             text: '',
             connectedUsers: [UserId],
         }))
-        dispatch(getNotes(UserId)); 
+        // await dispatch(getNotes(UserId)); 
     }
     const pressHandler=()=>{
         addOneNote(titleValue, colorValue );
         setTitleValue('')
     }
     const pressSearch = () =>{
-        // console.log(noteIdValue);
-        // Asocket.emit('findNote', aUser._id, noteIdValue);
-        // Asocket.on('ToNote',noteInfo=>{
-            //     console.log(noteInfo)
-            // })
-            // let a = ['fgfg', 'fdgfdg']
-            // let b = ['fgggggggggg', 'fdgfdg']
-            // console.log([...a, 'dfdf']) 
+        dispatch(findNote(UserId, noteIdValue))
         }  
         const returnDate = timestamp =>{
             let date = new Date(timestamp)
@@ -87,7 +83,6 @@ export default function Notes({route,navigation}){
         const [titleValue, setTitleValue] = useState('');
         const [colorValue, setColorValue] = useState('250, 228, 60');
         const [noteIdValue, setNoteIdValue] = useState('');
-        const [notes, setNotes] = useState(resNotes.notes);
         const confirmAlert =id=>{
             Alert.alert(
                 'This note will be deleted!!',
@@ -96,7 +91,7 @@ export default function Notes({route,navigation}){
                     {text: "Cancel", style: "cancel"},
                     { text: "OK", onPress: () =>{
                         dispatch(deleteNote(UserId, id))
-                        dispatch(getNotes(UserId));
+                        // dispatch(getNotes(UserId));
                     }}
             ]
         )
@@ -222,7 +217,7 @@ export default function Notes({route,navigation}){
             <View style={styles.section2}>
                 {(notes[0] !== undefined)?(<ScrollView>{notes.map(note=>{
                     return (
-                        <View key={note._id}>
+                        <View key={Date.now()}>
                             <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note, Userid:UserId})}} style={styles.noteListContaiter}>
                                 <View style={{flex:1,backgroundColor:`rgba(${note.color}, 0.5)`, 
                                     borderLeftWidth:12, 

@@ -67,31 +67,54 @@ exports.findAll = (req, res) => {
     });
   };
   
-  // Update a user identified by the userId in the request
-  exports.update = (req, res) => {
-    // Find user and update it with the request body
-    Notes.findByIdAndUpdate(req.params.userId, req.body, { new: true })
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({
-          message: "User not found with id " + req.params.userId,
+  // Update a note identified by the noteId in the request
+  exports.update = async(req, res) => {
+    let arr = []
+    console.log(req.params.noteId, req.params.userId);
+    await Notes
+    .findById(req.params.noteId, (err, note)=>{
+      if(!err){
+        if(note == null){return res.status(404).send({
+          message: "note not found with id " + req.params.noteId,
+        })}
+        else{arr = [ ...note.connectedUsers, req.params.userId ];
+          console.log(arr);
+          res.send(note);
+        }}
+    }).catch((err) => {
+        if (err.kind === "ObjectId") {
+          return res.status(404).send({
+          message: "note not found with id " + req.params.noteId,
         });
       }
-      res.send(user);
-    })
-    .catch((err) => {
-      if (err.kind === "ObjectId") {
-        return res.status(404).send({
-        message: "User not found with id " + req.params.userId,
+      return res.status(500).send({
+        message: "Error updating note with id " + req.params.noteId,
       });
-    }
-    return res.status(500).send({
-      message: "Error updating user with id " + req.params.userId,
     });
-  });
-};
+    await Notes.findByIdAndUpdate(req.params.noteId, {connectedUsers:arr})
+  }
+//     Notes.findByIdAndUpdate(req.params.noteId, req.body, { new: true })
+//     .then((note) => {
+//       if (!note) {
+//         return res.status(404).send({
+//           message: "note not found with id " + req.params.noteId,
+//         });
+//       }
+//       res.send(note);
+//     })
+//     .catch((err) => {
+//       if (err.kind === "ObjectId") {
+//         return res.status(404).send({
+//         message: "note not found with id " + req.params.noteId,
+//       });
+//     }
+//     return res.status(500).send({
+//       message: "Error updating note with id " + req.params.noteId,
+//     });
+//   });
 
-// Delete a note with the specified userId in the request
+
+// Delete a note with the specified noteId in the request
 exports.delete = (req, res) => {
   console.log(req.params)
   Notes.findByIdAndRemove(req.params.noteId)
