@@ -34,7 +34,7 @@ export default function Notes({route,navigation}){
             dispatch(getNotes(UserId));
             
         } 
-        if(getStatus==='succeeded'){setNotes(resNotes.notes), console.log('fvruvrv')}
+        if(getStatus==='succeeded'){setNotes(resNotes.notes)}
     },[getStatus, dispatch]);   
 
     // }, [notes]);

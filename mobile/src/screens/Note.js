@@ -17,19 +17,21 @@ import {
 import {styles} from '../styles'
 import '../img/paperBackground.png'
 // import { TextInput } from 'react-native-paper';
-
+import {useDispatch, useSelector} from 'react-redux';
+import {getNote, deleteNote, findNote} from '../../redux/actions/notes.actions'
 
 export default function Note({route, navigation}){
+    const dispatch = useDispatch();
+    const resNotes = useSelector(state => state.notes) 
     const { aNote } = route.params;
     const { User } = route.params;
-    const { socket } = route.params;
     const [note, setNote] = useState(aNote)
     const [text, setText] = useState(`${note.text}`)
   
     
     
     function addNoteText(text) {
-        socket.emit('saveNoteText', text, note._id)
+        // socket.emit('saveNoteText', text, note._id)
         
     }
     const pressHendler=()=>{
@@ -37,12 +39,7 @@ export default function Note({route, navigation}){
         setText(text);
     }
     useEffect(() => {
-        socket.emit('getNote', note._id);
-        socket.on('aNote', data=>{  
-            // console.log(data);
-            
-            setNote(data)
-        })
+        dispatch()
     }, [note]);
     return(
         <View style={styles.mainNoteContainer}>
@@ -61,7 +58,7 @@ export default function Note({route, navigation}){
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{pressHendler()}}>
                             <Image style={styles.addSmallButton} source={require('../img/edit.png')}/>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{navigation.navigate('chat', {aNote:note, aUser:User, Asocket: socket})}}>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{navigation.navigate('chat', {aNote:note, aUser:User})}}>
                             <Image style={styles.addSmallButton} source={require('../img/chat.png')}/>
                         </TouchableOpacity>
                     </View>

@@ -55,7 +55,7 @@ export default function Profile({navigation, route}) {
                 height:50,
                 flexDirection:'row'}}>
                 <View style={styles.nawbarContainerLeft}>
-                    <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{}}>
+                    <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{navigation.openDrawer()}}>
                         <Image style={styles.addSmallButton} source={require('../../img/menu.png')}/>
                     </TouchableOpacity>
                     <Text style={styles.nawbarTitle}>Profile</Text>   

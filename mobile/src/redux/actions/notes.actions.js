@@ -11,13 +11,18 @@ import {
   FIND_NOTE_SUCCESS,
   FIND_NOTE_STARTED,
   FIND_NOTE_FAIL,
+  UPDATE_NOTE_TEXT_STARTED,
+  UPDATE_NOTE_TEXT_SUCCESS,
+  UPDATE_NOTE_TEXT_FAIL,
 } from '../constants';
 import axios from 'axios';
 import {TouchableHighlight} from 'react-native';
 const client = axios.create({
-  baseURL: 'http://192.168.1.101:6666/',
+  baseURL: 'http://192.168.1.100:6666/',
   responseType: 'json',
 });
+
+//отримуємо всі нотатки
 export function getAllNotes() {
   return async (dispatch) => {
     dispatch(getNotesStarted());
@@ -40,7 +45,7 @@ export function getAllNotes() {
     }
   };
 }
-
+//отримуємо нотатки певного юзера
 export function getNotes(user) {
   return async (dispatch) => {
     dispatch(getNotesStarted());
@@ -63,6 +68,7 @@ export function getNotes(user) {
     }
   };
 }
+//додати нотатку
 export function addNote(note) {
   console.log(note);
   return async (dispatch) => {
@@ -83,10 +89,10 @@ export function addNote(note) {
       }
       dispatch(addNoteFail(err.message));
     }
-    request.then(({data}) => {});
+    // request.then(({data}) => {});
   };
 }
-
+//видалити нотатку
 export function deleteNote(user, note) {
   return async (dispatch) => {
     dispatch(deleteNoteStarted());
@@ -110,6 +116,7 @@ export function deleteNote(user, note) {
   };
 }
 
+//знайти і додати ноттаку за id 
 export function findNote(user_id, note_id) {
   return async (dispatch) => {
     dispatch(findNoteStarted());
@@ -129,6 +136,29 @@ export function findNote(user_id, note_id) {
         console.error('Error:', err.message);
       }
       dispatch(findNoteFail(err.message));
+    }
+  };
+}
+
+//оновити дані про нотатку (текст)
+export function updateNote(note_id, note) {
+  return async (dispatch) => {
+    dispatch(updateNoteStarted());
+    try {
+      await client.put(`/api/notes/${note_id}`, note).then((res) => {
+        dispatch(updateNoteSuccess(res.data));
+      });
+    } catch (err) {
+      if (err.response) {
+        console.log(err.response.data);
+        console.log(err.response.status);
+        console.log(err.response.headers);
+      } else if (err.request) {
+        console.log(err.request);
+      } else {
+        console.error('Error:', err.message);
+      }
+      dispatch(updateNoteFail(err.message));
     }
   };
 }
@@ -192,6 +222,22 @@ const findNoteStarted = () => ({
 
 const findNoteFail = (error) => ({
   type: FIND_NOTE_FAIL,
+  payload: {
+    error,
+  },
+});
+
+const updateNoteSuccess = (status) => ({
+  type: UPDATE_NOTE_TEXT_SUCCESS,
+  payload: status,
+});
+
+const updateNoteStarted = () => ({
+  type: UPDATE_NOTE_TEXT_STARTED,
+});
+
+const updateNoteFail = (error) => ({
+  type: UPDATE_NOTE_TEXT_FAIL,
   payload: {
     error,
   },

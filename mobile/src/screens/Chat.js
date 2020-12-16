@@ -17,31 +17,31 @@ import {styles} from '../styles';
 export default function Chat({route, navigation}) {
   const {aNote} = route.params;
   const {aUser} = route.params;
-  const {Asocket} = route.params;
+  // const {Asocket} = route.params;
   const [messageValue, setMessageValue] = useState('');
   const [messages, setMessages] = useState([]);
   const [modalUsersVisible, setModalUsersVisible] = useState(false);
   const [conUsers, setConUsers] = useState([]);
 
   useEffect(() => {
-    Asocket.emit('getMessages', aNote._id);
-    Asocket.on('messages', (data) => {
-      setMessages(data);
-    });
+    // Asocket.emit('getMessages', aNote._id);
+    // Asocket.on('messages', (data) => {
+    //   setMessages(data);
+    // });
   }, [messages]);
   async function addMessage(text) {
-    await Asocket.emit('addMessage', {
-      text: text,
-      author: aUser._id,
-      authorName: aUser.name,
-      port: aNote._id,
-    });
-    messages.push({
-      text: text,
-      author: aUser._id,
-      authorName: aUser.name,
-      port: aNote._id,
-    });
+    // await Asocket.emit('addMessage', {
+    //   text: text,
+    //   author: aUser._id,
+    //   authorName: aUser.name,
+    //   port: aNote._id,
+    // });
+    // messages.push({
+    //   text: text,
+    //   author: aUser._id,
+    //   authorName: aUser.name,
+    //   port: aNote._id,
+    // });
   }
   const copyToClipboard = () => {
     Clipboard.setString(aNote._id);
@@ -139,10 +139,10 @@ export default function Chat({route, navigation}) {
             style={styles.smallButtonContainer}
             onPress={() => {
               setModalUsersVisible(!modalUsersVisible);
-              Asocket.emit('getConnectedUsers', aNote.connectedUsers);
-              Asocket.on('conUsers', (data) => {
-                setConUsers(data);
-              });
+              // Asocket.emit('getConnectedUsers', aNote.connectedUsers);
+              // Asocket.on('conUsers', (data) => {
+              //   setConUsers(data);
+              // });
             }}>
             <Image
               style={styles.addSmallButton}
