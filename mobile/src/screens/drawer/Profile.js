@@ -1,4 +1,4 @@
-import React, { Component} from 'react';
+import React, { useState,  Component, useEffect} from 'react';
 import {
     View,
     Text,
@@ -8,12 +8,12 @@ import {
     Button, 
     Alert
 } from 'react-native';
-import { connect, useSelector, useDispatch } from 'react-redux';
+// import { connect, useSelector, useDispatch } from 'react-redux';
 import {styles} from '../../styles'
-import {getUsers, getUser} from '../../redux/actions/users.actions.js'
-import {getAllNotes} from '../../redux/actions/notes.actions.js'
-import{ bindActionCreators } from 'redux'
-import axios from 'axios';
+// import {getUsers, getUser, addUser} from '../../redux/actions/users.actions.js'
+// import {getAllNotes} from '../../redux/actions/notes.actions.js'
+// import{ bindActionCreators } from 'redux'
+// import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -21,6 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 //   console.log(ipv4Address);
 // });
 export default function Profile({navigation, route}) {
+    const [user, setUser] = useState({});
     const saveData = async (value) => {
         try {
             const jsonValue = JSON.stringify(value)
@@ -29,12 +30,7 @@ export default function Profile({navigation, route}) {
             console.error(e);
         }
       }
-    //  const socket = socketIOClient('http://192.168.1.100:6666', {      
-    // transports: ['websocket'], jsonp: false }); 
-    const users = useSelector(state => state.users)
-    const notes = useSelector(state => state.notes)
-    const dispatch = useDispatch()
-    // const { notes, loadingNotes} = this.props;
+
     const confirmAlert =()=>{
         Alert.alert(
             'Exit profile!',
@@ -42,12 +38,30 @@ export default function Profile({navigation, route}) {
             [
                 {text: "Cancel", style: "cancel"},
                 { text: "OK", onPress: () =>{
-                    saveData({isLogged: false, userId: null});
+                    saveData({isLogged: false, userData: null});
                     navigation.navigate('authorisation')
                 }}
             ]
         )
     }
+    const readData = async () => {
+        try {
+            const jsonValue =  await AsyncStorage.getItem('isLoggedIn');
+            if(jsonValue != null){
+                return JSON.parse(jsonValue).userData
+            }
+        } catch (e) {
+            console.error(e);
+        }
+      };
+      useEffect(() => {
+        readData()
+        .then(data =>{
+            setUser(data);
+            console.log(data)
+        })
+       }, [])
+      
     return(
         <ImageBackground source={require('../../img/paperBackground.png')} style={styles.image}>
             <View style={{
@@ -68,15 +82,15 @@ export default function Profile({navigation, route}) {
                     </View>
                 </View>
                 <View>
-                    <Text style={styles.mainText}>Name:Taras  </Text>
-                    <Text style={styles.mainText}>Age:20  </Text>
+                    <Text style={styles.mainText}>Name:{user.userName}</Text>
+                    <Text style={styles.mainText}>Age:{user.userAge}  </Text>
                 </View>
             </View>
             <View style={{margin:10}}>
                 <Button title='get users'
                     color='orange'
                     onPress={()=>{          
-                        dispatch(getUsers());
+                    
                     }}
                 />
             </View>
@@ -84,7 +98,7 @@ export default function Profile({navigation, route}) {
                 <Button title='Exit profile'
                     color='red'
                     onPress={()=>{          
-                        confirmAlert()
+                        
                     }}
                 />
             </View>

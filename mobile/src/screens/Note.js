@@ -11,20 +11,17 @@ import {
     ImageBackground, 
     TouchableOpacity,
     Image,
-    
-    
 } from 'react-native';
 import {styles} from '../styles'
 import '../img/paperBackground.png'
 // import { TextInput } from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
-import {getNote, deleteNote, findNote} from '../../redux/actions/notes.actions'
+import {getNote, deleteNote, findNote} from '../redux/actions/notes.actions'
 
 export default function Note({route, navigation}){
     const dispatch = useDispatch();
-    const resNotes = useSelector(state => state.notes) 
+    // const resNotes = useSelector(state => state.notes) 
     const { aNote } = route.params;
-    const { User } = route.params;
     const [note, setNote] = useState(aNote)
     const [text, setText] = useState(`${note.text}`)
   
@@ -38,12 +35,11 @@ export default function Note({route, navigation}){
         addNoteText(text);
         setText(text);
     }
-    useEffect(() => {
-        dispatch()
-    }, [note]);
+    // useEffect(() => {
+    //     dispatch()
+    // }, [note]);
     return(
         <View style={styles.mainNoteContainer}>
-      
             <ImageBackground source={require('../img/paperBackground.png')} style={styles.image}>
                 <View style={{backgroundColor:`rgba(${note.color}, 1)`, 
                     height:50,
@@ -58,7 +54,7 @@ export default function Note({route, navigation}){
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{pressHendler()}}>
                             <Image style={styles.addSmallButton} source={require('../img/edit.png')}/>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{navigation.navigate('chat', {aNote:note, aUser:User})}}>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{navigation.navigate('chat', {aNote:note})}}>
                             <Image style={styles.addSmallButton} source={require('../img/chat.png')}/>
                         </TouchableOpacity>
                     </View>

@@ -9,8 +9,8 @@ import {
   ScrollView,
   Modal,
   TouchableHighlight,
-  Clipboard,
 } from 'react-native';
+import {Clipboard} from '@react-native-community/clipboard';
 // import usersModel from '../../../backend/models/users.model';
 import {styles} from '../styles';
 

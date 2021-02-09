@@ -24,7 +24,7 @@ export default function Authorisatio({navigation}){
     // NetworkInfo.getIPV4Address().then(ipv4Address => {
     //   console.log(ipv4Address);
     // });
-    const socket = socketIOClient('http://192.168.1.100:6666', {      
+    const socket = socketIOClient('http://192.168.1.102:6666', {      
     transports: ['websocket'], jsonp: false });   
     const user = useSelector(state => state.users)
     const notes = useSelector(state => state.notes)
@@ -34,7 +34,7 @@ export default function Authorisatio({navigation}){
     const saveData = async (value) => {
         try {
             const jsonValue = JSON.stringify(value)
-            await AsyncStorage.setItem('isLoggedIn', jsonValue)
+            await AsyncStorage.setItem('isLoggedIn', jsonValue);
         } catch (e) {
             console.error(e);
         }
@@ -45,7 +45,7 @@ export default function Authorisatio({navigation}){
             if(jsonValue != null){
                 if(JSON.parse(jsonValue).isLogged == true) navigation.navigate('home',{
                     screen: 'notes',
-                    params: { UserId:JSON.parse(jsonValue).userId}
+                    params: { UserId:JSON.parse(jsonValue).userData.userId}
                 })
                 // console.log(jsonValue)
                 // console.log(JSON.parse(jsonValue).isLogged);
@@ -67,7 +67,7 @@ export default function Authorisatio({navigation}){
             socket.emit('checkLog', loginValue, passwordValue )
             socket.on('answerLog', (data, user)=>{
                 if(data== true){
-                    saveData({isLogged: true, userId: user._id})
+                    saveData({isLogged: true, userData:{userId: user._id, userName: user.name, userAge: user.age, userRegDate: user.createdAt}})
                     navigation.navigate('home',{
                         screen: 'notes',
                         params: { UserId:user._id}
