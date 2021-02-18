@@ -2,7 +2,7 @@ const Notes = require('../models/notes.model.js');
 
 //create new note
 exports.create = (req, res)=>{
-  console.log(req.body)
+  // console.log(req.body)
   const note = new Notes({
     title: req.body.title,
     color: req.body.color,
@@ -27,7 +27,7 @@ exports.create = (req, res)=>{
 exports.findAll = (req, res) => {
   Notes.find()
   .then((Notes) => {
-    console.log(Notes)
+    // console.log(Notes)
     res.send(Notes);
   })
   .catch((err) => {
@@ -40,14 +40,14 @@ exports.findAll = (req, res) => {
   // find a one note with a noteId
   exports.findOne = (req, res) => {
     // console.log(req.params)
-    console.log(req.params.userId)
+    // console.log(req.params.userId)
     Notes.find({connectedUsers:req.params.userId})
     // .exec((err, notes)=>{
     //   if(!err){
     //       socket.emit('notes', notes)
     //   }
     .then((notes) => {
-      console.log(notes)
+      // console.log(notes)
       if (!notes) {
         return res.status(404).send({
           message: "Note not found with id " + req.params.userId,
@@ -70,7 +70,7 @@ exports.findAll = (req, res) => {
   // Update a note identified by the noteId in the request
   exports.update = async(req, res) => {
     let arr = []
-    console.log(req.params.noteId, req.params.userId);
+    // console.log(req.params.noteId, req.params.userId);
     await Notes
     .findById(req.params.noteId, (err, note)=>{
       if(!err){
@@ -116,7 +116,7 @@ exports.findAll = (req, res) => {
 
 // Delete a note with the specified noteId in the request
 exports.delete = (req, res) => {
-  console.log(req.params)
+  // console.log(req.params)
   Notes.findByIdAndRemove(req.params.noteId)
   .then((user) => {
     if (!user) {

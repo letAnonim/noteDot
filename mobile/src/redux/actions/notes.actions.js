@@ -18,7 +18,7 @@ import {
 import axios from 'axios';
 import {TouchableHighlight} from 'react-native';
 const client = axios.create({
-  baseURL: 'http://192.168.1.100:6666/',
+  baseURL: 'http://192.168.1.101:6666/',
   responseType: 'json',
 });
 
@@ -28,7 +28,6 @@ export function getAllNotes() {
     dispatch(getNotesStarted());
     try {
       await client.get('/api/notes').then((res) => {
-        //   console.log(res)
         dispatch(getNotesSuccess(res.data));
       });
     } catch (err) {
@@ -51,7 +50,6 @@ export function getNotes(user) {
     dispatch(getNotesStarted());
     try {
       await client.get(`/api/notes/${user}`).then((res) => {
-        //   console.log(res)
         dispatch(getNotesSuccess(res.data));
       });
     } catch (err) {
@@ -68,9 +66,9 @@ export function getNotes(user) {
     }
   };
 }
+
 //додати нотатку
 export function addNote(note) {
-  console.log(note);
   return async (dispatch) => {
     dispatch(addNoteStarted());
     try {
@@ -89,7 +87,6 @@ export function addNote(note) {
       }
       dispatch(addNoteFail(err.message));
     }
-    // request.then(({data}) => {});
   };
 }
 //видалити нотатку
@@ -98,7 +95,6 @@ export function deleteNote(user, note) {
     dispatch(deleteNoteStarted());
     try {
       await client.delete(`/api/notes/${user}/${note}`).then((res) => {
-        //   console.log(res)
         dispatch(deleteNoteSuccess(res.data));
       });
     } catch (err) {
@@ -122,7 +118,6 @@ export function findNote(user_id, note_id) {
     dispatch(findNoteStarted());
     try {
       await client.put(`/api/notes/${note_id}/${user_id}`).then((res) => {
-        //   console.log(res)
         dispatch(findNoteSuccess(res.data));
       });
     } catch (err) {

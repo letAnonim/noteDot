@@ -159,7 +159,6 @@ module.exports = io =>{
       })
       socket.on('getConnectedUsers', conUsers=>{
         try {
-          // console.log(conUsers)
           Users.find().where('_id').in(conUsers).exec((err, data) => {if(!err){
             socket.emit('conUsers', data)
           }});

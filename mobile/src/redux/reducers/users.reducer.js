@@ -5,6 +5,9 @@ import {
   GET_USER_SUCCESS,
   GET_USER,
   GET_USER_FAIL,
+  UPDATE_USER_PHOTO_SUCCESS,
+  UPDATE_USER_PHOTO_FAIL,
+  UPDATE_USER_PHOTO_STARTED
 } from '../constants';
 
 const initialState = {loading: false, users: [], error: null};
@@ -29,17 +32,20 @@ export default function usersReducer(state = initialState, action) {
         loading: false,
         error: action.payload.error,
       };
-    // case GET_USER_INFO:
-    //   return { ...state, loadingInfo: true };
-    // case GET_USER_INFO_SUCCESS:
-    //   return { ...state, loadingInfo: false, repoInfo: action.payload.data };
-    // case GET_USER_INFO_FAIL:
-    //   console.log(action.payload);
-    //   return {
-    //     ...state,
-    //     loadingInfo: false,
-    //     errorInfo: 'Error getting repo info'
-    //   };
+      case UPDATE_USER_PHOTO_STARTED: 
+      return {
+          ...state
+  }
+  case UPDATE_USER_PHOTO_SUCCESS: 
+      return {
+          ...state,
+          notes: state.notes.concat(action.payload)
+      }
+  case UPDATE_USER_PHOTO_FAIL:
+      return { 
+          ...state, 
+          error: action.payload.error 
+      };
     case GET_USER:
       return {...state, loading: false, user: action.user};
 

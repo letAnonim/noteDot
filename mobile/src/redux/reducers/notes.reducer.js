@@ -16,7 +16,6 @@ import {
     UPDATE_NOTE_TEXT_FAIL, 
 } from '../constants';
 const initialState = {status:"inactive", error:null, notes: []};
-  // Reducers (Modifies The State And Returns A New State)
 export default function noteReducer(state = initialState, action){
     switch (action.type) {
         case GET_NOTES_STARTED:
@@ -83,7 +82,7 @@ export default function noteReducer(state = initialState, action){
                 ...state, 
                 error: action.payload.error 
             };
-            case UPDATE_NOTE_TEXT_STARTED: 
+        case UPDATE_NOTE_TEXT_STARTED: 
             return {
                 ...state
         }

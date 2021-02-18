@@ -14,7 +14,7 @@ module.exports = (app) => {
 	app.get("/api/users/:userId", users.findOne);
 
 	// Update a client with clientId
-	app.put("/api/users/:userId", users.update);
+	app.post("/api/user", users.update);
 
 	// Delete a client with clientId
 	app.delete("/api/users/:userId", users.delete);

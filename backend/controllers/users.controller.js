@@ -1,4 +1,18 @@
 const Users = require("../models/users.model.js");
+const imageSchema = require("../models/photo.js");
+const multer = require('multer');
+ 
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads')
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + '-' + Date.now())
+    }
+});
+ 
+var upload = multer({ storage: storage });
+
 
 //create new user
 exports.create = (req, res) => {
@@ -39,8 +53,8 @@ exports.findAll = (req, res) => {
 
 // find a one user with a userId
 exports.findOne = (req, res) => {
-	console.log(req)
-	Users.findById(req.params.userId)
+	// console.log(req)
+	Users.findById(req.params)
 		.then((user) => {
 			if (!user) {
 				return res.status(404).send({
@@ -64,25 +78,35 @@ exports.findOne = (req, res) => {
 // Update a user identified by the userId in the request
 exports.update = (req, res) => {
 	// Find user and update it with the request body
-	Users.findByIdAndUpdate(req.params.userId, req.body, { new: true })
-		.then((user) => {
-			if (!user) {
-				return res.status(404).send({
-					message: "User not found with id " + req.params.userId,
-				});
-			}
-			res.send(user);
-		})
-		.catch((err) => {
-			if (err.kind === "ObjectId") {
-				return res.status(404).send({
-					message: "User not found with id " + req.params.userId,
-				});
-			}
-			return res.status(500).send({
-				message: "Error updating user with id " + req.params.userId,
-			});
-		});
+	console.log(req.params)
+	// Users.findByIdAndUpdate(req.params.userId, req.body, { new: true })
+	// 	.then((user) => {
+	// 		if (!user) {
+	// 			return res.status(404).send({
+	// 				message: "User not found with id " + req.params.userId,
+	// 			});
+	// 		}
+	// 		res.send(user);
+	// 	})
+	// 	.catch((err) => {
+	// 		if (err.kind === "ObjectId") {
+	// 			return res.status(404).send({
+	// 				message: "User not found with id " + req.params.userId,
+	// 			});
+	// 		}
+	// 		return res.status(500).send({
+	// 			message: "Error updating user with id " + req.params.userId,
+	// 		});
+	// 	});
+	// imageSchema.find({}, (err, items) => {
+    //     if (err) {
+    //         console.log(err);
+    //         res.status(500).send('An error occurred', err);
+    //     }
+    //     else {
+    //         res.render('imagesPage', { items: items });
+    //     }
+    // });
 };
 
 // Delete a user with the specified userId in the request
