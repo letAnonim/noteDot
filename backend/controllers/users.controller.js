@@ -1,7 +1,9 @@
 const Users = require("../models/users.model.js");
-const imageSchema = require("../models/photo.js");
+// const ImageSchema = require("../models/photo.js");
 const multer = require('multer');
- 
+// const buffer = require('buffer/').Buffer; ?????????
+// const { response } = require("express");
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads')
@@ -11,7 +13,7 @@ const storage = multer.diskStorage({
     }
 });
  
-var upload = multer({ storage: storage });
+// const upload = multer({ storage: storage });
 
 
 //create new user
@@ -75,45 +77,45 @@ exports.findOne = (req, res) => {
 		});
 };
 
-// Update a user identified by the userId in the request
-exports.update = (req, res) => {
-	// Find user and update it with the request body
-	console.log(req.params)
-	// Users.findByIdAndUpdate(req.params.userId, req.body, { new: true })
-	// 	.then((user) => {
-	// 		if (!user) {
-	// 			return res.status(404).send({
-	// 				message: "User not found with id " + req.params.userId,
-	// 			});
-	// 		}
-	// 		res.send(user);
-	// 	})
-	// 	.catch((err) => {
-	// 		if (err.kind === "ObjectId") {
-	// 			return res.status(404).send({
-	// 				message: "User not found with id " + req.params.userId,
-	// 			});
-	// 		}
-	// 		return res.status(500).send({
-	// 			message: "Error updating user with id " + req.params.userId,
-	// 		});
-	// 	});
-	// imageSchema.find({}, (err, items) => {
-    //     if (err) {
-    //         console.log(err);
-    //         res.status(500).send('An error occurred', err);
-    //     }
-    //     else {
-    //         res.render('imagesPage', { items: items });
-    //     }
-    // });
+// Update a user photo by the userId in the request
+exports.photoUpdate = (req, res) => {
+	const photo = {
+		name: req.body.photo.name,
+		desc: (req.body.desc)?req.body.desc:undefined,
+		img: {
+			data: req.body.photo.uri,
+			contentType: req.body.photo.type
+		}
+	}
+	// console.log(photo);
+	Users.findByIdAndUpdate({_id: req.body.id},{photo: photo} ).then((user) => {
+		// console.log(user.photo.name, user.photo.desc, user.photo.img.data)
+		let resPhoto = {
+			name: user.photo.name,
+			desc: user.photo.desc,
+			img: {
+				data: Buffer.from(JSON.parse(JSON.stringify(user.photo.img.data)).data).toString('utf8'),
+				contentType: user.photo.img.contentType
+			}
+		}
+		// user.photo.img.data = Buffer.from(JSON.parse(JSON.stringify(user.photo.img.data)).data).toString('utf8');
+		console.log(resPhoto)
+		res.send(resPhoto);
+	})
+	.catch((err) => {
+		res.status(500).send({
+			message:
+				err.message ||
+				"Some error occurred while retrieving users.",
+		});
+	});
 };
 
-// Delete a user with the specified userId in the request
+// delete note by note id
 exports.delete = (req, res) => {
 	Users.findByIdAndRemove(req.params.userId)
-		.then((user) => {
-			if (!user) {
+	.then((user) => {
+		if (!user) {
 				return res.status(404).send({
 					message: "User not found with id " + req.params.userId,
 				});

@@ -7,7 +7,7 @@ import logger from 'redux-logger';
 import thunk from 'redux-thunk';
 const rootReducer = combineReducers({
     notes: noteReducer,
-    users: usersReducer
+    users: usersReducer,
 })
 const client = axios.create({
     baseURL: 'http://localhost:6666',

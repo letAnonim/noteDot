@@ -18,7 +18,7 @@ import {
 import axios from 'axios';
 import {TouchableHighlight} from 'react-native';
 const client = axios.create({
-  baseURL: 'http://192.168.1.101:6666/',
+  baseURL: 'http://192.168.1.100:6666/',
   responseType: 'json',
 });
 
@@ -44,6 +44,7 @@ export function getAllNotes() {
     }
   };
 }
+
 //отримуємо нотатки певного юзера
 export function getNotes(user) {
   return async (dispatch) => {

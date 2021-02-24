@@ -4,7 +4,7 @@ import React, {Component, useState, useEffect} from 'react';
 import {
     TextInput,
     View,
-    Button,
+    TouchableOpacity,
     Text,
     ImageBackground
 } from 'react-native';
@@ -13,15 +13,16 @@ import {styles} from '../styles';
 import { ScrollView } from 'react-native-gesture-handler';
 import socketIOClient from 'socket.io-client';
 
-export default function Registration({route, navigation}){
-    const { Asocket } = route.params;
+export default function Registration({navigation}){
+    const socket = socketIOClient('http://192.168.1.100:6666', {      
+        transports: ['websocket'], jsonp: false }); 
     async function addUser() {
         if(nameValue == ''||ageValue ==''||passwordValue == ''||confirmPassword==''){
             alert('pleace fill all fields')
         }
         else{
-            await Asocket.emit('regUser',{name:nameValue, age:ageValue, password:passwordValue, conPassword:confirmPassword})
-            await Asocket.on('answerReg',(data)=>{
+            await socket.emit('regUser',{name:nameValue, age:ageValue, password:passwordValue, conPassword:confirmPassword})
+            await socket.on('answerReg',(data)=>{
                 if(data ==1) alert('This name is already in use!');
                 else if(data == 2) alert('Incorrect age value!');
                 else if(data == 3) alert('Passwords dont match each other!');
@@ -88,21 +89,13 @@ export default function Registration({route, navigation}){
                             secureTextEntry={true} 
                         ></TextInput>
                     </View>
-                    <View style={{margin: 20}}>
-                        <Button title='Register!'
-                        color='orange'
-                        onPress={addUser}
-                        />
-                    </View>
-                    <View style={{margin: 20}}>
-                        <Button title='Log in!'
-                        color='orange'
-                        onPress={()=>{   
+                    <View style={styles.buttonsContainer}>
+                        <TouchableOpacity style={styles.defaultButton} onPress={addUser}
+                        ><Text style={styles.mainText}>Register</Text></TouchableOpacity>
+                        <TouchableOpacity style={styles.defaultButton} onPress={()=>{        
                             navigation.navigate('authorisation')
-                        }}
-                        />
+                        }}><Text style={styles.mainText} >log in</Text></TouchableOpacity>
                     </View>
-                    
                 </View>
                 <View style={styles.registerContainer}>
 

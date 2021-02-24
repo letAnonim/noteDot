@@ -3,16 +3,17 @@ import {
   GET_USERS_SUCCESS,
   GET_USERS_FAIL,
   GET_USERS_STARTED,
-  ADD_USER_STARTED,
-  ADD_USER_SUCCESS,
-  ADD_USER_FAIL,
+  UPDATE_USER_STARTED,
+  UPDATE_USER_SUCCESS,
+  UPDATE_USER_FAIL,
 } from '../constants';
 import axios from 'axios';
 import {TouchableHighlight} from 'react-native';
 const client = axios.create({
-  baseURL: 'http://192.168.1.101:6666/',
+  baseURL: 'http://192.168.1.100:6666/',
   responseType: 'json',
 });
+
 export function getUsers() {
   return async (dispatch) => {
     dispatch(getUsersStarted());
@@ -48,7 +49,6 @@ export function getUser(user) {
   };
 }
 
-
 export function addUser(user) {
   console.log(user);
   return async (dispatch) => {
@@ -74,23 +74,16 @@ export function addUser(user) {
   };
 }
 
-//update user 
-export function updateUserPhoto(user) {
-  return async (dispatch) => {
-    dispatch(updateUserPhotoStarted());
+export function updateUser(user) {
+  console.log(user);
+  console.log('console.log')
+  return async (dis5patch) => {
+    dispatch(updateUserStarted());
     try {
-      await axios({
-        uri: `http://192.168.1.101:6666/api/user`,
-        responseType: 'json',
-        method: 'POST',
-        data: formData,
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'multipart/form-data'
-        }
-      }, user).then((res) => {
-        dispatch(updateUserPhotoSuccess(res.data));
-      });
+        await client.put('/api/user/photo', user).then((res) => {
+            dispatch(updateUserSuccess(res.data));
+        });
+        console.log('here')
     } catch (err) {
       if (err.response) {
         console.log(err.response);
@@ -101,11 +94,26 @@ export function updateUserPhoto(user) {
       } else {
         console.error('Error:', err.message);
       }
-      dispatch(updateUserPhotoFail(err.message));
+      dispatch(updateUserFail(err.message));
+      console.log('end')
     }
-    // request.then(({data}) => {});
+    console.log('final end')
   };
 }
+  
+      // await axios.post({
+      //   uri: `http://192.168.1.104:6666/api/user`,
+      //   // responseType: 'json',
+      //   method: 'POST',
+      //   // data: formData,
+      //   headers: {
+      //     Accept: 'application/json',
+      //     'Content-Type': 'multipart/form-data'
+      //   }
+      // }, user)
+      
+
+
 
 
 const getUsersSuccess = (users) => ({
@@ -129,6 +137,7 @@ const getUsersFail = (error) => ({
 const addUserStarted = () => ({
   type: ADD_USER_STARTED,
 });
+
 const addUserSuccess = (users) => ({
   type: ADD_USER_SUCCESS,
   payload: users,
@@ -141,16 +150,16 @@ const addUserFail = (error) => ({
   },
 });
 
-const updateUserPhotoStarted = () => ({
+const updateUserStarted = () => ({
   type: UPDATE_USER_STARTED,
 });
 
-const updateUserPhotoSuccess = (user) => ({
+const updateUserSuccess = (users) => ({
   type: UPDATE_USER_SUCCESS,
-  payload: user,
+  payload: users,
 });
 
-const updateUserPhotoFail = (error) => ({
+const updateUserFail = (error) => ({
   type: UPDATE_USER_FAIL,
   payload: {
     error,

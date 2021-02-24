@@ -2,12 +2,10 @@ import {
   GET_USERS_STARTED,
   GET_USERS_SUCCESS,
   GET_USERS_FAIL,
-  GET_USER_SUCCESS,
   GET_USER,
-  GET_USER_FAIL,
-  UPDATE_USER_PHOTO_SUCCESS,
-  UPDATE_USER_PHOTO_FAIL,
-  UPDATE_USER_PHOTO_STARTED
+  UPDATE_USER_SUCCESS,
+  UPDATE_USER_FAIL,
+  UPDATE_USER_STARTED
 } from '../constants';
 
 const initialState = {loading: false, users: [], error: null};
@@ -32,24 +30,25 @@ export default function usersReducer(state = initialState, action) {
         loading: false,
         error: action.payload.error,
       };
-      case UPDATE_USER_PHOTO_STARTED: 
+    case UPDATE_USER_STARTED: 
       return {
-          ...state
-  }
-  case UPDATE_USER_PHOTO_SUCCESS: 
-      return {
-          ...state,
-          notes: state.notes.concat(action.payload)
-      }
-  case UPDATE_USER_PHOTO_FAIL:
-      return { 
-          ...state, 
-          error: action.payload.error 
-      };
+        ...state
+    }
+    case UPDATE_USER_SUCCESS: 
+        return {
+            ...state,
+            users: action.payload,
+            // status:"inactive"
+        }
+    case UPDATE_USER_FAIL:
+        return { 
+            ...state, 
+            error: action.payload.error
+        };
     case GET_USER:
-      return {...state, loading: false, user: action.user};
+        return {...state, loading: false, user: action.user};
 
     default:
-      return state;
-  }
+        return state;
+    }
 }

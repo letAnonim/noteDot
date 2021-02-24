@@ -1,6 +1,4 @@
 // const auth = require("../middleware/auth");
-// 
-
 module.exports = (app) => {
     const users = require("../controllers/users.controller");
 
@@ -14,7 +12,10 @@ module.exports = (app) => {
 	app.get("/api/users/:userId", users.findOne);
 
 	// Update a client with clientId
-	app.post("/api/user", users.update);
+	// app.post("/api/user/update", users.update);
+
+	// Update a client photo with clientId
+	app.post("/api/user/photoupdate", users.photoUpdate);
 
 	// Delete a client with clientId
 	app.delete("/api/users/:userId", users.delete);

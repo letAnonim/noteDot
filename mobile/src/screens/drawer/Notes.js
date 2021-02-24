@@ -20,9 +20,7 @@ import {getNotes, addNote, deleteNote, findNote} from '../../redux/actions/notes
 // import socketIOClient from 'socket.io-client';
 // import io from 'socket.io-client'
 
-
 export default function Notes({route,navigation}){
-
     const dispatch = useDispatch();
     const resNotes = useSelector(state => state.notes) 
     const getStatus = useSelector(state => state.notes.status )
@@ -56,52 +54,51 @@ export default function Notes({route,navigation}){
     const pressSearch = () =>{
         dispatch(findNote(UserId, noteIdValue))
         }  
-        const returnDate = timestamp =>{
-            let date = new Date(timestamp)
-            let now = new Date()
-            let minutes = date.getMinutes();
-            let hours = date.getHours();
-            let day = date.getDay();
-            let month = date.getMonth();
-            let year = date.getFullYear()
-            
-            let returnHours = (hours<10)?(`0${hours}:`):(`${hours}:`)
-            let returnMinutes = (minutes<10)?(`0${minutes}`):(minutes)
-            
-            if(day == now.getDay()&&month == now.getMonth()&&year==now.getFullYear()){
-                return returnHours+returnMinutes
-            }
-            else{
-                let returnDay = (day<10)?(`0${day}/`):(`${day}/${year}`)
-                let returnMonth = (month<10)?(`0${month}/${year}`):(`${month}/${year}`);
-                return returnDay+returnMonth+' at '+returnHours+returnMinutes
-            } 
-        }
+    const returnDate = timestamp =>{
+        let date = new Date(timestamp)
+        let now = new Date()
+        let minutes = date.getMinutes();
+        let hours = date.getHours();
+        let day = date.getDay();
+        let month = date.getMonth();
+        let year = date.getFullYear()
         
-        const [modalCreateVisible, setModalCreateVisible] = useState(false);
-        const [modalSearchVisible, setModalSearchVisible] = useState(false);
-        const [titleValue, setTitleValue] = useState('');
-        const [colorValue, setColorValue] = useState('250, 228, 60');
-        const [noteIdValue, setNoteIdValue] = useState('');
-        const confirmAlert =id=>{
-            Alert.alert(
-                'This note will be deleted!!',
-                'Are you sure?',
-                [
-                    {text: "Cancel", style: "cancel"},
-                    { text: "OK", onPress: () =>{
-                        dispatch(deleteNote(UserId, id))
-                        // dispatch(getNotes(UserId));
-                    }}
+        let returnHours = (hours<10)?(`0${hours}:`):(`${hours}:`)
+        let returnMinutes = (minutes<10)?(`0${minutes}`):(minutes)
+        
+        if(day == now.getDay()&&month == now.getMonth()&&year==now.getFullYear()){
+            return returnHours+returnMinutes
+        }
+        else{
+            let returnDay = (day<10)?(`0${day}/`):(`${day}/${year}`)
+            let returnMonth = (month<10)?(`0${month}/${year}`):(`${month}/${year}`);
+            return returnDay+returnMonth+' at '+returnHours+returnMinutes
+        } 
+    }
+        
+    const confirmAlert =id=>{
+        Alert.alert(
+            'This note will be deleted!!',
+            'Are you sure?',
+            [
+                {text: "Cancel", style: "cancel"},
+                { text: "OK", onPress: () =>{
+                    dispatch(deleteNote(UserId, id))
+                }}
             ]
         )
     }
+    const [modalCreateVisible, setModalCreateVisible] = useState(false);
+    const [modalSearchVisible, setModalSearchVisible] = useState(false);
+    const [titleValue, setTitleValue] = useState('');
+    const [colorValue, setColorValue] = useState('250, 228, 60');
+    const [noteIdValue, setNoteIdValue] = useState('');
     return(
         <ImageBackground source={require('../../img/paperBackground.png')} style={styles.image}>
-        <View style={styles.body}>
+            <View style={styles.body}>
             {/*////////////////////////////////modalCreate//////////////////////////////////////*/}
             <Modal
-                animationType='slide'
+                animationType='fade'
                 transparent={true}
                 visible={modalCreateVisible}>
                 <View style={styles.centeredView}>
@@ -150,7 +147,7 @@ export default function Notes({route,navigation}){
                             <Text style={styles.textStyle}>Create note!</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={styles.closeButton}
+                            style={styles.SmallCloseButton}
                             onPress={() => {
                                 setModalCreateVisible(!modalCreateVisible)}}>  
                             <Text style={styles.textStyle}>close</Text>
@@ -161,7 +158,7 @@ export default function Notes({route,navigation}){
             {/*///////////////////////////////modalCreate//////////////////////////////////////*/}
             {/*////////////////////////////////modalSearch//////////////////////////////////////*/}
             <Modal
-                animationType='slide'
+                animationType='fade'
                 transparent={true}
                 visible={modalSearchVisible}>
                 <View style={styles.centeredView}>
@@ -183,7 +180,7 @@ export default function Notes({route,navigation}){
                             <Text style={styles.textStyle}>Connect to note!</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={styles.closeButton}
+                            style={styles.SmallCloseButton}
                             onPress={() => {
                                 setModalSearchVisible(!modalSearchVisible)}}>  
                             <Text style={styles.textStyle}>close</Text>
@@ -217,7 +214,7 @@ export default function Notes({route,navigation}){
             <View style={styles.section2}>
                 {(notes[0] !== undefined)?(<ScrollView>{notes.map(note=>{
                     return (
-                        <View key={Date.now()}>
+                        <View key={note._id}>
                             <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note})}} style={styles.noteListContaiter}>
                                 <View style={{flex:1,backgroundColor:`rgba(${note.color}, 0.5)`, 
                                     borderLeftWidth:12, 
@@ -257,10 +254,10 @@ export default function Notes({route,navigation}){
                             <Image style={styles.addBigButton} source={require('../../img/add.png')}/>
                         </TouchableOpacity>
                     </View>
-                )}             
+                )}
             </View>
         </View>
     </ImageBackground>
-    )      
+    )
 }
 
