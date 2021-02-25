@@ -15,8 +15,10 @@ import {
 import {styles} from '../../styles'
 import {getUser, addUser, updateUser} from '../../redux/actions/users.actions.js'
 import axios from 'axios';
+import {lightIconColor} from '../../styles'
+import Icon from 'react-native-vector-icons/FontAwesome';
 const client = axios.create({
-    baseURL: 'http://192.168.1.100:6666/',
+    baseURL: 'http://192.168.1.102:6666/',
     responseType: 'json',
   });
 // import {getAllNotes} from '../../redux/actions/notes.actions.js'
@@ -128,13 +130,13 @@ export default function Profile({navigation, route}) {
                 flexDirection:'row'}}>
                 <View style={styles.nawbarContainerLeft}>
                     <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{navigation.openDrawer()}}>
-                        <Image style={styles.addSmallButton} source={require('../../img/menu.png')}/>
+                        <Icon name="align-justify" color={lightIconColor} size={35} style={{margin: 7}}/>
                     </TouchableOpacity>
                     <Text style={styles.nawbarTitle}>Profile</Text>   
                 </View>
                 <View style={styles.nawbarContainerRight}>
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={{}}>
-                            <Image style={styles.addSmallButton} source={require('../../img/setings.png')}/>
+                        <Icon name="gears" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
                     </View>
             </View>

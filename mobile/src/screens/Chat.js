@@ -13,6 +13,9 @@ import {
 import {Clipboard} from '@react-native-community/clipboard';
 // import usersModel from '../../../backend/models/users.model';
 import {styles} from '../styles';
+import {lightIconColor} from '../styles'
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon1 from 'react-native-vector-icons/Feather';
 
 export default function Chat({route, navigation}) {
   const {aNote} = route.params;
@@ -81,34 +84,35 @@ export default function Chat({route, navigation}) {
       style={styles.image}>
       {/*////////////////////////////////modalUsers//////////////////////////////////////*/}
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={modalUsersVisible}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Users:</Text>
+           { (conUsers>1)?(
             <View>
-              {conUsers.map((user) => {
-                return (
-                  <View key={user._id} style={{flexDirection: 'row'}}>
-                    <Text>Name:{user.name} </Text>
-                    <Text>Age:{user.age}</Text>
-                  </View>
-                );
-              })}
-            </View>
-            <TouchableHighlight
-              style={styles.openButton}
-              onPress={() => {
-                copyToClipboard();
-              }}>
+              <Text style={styles.modalText}>Users:</Text>
+              <View>
+                {conUsers.map((user) => {
+                  return (
+                    <View key={user._id} style={{flexDirection: 'row'}}>
+                      <Text>Name:{user.name} </Text>
+                      <Text>Age:{user.age}</Text>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>):(
+            <View>
+              <Text style={styles.modalText}>No users here yet...</Text>
+            </View> )}
+            <TouchableHighlight style={styles.smallDefaultButton} onPress={copyToClipboard}>
               <Text style={styles.textStyle}>Copy invite link</Text>
             </TouchableHighlight>
-            <TouchableHighlight
-              style={styles.closeButton}
-              onPress={() => {
-                setModalUsersVisible(!modalUsersVisible);
-              }}>
+            <TouchableHighlight style={styles.smallDefaultButton} onPress={{}}>
+              <Text style={styles.textStyle}>Generate invite QR code</Text>
+            </TouchableHighlight>
+            <TouchableHighlight style={styles.SmallCloseButton} onPress={()=>setModalUsersVisible(!modalUsersVisible)}>
               <Text style={styles.textStyle}>close</Text>
             </TouchableHighlight>
           </View>
@@ -116,21 +120,12 @@ export default function Chat({route, navigation}) {
       </Modal>
       {/*///////////////////////////////modalUsers//////////////////////////////////////*/}
       <View
-        style={{
-          backgroundColor: `rgba(${aNote.color}, 1)`,
-          height: 50,
-          flexDirection: 'row',
-        }}>
+        style={{backgroundColor: `rgba(${aNote.color}, 1)`,height: 50,flexDirection: 'row'}}>
         <View style={styles.nawbarContainerLeft}>
           <TouchableOpacity
             style={styles.smallButtonContainer}
-            onPress={() => {
-              navigation.navigate('note');
-            }}>
-            <Image
-              style={styles.addSmallButton}
-              source={require('../img/menu.png')}
-            />
+            onPress={() => {navigation.navigate('note')}}>
+            <Icon name="align-justify" color={lightIconColor} size={35} style={{margin: 7}}/>
           </TouchableOpacity>
           <Text style={styles.nawbarTitle}>Chat</Text>
         </View>
@@ -144,20 +139,14 @@ export default function Chat({route, navigation}) {
               //   setConUsers(data);
               // });
             }}>
-            <Image
-              style={styles.addSmallButton}
-              source={require('../img/users.png')}
-            />
+            <Icon name="users" color={lightIconColor} size={35} style={{margin: 7}}/>
           </TouchableOpacity>
         </View>
       </View>
       <View style={styles.chatMessagesContainer}>
         {messages[0] !== undefined ? (
-          <ScrollView
-            ref={scrollViewRef}
-            onContentSizeChange={() =>
-              scrollViewRef.current.scrollToEnd({animated: true})
-            }>
+          <ScrollView ref={scrollViewRef}
+            onContentSizeChange={() => scrollViewRef.current.scrollToEnd({animated: true})}>
             {messages.map((mes) => {
               return (
                 <View key={Math.random()} style={{flex: 1}}>
@@ -165,25 +154,15 @@ export default function Chat({route, navigation}) {
                     <TouchableOpacity onPress={() => {}}>
                       <View style={styles.messageOvner}>
                         <Text style={{fontSize: 20}}>{mes.text}</Text>
-                        <Text
-                          style={{
-                            flex: 1,
-                            alignSelf: 'flex-end',
-                            fontSize: 10,
-                          }}>
+                        <Text style={{flex: 1,alignSelf: 'flex-end',fontSize: 10,}}>
                           {returnDate(mes.updatedAt)}
                         </Text>
                       </View>
                     </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity onPress={() => {}}>
+                  ):(<TouchableOpacity onPress={() => {}}>
                       <View style={styles.messageSender}>
                         <Text
-                          style={{
-                            flex: 1,
-                            alignSelf: 'flex-start',
-                            fontSize: 13,
-                          }}>
+                          style={{flex: 1,alignSelf: 'flex-start',fontSize: 13,}}>
                           {mes.authorName}
                         </Text>
                         <Text style={{fontSize: 20}}>{mes.text}</Text>
@@ -196,24 +175,19 @@ export default function Chat({route, navigation}) {
                 </View>
               );
             })}
-          </ScrollView>
-        ) : (
+          </ScrollView>):(
           <View style={styles.addnoteBigButtonContainer}>
-            <Image
-              style={styles.addBigButton}
-              source={require('../img/chat.png')}
-            />
+            <Icon1 name="message-circle" color='white' size={100}/>
             <Text>No messages here yet...</Text>
           </View>
         )}
       </View>
       <View
-        style={{
-          flex: 1,
+        style={{flex: 1,
           alignItems: 'flex-start',
           // justifyContent:'center',
           flexDirection: 'row',
-          maxHeight: 60,
+          maxHeight: 50,
           maxWidth: '100%',
           backgroundColor: `rgba(${aNote.color}, 1)`,
         }}>
@@ -230,10 +204,7 @@ export default function Chat({route, navigation}) {
           onPress={() => {
             pressHandler();
           }}>
-          <Image
-            style={styles.sendSmallButton}
-            source={require('../img/upload.png')}
-          />
+          <Icon name="send" color={lightIconColor} size={25} style={{marginRight: 12, marginTop:5}}/>
         </TouchableOpacity>
       </View>
     </ImageBackground>

@@ -8,13 +8,16 @@ import {
     Modal,
     Text,
     Alert, 
-    ImageBackground
+    ImageBackground, 
 } from 'react-native';
 import {RadioButton} from 'react-native-paper'
 import {styles} from '../../styles';
 import { ScrollView } from 'react-native-gesture-handler';
 import {useDispatch, useSelector} from 'react-redux'
 import {getNotes, addNote, deleteNote, findNote} from '../../redux/actions/notes.actions'
+import {lightIconColor} from '../../styles'
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
 // import { createDrawerNavigator } from '@react-navigation/drawer';
 // import { NavigationContainer } from '@react-navigation/native';
 // import socketIOClient from 'socket.io-client';
@@ -139,17 +142,18 @@ export default function Notes({route,navigation}){
                             </RadioButton.Group>     
                         </View>
                         <TouchableOpacity
-                            style={styles.openButton}
+                            style={styles.smallDefaultButton}
                             onPress={() => {
                                 (!titleValue)?(Alert.alert('Pleace write the title!!')
-                                ):(pressHandler(), setModalCreateVisible(!modalCreateVisible))
+                                ):(pressHandler(), setModalCreateVisible(!modalCreateVisible), setColorValue('250, 228, 60'))
                                 }}>  
                             <Text style={styles.textStyle}>Create note!</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.SmallCloseButton}
                             onPress={() => {
-                                setModalCreateVisible(!modalCreateVisible)}}>  
+                                setModalCreateVisible(!modalCreateVisible)
+                                setColorValue('250, 228, 60')}}>  
                             <Text style={styles.textStyle}>close</Text>
                         </TouchableOpacity>
                     </View>
@@ -172,7 +176,7 @@ export default function Notes({route,navigation}){
                         <View style={styles.modalRadioContainer}>    
                         </View>
                         <TouchableOpacity
-                            style={styles.openButton}
+                            style={styles.smallDefaultButton}
                             onPress={() => {
                                 (!noteIdValue)?(Alert.alert('Pleace write the id!!')
                                 ):(pressSearch(),setModalSearchVisible(!modalSearchVisible))
@@ -193,24 +197,27 @@ export default function Notes({route,navigation}){
                 <View style={styles.nawbarContainer}>
                     <View style={styles.nawbarContainerLeft}>
                         <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{navigation.openDrawer()}}>
-                            <Image style={styles.addSmallButton} source={require('../../img/menu.png')}/>
+                            <Icon name="align-justify" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
                         <Text style={styles.nawbarTitle}>Notes.dot</Text>   
                     </View>
                     <View style={styles.nawbarContainerRight}>
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalSearchVisible(!modalSearchVisible)}>
-                            <Image style={styles.addSmallButton} source={require('../../img/search.png')}/>
+                            <Icon1 name="qrcode-scan" color={lightIconColor} size={35} style={{margin: 7}}/>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalSearchVisible(!modalSearchVisible)}>
+                            <Icon name="search-plus" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={()=> 
                             // dispatch(getNotes(UserId))
                             setModalCreateVisible(!modalCreateVisible)
                             }>
-                            <Image style={styles.addSmallButton} source={require('../../img/add.png')}/>
+                            <Icon name="plus" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
+                        
                     </View>
                  </View> 
             </View>
-
             <View style={styles.section2}>
                 {(notes[0] !== undefined)?(<ScrollView>{notes.map(note=>{
                     return (
@@ -239,7 +246,7 @@ export default function Notes({route,navigation}){
                                                 {(UserId == note.owner)?(<TouchableOpacity onPress={()=>{
                                                     confirmAlert(note._id)
                                                 }}>
-                                                    <Image style={styles.deleteSmallButton} source={require('../../img/delete.png')} />
+                                                    <Icon name="remove" color={lightIconColor} size={35} style={{margin: 7}}/>
                                                 </TouchableOpacity>):(<View/>)}
                                             </View>                     
                                         </View>
@@ -251,7 +258,7 @@ export default function Notes({route,navigation}){
                     })}</ScrollView>):(
                     <View style={styles.addnoteBigButtonContainer}>
                         <TouchableOpacity  onPress={()=>setModalCreateVisible(true)}>
-                            <Image style={styles.addBigButton} source={require('../../img/add.png')}/>
+                            <Icon name="plus" color='white' size={120}/>
                         </TouchableOpacity>
                     </View>
                 )}

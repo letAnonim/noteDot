@@ -1,9 +1,9 @@
 import React from 'react'
 import { StyleSheet  
   } from 'react-native';
-
   const MainColour = "#FFBA51";
   const red = '#E04536';
+  export const lightIconColor = '#C4C4C4'
 export const styles = StyleSheet.create({
     body:{
       flex: 1
@@ -115,6 +115,7 @@ export const styles = StyleSheet.create({
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
+      backgroundColor: "rgba(0, 0, 0, 0.5)"
     },
     modalView: {
       margin: 20,
@@ -167,7 +168,17 @@ export const styles = StyleSheet.create({
     },
     SmallCloseButton:{
       backgroundColor:red,
-      margin:10,
+      margin:5,
+      padding:5,
+      borderRadius:5,
+      height:40,
+      // width:150,
+      alignItems:'center',
+      justifyContent:'center'
+    },
+    smallDefaultButton:{
+      backgroundColor:MainColour,
+      margin:5,
       padding:5,
       borderRadius:5,
       height:40,
@@ -177,7 +188,6 @@ export const styles = StyleSheet.create({
     },
     defaultCloseButton:{
       backgroundColor:red,
-      
       margin:10,
       padding:5,
       borderRadius:5,
@@ -188,12 +198,14 @@ export const styles = StyleSheet.create({
     },
     section2:{
       flex:1,
+      marginTop:3
     },
     noteListContaiter:{
       height: 80,
-      width: '97%',
+      // width: '100%',
       margin: 2,
-      marginLeft:5
+      marginLeft:5,
+      marginRight:5
     },
     mainNoteContainer:{
       flex: 1,
@@ -283,10 +295,10 @@ export const styles = StyleSheet.create({
     },
     messageInput:{
       flex:1,
-      borderTopRightRadius:10,
-      borderBottomRightRadius:10,
+      borderTopRightRadius:30,
+      borderBottomRightRadius:30,
       backgroundColor:'rgba(255,255,255, 0.5)',
-      minWidth:'80%',
+      minWidth:'75%',
       alignItems:'flex-start',
       borderColor:MainColour,
       borderLeftWidth:8,
@@ -294,7 +306,7 @@ export const styles = StyleSheet.create({
       padding:2,
       paddingLeft:10,
       margin: 5,
-      height:45
+      maxHeight:'100%'
     },
     sendSmallButton:{
       maxHeight:30,
