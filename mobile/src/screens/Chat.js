@@ -16,6 +16,8 @@ import {styles} from '../styles';
 import {lightIconColor} from '../styles'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/Feather';
+import QRCode from 'react-native-qrcode-svg';
+
 
 export default function Chat({route, navigation}) {
   const {aNote} = route.params;
@@ -24,6 +26,7 @@ export default function Chat({route, navigation}) {
   const [messageValue, setMessageValue] = useState('');
   const [messages, setMessages] = useState([]);
   const [modalUsersVisible, setModalUsersVisible] = useState(false);
+  const [modalQRVisible, setModalQRVisible] = useState(false);
   const [conUsers, setConUsers] = useState([]);
 
   useEffect(() => {
@@ -109,7 +112,7 @@ export default function Chat({route, navigation}) {
             <TouchableHighlight style={styles.smallDefaultButton} onPress={copyToClipboard}>
               <Text style={styles.textStyle}>Copy invite link</Text>
             </TouchableHighlight>
-            <TouchableHighlight style={styles.smallDefaultButton} onPress={{}}>
+            <TouchableHighlight style={styles.smallDefaultButton} onPress={()=>{setModalUsersVisible(!modalUsersVisible);setModalQRVisible(!modalQRVisible)}}>
               <Text style={styles.textStyle}>Generate invite QR code</Text>
             </TouchableHighlight>
             <TouchableHighlight style={styles.SmallCloseButton} onPress={()=>setModalUsersVisible(!modalUsersVisible)}>
@@ -119,6 +122,26 @@ export default function Chat({route, navigation}) {
         </View>
       </Modal>
       {/*///////////////////////////////modalUsers//////////////////////////////////////*/}
+      {/*///////////////////////////////ModalQRcode/////////////////////////////////////*/}
+      <Modal animationType="fade" transparent={true} visible={modalQRVisible}>
+      <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+              <QRCode
+                value="Just some string value"
+                size={200}
+                enableLinearGradient={true}
+                linearGradient={['#FFBA51','grey']}
+
+                // logoSize={30}
+                // logoBackgroundColor='transparent'
+                />
+              <TouchableHighlight style={styles.SmallCloseButton} onPress={()=>setModalQRVisible(!modalQRVisible)}>
+                <Text style={styles.textStyle}>close</Text>
+            </TouchableHighlight>
+          </View>
+        </View>      
+      </Modal>
+      {/*///////////////////////////////ModalQRcode/////////////////////////////////////*/}
       <View
         style={{backgroundColor: `rgba(${aNote.color}, 1)`,height: 50,flexDirection: 'row'}}>
         <View style={styles.nawbarContainerLeft}>

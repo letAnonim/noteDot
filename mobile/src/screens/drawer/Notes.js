@@ -18,6 +18,8 @@ import {getNotes, addNote, deleteNote, findNote} from '../../redux/actions/notes
 import {lightIconColor} from '../../styles'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
+// import QRCodeScanner from 'react-native-qrcode-scanner';
+// import { RNCamera } from 'react-native-camera';
 // import { createDrawerNavigator } from '@react-navigation/drawer';
 // import { NavigationContainer } from '@react-navigation/native';
 // import socketIOClient from 'socket.io-client';
@@ -57,6 +59,24 @@ export default function Notes({route,navigation}){
     const pressSearch = () =>{
         dispatch(findNote(UserId, noteIdValue))
         }  
+    const QRscanner = ()=>{
+        <QRCodeScanner
+            onRead={this.onSuccess}
+            flashMode={RNCamera.Constants.FlashMode.torch}
+            // topContent={
+            // // <Text style={styles.centerText}>
+            // //     Go to{' '}
+            // //     <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on
+            // //     your computer and scan the QR code.
+            // // </Text>
+            // }
+            bottomContent={
+            <TouchableOpacity style={styles.buttonTouchable}>
+                <Text style={styles.buttonText}>OK. Got it!</Text>
+            </TouchableOpacity>
+            }
+        />
+    }
     const returnDate = timestamp =>{
         let date = new Date(timestamp)
         let now = new Date()
@@ -202,7 +222,7 @@ export default function Notes({route,navigation}){
                         <Text style={styles.nawbarTitle}>Notes.dot</Text>   
                     </View>
                     <View style={styles.nawbarContainerRight}>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalSearchVisible(!modalSearchVisible)}>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={QRscanner}>
                             <Icon1 name="qrcode-scan" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalSearchVisible(!modalSearchVisible)}>

@@ -18,7 +18,7 @@ import axios from 'axios';
 import {lightIconColor} from '../../styles'
 import Icon from 'react-native-vector-icons/FontAwesome';
 const client = axios.create({
-    baseURL: 'http://192.168.1.102:6666/',
+    baseURL: 'http://192.168.1.105:6666/',
     responseType: 'json',
   });
 // import {getAllNotes} from '../../redux/actions/notes.actions.js'
