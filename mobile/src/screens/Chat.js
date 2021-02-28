@@ -127,7 +127,7 @@ export default function Chat({route, navigation}) {
       <View style={styles.centeredView}>
           <View style={styles.modalView}>
               <QRCode
-                value="Just some string value"
+                value={aNote._id}
                 size={200}
                 enableLinearGradient={true}
                 linearGradient={['#FFBA51','grey']}

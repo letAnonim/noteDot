@@ -31,15 +31,13 @@ export default function Notes({route,navigation}){
     const getStatus = useSelector(state => state.notes.status )
     const [notes, setNotes] = useState([]);
     const { UserId } = route.params;
-    // console.log(resNotes.notes);
     useEffect(() => {
         if(getStatus === 'inactive'){
-            dispatch(getNotes(UserId));
-            
+            dispatch(getNotes(UserId)); 
         } 
         if(getStatus==='succeeded'){setNotes(resNotes.notes)}
     },[getStatus, dispatch]);   
-
+    // navigation.navigate('qrscanner')
     // }, [notes]);
     // setNotes(resNotes.notes)
     async function addOneNote(title, color) {   
@@ -58,25 +56,7 @@ export default function Notes({route,navigation}){
     }
     const pressSearch = () =>{
         dispatch(findNote(UserId, noteIdValue))
-        }  
-    const QRscanner = ()=>{
-        <QRCodeScanner
-            onRead={this.onSuccess}
-            flashMode={RNCamera.Constants.FlashMode.torch}
-            // topContent={
-            // // <Text style={styles.centerText}>
-            // //     Go to{' '}
-            // //     <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on
-            // //     your computer and scan the QR code.
-            // // </Text>
-            // }
-            bottomContent={
-            <TouchableOpacity style={styles.buttonTouchable}>
-                <Text style={styles.buttonText}>OK. Got it!</Text>
-            </TouchableOpacity>
-            }
-        />
-    }
+    }  
     const returnDate = timestamp =>{
         let date = new Date(timestamp)
         let now = new Date()
@@ -219,22 +199,21 @@ export default function Notes({route,navigation}){
                         <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{navigation.openDrawer()}}>
                             <Icon name="align-justify" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
-                        <Text style={styles.nawbarTitle}>Notes.dot</Text>   
+                        <Text style={styles.nawbarTitle}>Notes.dot</Text>
                     </View>
                     <View style={styles.nawbarContainerRight}>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={QRscanner}>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{navigation.navigate('qrscanner', {userId: UserId})}}>
                             <Icon1 name="qrcode-scan" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalSearchVisible(!modalSearchVisible)}>
                             <Icon name="search-plus" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=> 
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>
                             // dispatch(getNotes(UserId))
                             setModalCreateVisible(!modalCreateVisible)
                             }>
                             <Icon name="plus" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
-                        
                     </View>
                  </View> 
             </View>
@@ -248,11 +227,11 @@ export default function Notes({route,navigation}){
                                     borderLeftColor:`rgba(${note.color}, 1)`
                                 }}>
                                     <View style={{flex:1, flexDirection:'row'}}>
-                                        <View style={{flex:1, flexDirection:'column'}}>     
+                                        <View style={{flex:1, flexDirection:'column'}}>
                                             <Text   style={{margin:3,fontSize:18, color:'black', width:180}}  numberOfLines={1}>
                                                 <Text style={{fontSize:19,fontWeight:'bold',}}  numberOfLines={1}>Title:</Text> 
                                                 {note.title}
-                                            </Text>           
+                                            </Text>
                                             <View style={{marginLeft:3, flex:1, flexDirection:'column'}}>
                                                 <Text style={{fontSize:17, maxWidth:200}} numberOfLines={1}>Text:{note.text}</Text>
                                                 <Text style={{fontSize:15, maxWidth:200}} numberOfLines={1}>Number of users:{note.connectedUsers.length} </Text>
@@ -268,7 +247,8 @@ export default function Notes({route,navigation}){
                                                 }}>
                                                     <Icon name="remove" color={lightIconColor} size={35} style={{margin: 7}}/>
                                                 </TouchableOpacity>):(<View/>)}
-                                            </View>                     
+                                            </View>
+                                            
                                         </View>
                                     </View>
                                 </View>

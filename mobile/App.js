@@ -16,6 +16,7 @@ import Registration from './src/screens/Registaration';
 import Home from './src/screens/Home';
 import Chat from './src/screens/Chat';
 import Note from './src/screens/Note';
+import QRCodeScanner from './src/screens/drawer/qrCodeScanner'
 import SplashScreen from 'react-native-splash-screen';
 import socketIO from 'socket.io-client';
 import {Provider, connect} from 'react-redux';
@@ -45,6 +46,7 @@ export default class App extends Component {
             <Stack.Screen name="home" component={Home} />
             <Stack.Screen name="chat" component={Chat} />
             <Stack.Screen name="note" component={Note} />
+            <Stack.Screen name="qrscanner" component={QRCodeScanner}/>
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

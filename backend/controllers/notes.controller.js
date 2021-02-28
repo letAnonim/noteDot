@@ -78,7 +78,6 @@ exports.findAll = (req, res) => {
           message: "note not found with id " + req.params.noteId,
         })}
         else{arr = [ ...note.connectedUsers, req.params.userId ];
-          console.log(arr);
           res.send(note);
         }}
     }).catch((err) => {

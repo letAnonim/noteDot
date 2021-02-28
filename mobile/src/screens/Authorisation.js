@@ -21,7 +21,7 @@ export default function Authorisatio({navigation}){
     // NetworkInfo.getIPV4Address().then(ipv4Address => {
     //   console.log(ipv4Address);
     // });
-    const socket = socketIOClient('http://192.168.1.100:6666', {      
+    const socket = socketIOClient('http://192.168.1.105:6666', {      
     transports: ['websocket'], jsonp: false });   
     const user = useSelector(state => state.users)
     const notes = useSelector(state => state.notes)

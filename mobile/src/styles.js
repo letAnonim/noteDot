@@ -1,8 +1,8 @@
 import React from 'react'
 import { StyleSheet  
   } from 'react-native';
-  const MainColour = "#FFBA51";
-  const red = '#E04536';
+  export const MainColour = "#FFBA51";
+  export const red = '#E04536';
   export const lightIconColor = '#C4C4C4'
 export const styles = StyleSheet.create({
     body:{
