@@ -8,12 +8,12 @@ import {
   TextInput,
   ScrollView,
   Modal,
-  TouchableHighlight,
 } from 'react-native';
-import {Clipboard} from '@react-native-community/clipboard';
+import Clipboard from '@react-native-community/clipboard';
+import {showMessage} from "react-native-flash-message";
+import FlashMessage from "react-native-flash-message";
 // import usersModel from '../../../backend/models/users.model';
-import {styles} from '../styles';
-import {lightIconColor} from '../styles'
+import {lightIconColor, MainColour, styles} from '../styles';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/Feather';
 import QRCode from 'react-native-qrcode-svg';
@@ -51,6 +51,15 @@ export default function Chat({route, navigation}) {
   }
   const copyToClipboard = () => {
     Clipboard.setString(aNote._id);
+    console.log('copied')
+    // alert('copied')
+    showMessage({
+      floating: true,
+      icon:'success',
+      message: "Invite link copied",
+      type: "success",
+      color:'#FFFFFF', // text color
+    });
   };
   const pressHandler = () => {
     addMessage(messageValue);
@@ -91,6 +100,7 @@ export default function Chat({route, navigation}) {
         transparent={true}
         visible={modalUsersVisible}>
         <View style={styles.centeredView}>
+        <FlashMessage position="top" />
           <View style={styles.modalView}>
            { (conUsers>1)?(
             <View>
@@ -109,15 +119,15 @@ export default function Chat({route, navigation}) {
             <View>
               <Text style={styles.modalText}>No users here yet...</Text>
             </View> )}
-            <TouchableHighlight style={styles.smallDefaultButton} onPress={copyToClipboard}>
+            <TouchableOpacity style={styles.smallDefaultButton} onPress={copyToClipboard}>
               <Text style={styles.textStyle}>Copy invite link</Text>
-            </TouchableHighlight>
-            <TouchableHighlight style={styles.smallDefaultButton} onPress={()=>{setModalUsersVisible(!modalUsersVisible);setModalQRVisible(!modalQRVisible)}}>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.smallDefaultButton} onPress={()=>{setModalUsersVisible(!modalUsersVisible); setModalQRVisible(!modalQRVisible)}}>
               <Text style={styles.textStyle}>Generate invite QR code</Text>
-            </TouchableHighlight>
-            <TouchableHighlight style={styles.SmallCloseButton} onPress={()=>setModalUsersVisible(!modalUsersVisible)}>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.SmallCloseButton} onPress={()=>setModalUsersVisible(!modalUsersVisible)}>
               <Text style={styles.textStyle}>close</Text>
-            </TouchableHighlight>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -131,13 +141,12 @@ export default function Chat({route, navigation}) {
                 size={200}
                 enableLinearGradient={true}
                 linearGradient={['#FFBA51','grey']}
-
                 // logoSize={30}
                 // logoBackgroundColor='transparent'
                 />
-              <TouchableHighlight style={styles.SmallCloseButton} onPress={()=>setModalQRVisible(!modalQRVisible)}>
+              <TouchableOpacity style={styles.SmallCloseButton} onPress={()=>setModalQRVisible(!modalQRVisible)}>
                 <Text style={styles.textStyle}>close</Text>
-            </TouchableHighlight>
+            </TouchableOpacity>
           </View>
         </View>      
       </Modal>

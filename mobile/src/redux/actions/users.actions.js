@@ -19,7 +19,7 @@ export function getUsers() {
     dispatch(getUsersStarted());
     try {
       await client.get('/api/users').then((res) => {
-        //   console.log(res)
+
         dispatch(getUsersSuccess(res.data));
       });
     } catch (err) {

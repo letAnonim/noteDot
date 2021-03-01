@@ -5,7 +5,6 @@ import {
     TouchableOpacity,
     Text,
     StyleSheet,
-    Linking,
     Image
 } from 'react-native';
 
@@ -22,15 +21,9 @@ export default function QRscanner({route,navigation}){
   const { userId } = route.params; 
   const [camera, setCamera] = useState('')
   const [flashlightOptions, setFlashlightOptions] = useState({light:'off', color:MainColour, icon:'flashlight-off'});
-  const openLink = link => {
-      console.log(link)  
-      Linking.openURL(link).catch(err =>
-          console.error('An error occured', err)
-        );
-      };
   const pressSearch = (noteId) =>{
       dispatch(findNote(userId, noteId))
-      dispatch(getNotes(UserId));
+      // dispatch(getNotes(UserId));
       navigation.navigate('notes')
     } 
     const QRcodeRecognized = (barc) => {

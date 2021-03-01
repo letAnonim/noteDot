@@ -18,24 +18,29 @@ import {getNotes, addNote, deleteNote, findNote} from '../../redux/actions/notes
 import {lightIconColor} from '../../styles'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
-// import QRCodeScanner from 'react-native-qrcode-scanner';
-// import { RNCamera } from 'react-native-camera';
-// import { createDrawerNavigator } from '@react-navigation/drawer';
-// import { NavigationContainer } from '@react-navigation/native';
-// import socketIOClient from 'socket.io-client';
-// import io from 'socket.io-client'
+import {showMessage} from "react-native-flash-message";
+import FlashMessage from "react-native-flash-message";
 
 export default function Notes({route,navigation}){
     const dispatch = useDispatch();
     const resNotes = useSelector(state => state.notes) 
-    const getStatus = useSelector(state => state.notes.status )
+    const getStatus = useSelector(state => state.notes.status)
     const [notes, setNotes] = useState([]);
     const { UserId } = route.params;
     useEffect(() => {
         if(getStatus === 'inactive'){
             dispatch(getNotes(UserId)); 
         } 
-        if(getStatus==='succeeded'){setNotes(resNotes.notes)}
+        else if(getStatus==='succeeded'){setNotes(resNotes.notes)}
+        else if(getStatus==='failed'){
+            showMessage({
+                floating: true,
+                icon:'warning',
+                message: "Incorrect invite link!!!",
+                type: 'danger',
+                color:'#FFFFFF',
+            });}
+
     },[getStatus, dispatch]);   
     // navigation.navigate('qrscanner')
     // }, [notes]);
@@ -87,6 +92,13 @@ export default function Notes({route,navigation}){
                 {text: "Cancel", style: "cancel"},
                 { text: "OK", onPress: () =>{
                     dispatch(deleteNote(UserId, id))
+                    showMessage({
+                        floating: true,
+                        icon:'success',
+                        message: "Note deleted successfully",
+                        type: 'success',
+                        color:'#FFFFFF', // text color
+                      });
                 }}
             ]
         )
@@ -194,6 +206,7 @@ export default function Notes({route,navigation}){
             </Modal>
             {/*///////////////////////////////modalSearch//////////////////////////////////////*/}
             <View style ={styles.section1}>
+                <FlashMessage position="top" /> 
                 <View style={styles.nawbarContainer}>
                     <View style={styles.nawbarContainerLeft}>
                         <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{navigation.openDrawer()}}>
@@ -209,7 +222,6 @@ export default function Notes({route,navigation}){
                             <Icon name="search-plus" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>
-                            // dispatch(getNotes(UserId))
                             setModalCreateVisible(!modalCreateVisible)
                             }>
                             <Icon name="plus" color={lightIconColor} size={35} style={{margin: 7}}/>

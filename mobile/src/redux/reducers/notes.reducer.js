@@ -75,12 +75,14 @@ export default function noteReducer(state = initialState, action){
         case FIND_NOTE_SUCCESS: 
             return {
                 ...state,
-                notes: state.notes.concat(action.payload)
+                notes: state.notes.concat(action.payload),
+                status:"inactive"
             }
         case FIND_NOTE_FAIL:
             return { 
                 ...state, 
-                error: action.payload.error 
+                error: action.payload.error,
+                status:"failed"
             };
         case UPDATE_NOTE_TEXT_STARTED: 
             return {
