@@ -14,6 +14,9 @@ import {
     UPDATE_NOTE_TEXT_STARTED,
     UPDATE_NOTE_TEXT_SUCCESS,
     UPDATE_NOTE_TEXT_FAIL, 
+    UPDATE_NOTE_LIST_STARTED,
+    UPDATE_NOTE_LIST_SUCCESS,
+    UPDATE_NOTE_LIST_FAIL,
 } from '../constants';
 const initialState = {status:"inactive", loading:false, error:null, notes: []};
 export default function notesReducer(state = initialState, action){
@@ -30,11 +33,33 @@ export default function notesReducer(state = initialState, action){
                 status:"getNoteSucceeded", 
                 loading:false,
                 error:null,
-                notes: action.payload              };
+                notes: action.payload
+            };
         case GET_NOTES_FAIL:
             return { 
                 ...state, 
                 status:"getNoteFailed", 
+                loading:false,
+                error: action.payload.error
+            };
+        case UPDATE_NOTE_LIST_STARTED:
+            return {
+                ...state, 
+                status:"updatingNoteList",
+                loading:true
+            };
+        case UPDATE_NOTE_LIST_SUCCESS:
+            return { 
+                ...state, 
+                status:"updateNoteListSucceeded", 
+                loading:false,
+                error:null,
+                notes: action.payload
+            };
+        case UPDATE_NOTE_LIST_FAIL:
+            return { 
+                ...state, 
+                status:"updateNoteListFailed", 
                 loading:false,
                 error: action.payload.error
             };

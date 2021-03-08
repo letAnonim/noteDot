@@ -14,6 +14,9 @@ import {
   UPDATE_NOTE_TEXT_STARTED,
   UPDATE_NOTE_TEXT_SUCCESS,
   UPDATE_NOTE_TEXT_FAIL,
+  UPDATE_NOTE_LIST_STARTED,
+  UPDATE_NOTE_LIST_SUCCESS,
+  UPDATE_NOTE_LIST_FAIL,
 } from '../constants';
 import axios from 'axios';
 import {TouchableHighlight} from 'react-native';
@@ -22,13 +25,13 @@ const client = axios.create({
   responseType: 'json',
 });
 
-//отримуємо всі нотатки
-export function getAllNotes() {
+//update user notes list
+export function updateNoteList(user) {
   return async (dispatch) => {
-    dispatch(getNotesStarted());
+    dispatch(updateNoteListStarted());
     try {
-      await client.get('/api/notes').then((res) => {
-        dispatch(getNotesSuccess(res.data));
+      await client.get(`/api/notes/${user}`).then((res) => {
+        dispatch(updateNoteListSuccess(res.data));
       });
     } catch (err) {
       if (err.response) {
@@ -40,7 +43,7 @@ export function getAllNotes() {
       } else {
         console.error('Error:', err.message);
       }
-      dispatch(getNotesFail(err.message));
+      dispatch(updateNoteListFail(err.message));
     }
   };
 }
@@ -166,7 +169,6 @@ const getNotesSuccess = (notes) => ({
 
 const getNotesStarted = () => ({
   type: GET_NOTES_STARTED,
-
 });
 
 const getNotesFail = (error) => ({
@@ -234,6 +236,22 @@ const updateNoteTextStarted = () => ({
 
 const updateNoteTextFail = (error) => ({
   type: UPDATE_NOTE_TEXT_FAIL,
+  payload: {
+    error,
+  },
+});
+
+const updateNoteListStarted = (notes) => ({
+  type: UPDATE_NOTE_LIST_STARTED
+});
+
+const updateNoteListSuccess = (notes) => ({
+  type: UPDATE_NOTE_LIST_SUCCESS,
+  payload: notes
+});
+
+const updateNoteListFail = (error) => ({
+  type: UPDATE_NOTE_LIST_FAIL,
   payload: {
     error,
   },

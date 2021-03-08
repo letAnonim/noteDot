@@ -11,14 +11,16 @@ import {
     ImageBackground, 
 }from 'react-native';
 import {RadioButton} from 'react-native-paper'
-import {styles} from '../../styles';
+import {MainColour,lightIconColor, styles} from '../../styles';
 import { ScrollView } from 'react-native-gesture-handler';
 import {useDispatch, useSelector} from 'react-redux'
-import {getNotes, addNote, deleteNote, findNote} from '../../redux/actions/notes.actions'
-import {lightIconColor} from '../../styles'
+import {getNotes, addNote, deleteNote, findNote, updateNoteList} from '../../redux/actions/notes.actions'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
 import {showMessage} from "react-native-flash-message";
+// const Spinner = require('react-native-spinkit');
+import Spinner from 'react-native-spinkit'
+
 // import { NetworkInfo } from "react-native-network-info";
 
 export default function Notes({route,navigation}){
@@ -32,8 +34,11 @@ export default function Notes({route,navigation}){
     const [notes, setNotes] = useState([]);
     const { UserId } = route.params;
     useEffect(() => {
-        if(getStatus ==='inactive'||getStatus==='deleteNoteSucceeded'||getStatus==='addNoteSucceeded'||getStatus==='findNoteSucceeded'){dispatch(getNotes(UserId))} 
-        else if(getStatus ==='getNoteSucceeded'){setNotes(resNotes.notes)}
+        if(getStatus ==='inactive'){dispatch(getNotes(UserId))} 
+        else if(getStatus==='deleteNoteSucceeded'||getStatus==='addNoteSucceeded'||getStatus==='findNoteSucceeded'){dispatch(updateNoteList(UserId))} 
+        else if(getStatus ==='gettingNotes'){setIsLoading(!isLoading)} 
+        else if(getStatus ==='getNoteSucceeded'){setNotes(resNotes.notes), setIsLoading(false)}
+        else if(getStatus ==='updateNoteListSucceeded'){setNotes(resNotes.notes)}
         else if(getStatus === 'updatingNoteText'){}
         else if(getStatus ==='findNoteFailed'){
             showMessage({
@@ -109,6 +114,8 @@ export default function Notes({route,navigation}){
     const [titleValue, setTitleValue] = useState('');
     const [colorValue, setColorValue] = useState('250, 228, 60');
     const [noteIdValue, setNoteIdValue] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    
     return(
         <ImageBackground source={require('../../img/paperBackground.png')} style={styles.image}>
             <View style={styles.body}>
@@ -230,7 +237,8 @@ export default function Notes({route,navigation}){
                  </View> 
             </View>
             <View style={styles.section2}>
-                {(notes[0] !== undefined)?(
+            
+                {(isLoading===true)?(<Spinner style={{flex:1, alignSelf:'center', justifyContent:'center'}} isVisible={isLoading} size={80} type='Wave' color='white'/>):(notes[0] !== undefined)?(
                     <ScrollView>{notes.map(note=>{
                     return (
                         <View key={note._id}>
