@@ -1,12 +1,12 @@
 import { createStore, combineReducers, applyMiddleware, compose} from 'redux';
-import noteReducer from '../reducers/notes.reducer';
+import notesReducer from '../reducers/notes.reducer';
 import usersReducer from '../reducers/users.reducer';
 import axios from 'axios';
 import axiosMiddleware from 'redux-axios-middleware';
 import logger from 'redux-logger';
 import thunk from 'redux-thunk';
 const rootReducer = combineReducers({
-    notes: noteReducer,
+    notes: notesReducer,
     users: usersReducer,
 })
 const client = axios.create({

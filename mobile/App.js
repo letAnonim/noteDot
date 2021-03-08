@@ -23,8 +23,7 @@ import {Provider, connect} from 'react-redux';
 import {createStore, applyMiddleware} from 'redux';
 import store from './src/redux/store/store';
 import {StackNavigator, TabNavigator} from 'react-navigation';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import FlashMessage from "react-native-flash-message";
 
 export default class App extends Component {
   componentDidMount() {
@@ -49,6 +48,7 @@ export default class App extends Component {
             <Stack.Screen name="qrscanner" component={QRCodeScanner}/>
           </Stack.Navigator>
         </NavigationContainer>
+        <FlashMessage position="top"/>
       </Provider>
     );
   }

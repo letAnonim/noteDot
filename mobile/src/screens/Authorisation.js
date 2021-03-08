@@ -1,6 +1,5 @@
 import 'react-native-gesture-handler';
 import React, {Component, useState, useEffect} from 'react';
-import { NetworkInfo } from "react-native-network-info";
 import{ bindActionCreators } from 'redux'
 import {getNotes} from '../redux/actions/notes.actions'
 
@@ -18,9 +17,6 @@ import socketIOClient from 'socket.io-client';
 import { useSelector, useDispatch } from 'react-redux'
 
 export default function Authorisatio({navigation}){
-    // NetworkInfo.getIPV4Address().then(ipv4Address => {
-    //   console.log(ipv4Address);
-    // });
     const socket = socketIOClient('http://192.168.1.105:6666', {      
     transports: ['websocket'], jsonp: false });   
     const user = useSelector(state => state.users)

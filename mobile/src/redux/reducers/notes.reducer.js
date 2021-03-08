@@ -15,88 +15,109 @@ import {
     UPDATE_NOTE_TEXT_SUCCESS,
     UPDATE_NOTE_TEXT_FAIL, 
 } from '../constants';
-const initialState = {status:"inactive", error:null, notes: []};
-export default function noteReducer(state = initialState, action){
+const initialState = {status:"inactive", loading:false, error:null, notes: []};
+export default function notesReducer(state = initialState, action){
     switch (action.type) {
         case GET_NOTES_STARTED:
             return {
               ...state, 
-              status:"loading"
+              status:"gettingNotes",
+              loading:true
             };
         case GET_NOTES_SUCCESS:
             return { 
                 ...state, 
-                status:"succeeded", 
-                notes: action.payload,
-                error:null
-              };
+                status:"getNoteSucceeded", 
+                loading:false,
+                error:null,
+                notes: action.payload              };
         case GET_NOTES_FAIL:
             return { 
                 ...state, 
-                status:"failed", 
-                error: action.payload.error 
+                status:"getNoteFailed", 
+                loading:false,
+                error: action.payload.error
             };
         case ADD_NOTE_STARTED: 
             return {
-                ...state
-                
-        }
+                ...state,
+                status:'addindNote',
+                loading:true    
+            }
         case ADD_NOTE_SUCCESS: 
             return {
                 ...state,
-                notes: state.notes.concat(action.payload),
-                status:"inactive"
+                status:"addNoteSucceeded",
+                loading:false,
+                notes: state.notes.concat(action.payload)
             }
         case ADD_NOTE_FAIL:
             return { 
                 ...state, 
-                error: action.payload.error,
-                status:"failed", 
+                status:"addNoteFailed", 
+                loading:false,
+                error: action.payload.error
             };
         case DELETE_NOTE_STARTED: 
             return {
                 ...state,
+                status:'deletindNote',
+                loading:true  
             }
         case DELETE_NOTE_SUCCESS: 
             return {
                 ...state,
-                status:"inactive"
+                status:"deleteNoteSucceeded",
+                loading:false,
+                notes: state.notes.concat(action.payload)
             }
         case DELETE_NOTE_FAIL:
             return { 
                 ...state, 
-                error: action.payload.error,
-                status:"failed"
+                status:"deleteNoteFailed", 
+                loading:false,
+                error: action.payload.error
             };
         case FIND_NOTE_STARTED: 
             return {
-                ...state
+                ...state,
+                status:"findingNote",
+                loading:true
         }
         case FIND_NOTE_SUCCESS: 
             return {
                 ...state,
-                notes: state.notes.concat(action.payload),
-                status:"inactive"
+                status:"findNoteSucceeded",
+                loading:false,
+                notes: state.notes.concat(action.payload)
             }
         case FIND_NOTE_FAIL:
             return { 
                 ...state, 
-                error: action.payload.error,
-                status:"failed"
+                status:"findNoteFailed", 
+                loading:false,
+                error: action.payload.error
             };
         case UPDATE_NOTE_TEXT_STARTED: 
             return {
-                ...state
+                ...state,
+                status:"updatingNoteText",
+                loading:true
+
         }
         case UPDATE_NOTE_TEXT_SUCCESS: 
             return {
                 ...state,
-                notes: state.notes.concat(action.payload)
+                status:"updateNoteTextSucceeded",
+                loading:false,
+                // notes: state.notes.concat(action.payload)
             }
         case UPDATE_NOTE_TEXT_FAIL:
             return { 
                 ...state, 
-                error: action.payload.error 
+                status:"updateNoteTextFailed",
+                loading:false,
+                error: action.payload.error
             };
       default: {
         return state;

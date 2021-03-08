@@ -11,11 +11,10 @@ import {
 } from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 import {showMessage} from "react-native-flash-message";
-import FlashMessage from "react-native-flash-message";
-// import usersModel from '../../../backend/models/users.model';
 import {lightIconColor, MainColour, styles} from '../styles';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/Feather';
+import Icon2 from 'react-native-vector-icons/AntDesign';
 import QRCode from 'react-native-qrcode-svg';
 
 
@@ -51,8 +50,6 @@ export default function Chat({route, navigation}) {
   }
   const copyToClipboard = () => {
     Clipboard.setString(aNote._id);
-    console.log('copied')
-    // alert('copied')
     showMessage({
       floating: true,
       icon:'success',
@@ -92,15 +89,14 @@ export default function Chat({route, navigation}) {
   };
   return (
     <ImageBackground
-      source={require('../img/paperBackground.png')}
-      style={styles.image}>
+    source={require('../img/paperBackground.png')}
+    style={styles.image}>
       {/*////////////////////////////////modalUsers//////////////////////////////////////*/}
       <Modal
         animationType="fade"
         transparent={true}
         visible={modalUsersVisible}>
         <View style={styles.centeredView}>
-        <FlashMessage position="top" />
           <View style={styles.modalView}>
            { (conUsers>1)?(
             <View>
@@ -157,7 +153,7 @@ export default function Chat({route, navigation}) {
           <TouchableOpacity
             style={styles.smallButtonContainer}
             onPress={() => {navigation.navigate('note')}}>
-            <Icon name="align-justify" color={lightIconColor} size={35} style={{margin: 7}}/>
+            <Icon2 name="back" color={lightIconColor} size={35} style={{margin: 7}}/>
           </TouchableOpacity>
           <Text style={styles.nawbarTitle}>Chat</Text>
         </View>

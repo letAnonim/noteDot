@@ -9,7 +9,7 @@ import {
     Text,
     Alert, 
     ImageBackground, 
-} from 'react-native';
+}from 'react-native';
 import {RadioButton} from 'react-native-paper'
 import {styles} from '../../styles';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -19,20 +19,23 @@ import {lightIconColor} from '../../styles'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
 import {showMessage} from "react-native-flash-message";
-import FlashMessage from "react-native-flash-message";
+// import { NetworkInfo } from "react-native-network-info";
 
 export default function Notes({route,navigation}){
+    // NetworkInfo.getIPV4Address().then(ipv4Address => {
+    //     console.log(ipv4Address);
+    //   });
     const dispatch = useDispatch();
     const resNotes = useSelector(state => state.notes) 
     const getStatus = useSelector(state => state.notes.status)
+    const getLoading = useSelector(state => state.notes.loading)
     const [notes, setNotes] = useState([]);
     const { UserId } = route.params;
     useEffect(() => {
-        if(getStatus === 'inactive'){
-            dispatch(getNotes(UserId)); 
-        } 
-        else if(getStatus==='succeeded'){setNotes(resNotes.notes)}
-        else if(getStatus==='failed'){
+        if(getStatus ==='inactive'||getStatus==='deleteNoteSucceeded'||getStatus==='addNoteSucceeded'||getStatus==='findNoteSucceeded'){dispatch(getNotes(UserId))} 
+        else if(getStatus ==='getNoteSucceeded'){setNotes(resNotes.notes)}
+        else if(getStatus === 'updatingNoteText'){}
+        else if(getStatus ==='findNoteFailed'){
             showMessage({
                 floating: true,
                 icon:'warning',
@@ -40,11 +43,11 @@ export default function Notes({route,navigation}){
                 type: 'danger',
                 color:'#FFFFFF',
             });}
-
+        console.log(getStatus)
     },[getStatus, dispatch]);   
     // navigation.navigate('qrscanner')
     // }, [notes]);
-    // setNotes(resNotes.notes)
+    // setNotes(resNotes.notes);
     async function addOneNote(title, color) {   
         await dispatch(addNote({
             title: title,
@@ -70,10 +73,8 @@ export default function Notes({route,navigation}){
         let day = date.getDay();
         let month = date.getMonth();
         let year = date.getFullYear()
-        
         let returnHours = (hours<10)?(`0${hours}:`):(`${hours}:`)
         let returnMinutes = (minutes<10)?(`0${minutes}`):(minutes)
-        
         if(day == now.getDay()&&month == now.getMonth()&&year==now.getFullYear()){
             return returnHours+returnMinutes
         }
@@ -206,7 +207,6 @@ export default function Notes({route,navigation}){
             </Modal>
             {/*///////////////////////////////modalSearch//////////////////////////////////////*/}
             <View style ={styles.section1}>
-                <FlashMessage position="top" /> 
                 <View style={styles.nawbarContainer}>
                     <View style={styles.nawbarContainerLeft}>
                         <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{navigation.openDrawer()}}>
@@ -230,7 +230,8 @@ export default function Notes({route,navigation}){
                  </View> 
             </View>
             <View style={styles.section2}>
-                {(notes[0] !== undefined)?(<ScrollView>{notes.map(note=>{
+                {(notes[0] !== undefined)?(
+                    <ScrollView>{notes.map(note=>{
                     return (
                         <View key={note._id}>
                             <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note})}} style={styles.noteListContaiter}>

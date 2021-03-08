@@ -136,13 +136,13 @@ export function findNote(user_id, note_id) {
   };
 }
 
-//оновити дані про нотатку (текст)
-export function updateNote(note_id, note) {
+// оновити дані про нотатку (текст)
+export function updateNoteText(data) {
   return async (dispatch) => {
-    dispatch(updateNoteStarted());
+    dispatch(updateNoteTextStarted());
     try {
-      await client.put(`/api/notes/${note_id}`, note).then((res) => {
-        dispatch(updateNoteSuccess(res.data));
+      await client.put(`/api/notes/text`, data).then((res) => {
+        dispatch(updateNoteTextSuccess(res.data));
       });
     } catch (err) {
       if (err.response) {
@@ -154,7 +154,7 @@ export function updateNote(note_id, note) {
       } else {
         console.error('Error:', err.message);
       }
-      dispatch(updateNoteFail(err.message));
+      dispatch(updateNoteTextFail(err.message));
     }
   };
 }
@@ -223,16 +223,16 @@ const findNoteFail = (error) => ({
   },
 });
 
-const updateNoteSuccess = (status) => ({
+const updateNoteTextSuccess = (status) => ({
   type: UPDATE_NOTE_TEXT_SUCCESS,
-  payload: status,
+
 });
 
-const updateNoteStarted = () => ({
+const updateNoteTextStarted = () => ({
   type: UPDATE_NOTE_TEXT_STARTED,
 });
 
-const updateNoteFail = (error) => ({
+const updateNoteTextFail = (error) => ({
   type: UPDATE_NOTE_TEXT_FAIL,
   payload: {
     error,

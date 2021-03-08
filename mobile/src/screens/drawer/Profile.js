@@ -21,9 +21,6 @@ const client = axios.create({
     baseURL: 'http://192.168.1.105:6666/',
     responseType: 'json',
   });
-// import {getAllNotes} from '../../redux/actions/notes.actions.js'
-// import{ bindActionCreators } from 'redux'
-// import axios from 'axios';
 const ImagePicker = NativeModules.ImageCropPicker
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
