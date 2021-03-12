@@ -3,14 +3,14 @@ import {
   GET_USERS_SUCCESS,
   GET_USERS_FAIL,
   GET_USERS_STARTED,
-  UPDATE_USER_STARTED,
-  UPDATE_USER_SUCCESS,
-  UPDATE_USER_FAIL,
+  UPDATE_USER_PHOTO_SUCCESS,
+  UPDATE_USER_PHOTO_FAIL,
+  UPDATE_USER_PHOTO_STARTED,
 } from '../constants';
 import axios from 'axios';
 import {TouchableHighlight} from 'react-native';
 const client = axios.create({
-  baseURL: 'http://192.168.1.3:6666/',
+  baseURL: 'http://192.168.1.105:6666/',
   responseType: 'json',
 });
 
@@ -74,16 +74,15 @@ export function addUser(user) {
   };
 }
 
-export function updateUser(user) {
-  console.log(user);
-  console.log('console.log')
-  return async (dis5patch) => {
-    dispatch(updateUserStarted());
+export function updateUserPhoto(data) {
+  console.log(data);
+  return async (dispatch) => {
+    dispatch(updateUserPhotoStarted());
     try {
-        await client.put('/api/user/photo', user).then((res) => {
-            dispatch(updateUserSuccess(res.data));
+        await client.put("/api/user/photoupdate", data).then((res) => {
+          dispatch(updateUserPhotoSuccess(res.data));
+          console.log('response', res.data);  
         });
-        console.log('here')
     } catch (err) {
       if (err.response) {
         console.log(err.response);
@@ -94,10 +93,8 @@ export function updateUser(user) {
       } else {
         console.error('Error:', err.message);
       }
-      dispatch(updateUserFail(err.message));
-      console.log('end')
+      dispatch(updateUserPhotoFail(err.message));
     }
-    console.log('final end')
   };
 }
   
@@ -150,17 +147,17 @@ const addUserFail = (error) => ({
   },
 });
 
-const updateUserStarted = () => ({
-  type: UPDATE_USER_STARTED,
+const updateUserPhotoStarted = () => ({
+  type: UPDATE_USER_PHOTO_STARTED,
 });
 
-const updateUserSuccess = (users) => ({
-  type: UPDATE_USER_SUCCESS,
+const updateUserPhotoSuccess = (users) => ({
+  type: UPDATE_USER_PHOTO_SUCCESS,
   payload: users,
 });
 
-const updateUserFail = (error) => ({
-  type: UPDATE_USER_FAIL,
+const updateUserPhotoFail = (error) => ({
+  type: UPDATE_USER_PHOTO_FAIL,
   payload: {
     error,
   },

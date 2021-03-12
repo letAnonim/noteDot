@@ -4,7 +4,6 @@ import {
     TextInput,
     View,
     TouchableOpacity,
-    Image,
     Modal,
     Text,
     Alert, 
@@ -14,13 +13,12 @@ import {RadioButton} from 'react-native-paper'
 import {MainColour,lightIconColor, styles} from '../../styles';
 import { ScrollView } from 'react-native-gesture-handler';
 import {useDispatch, useSelector} from 'react-redux'
+import {createSelector} from 'reselect'
 import {getNotes, addNote, deleteNote, findNote, updateNoteList} from '../../redux/actions/notes.actions'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
 import {showMessage} from "react-native-flash-message";
-// const Spinner = require('react-native-spinkit');
 import Spinner from 'react-native-spinkit'
-
 // import { NetworkInfo } from "react-native-network-info";
 
 export default function Notes({route,navigation}){
@@ -30,7 +28,6 @@ export default function Notes({route,navigation}){
     const dispatch = useDispatch();
     const resNotes = useSelector(state => state.notes) 
     const getStatus = useSelector(state => state.notes.status)
-    const getLoading = useSelector(state => state.notes.loading)
     const [notes, setNotes] = useState([]);
     const { UserId } = route.params;
     useEffect(() => {
@@ -49,7 +46,7 @@ export default function Notes({route,navigation}){
                 color:'#FFFFFF',
             });}
         console.log(getStatus)
-    },[getStatus, dispatch]);   
+    },[getStatus]);   
     // navigation.navigate('qrscanner')
     // }, [notes]);
     // setNotes(resNotes.notes);
@@ -288,4 +285,3 @@ export default function Notes({route,navigation}){
     </ImageBackground>
     )
 }
-

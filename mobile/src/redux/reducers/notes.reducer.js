@@ -32,7 +32,6 @@ export default function notesReducer(state = initialState, action){
                 ...state, 
                 status:"getNoteSucceeded", 
                 loading:false,
-                error:null,
                 notes: action.payload
             };
         case GET_NOTES_FAIL:
@@ -53,7 +52,6 @@ export default function notesReducer(state = initialState, action){
                 ...state, 
                 status:"updateNoteListSucceeded", 
                 loading:false,
-                error:null,
                 notes: action.payload
             };
         case UPDATE_NOTE_LIST_FAIL:

@@ -7,39 +7,37 @@ import {
     ImageBackground,
     Alert,
     NativeModules,
-    TextInut,
-    Modal,
     Dimensions
 } from 'react-native';
 // import { connect, useSelector, useDispatch } from 'react-redux';
 import {styles} from '../../styles'
-import {getUser, addUser, updateUser} from '../../redux/actions/users.actions.js'
+import {getUsers, updateUserPhoto} from '../../redux/actions/users.actions.js'
 import axios from 'axios';
+import {useDispatch, useSelector} from 'react-redux';
 import {lightIconColor} from '../../styles'
 import Icon from 'react-native-vector-icons/FontAwesome';
-const client = axios.create({
-    baseURL: 'http://192.168.1.105:6666/',
-    responseType: 'json',
-  });
+// const client = axios.create({
+//     baseURL: 'http://192.168.1.105:6666/',
+//     responseType: 'json',
+//   });
 const ImagePicker = NativeModules.ImageCropPicker
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchImageLibrary} from 'react-native-image-picker';
 
-// NetworkInfo.getIPV4Address().then(ipv4Address => {
-//   console.log(ipv4Address);
-// });
 export default function Profile({navigation, route}) {
+    const dispatch = useDispatch();
     const [user, setUser] = useState({});
     const [imageSource, setImageSource] = useState('')
     const [imageUri, setImageUri] = useState('')
-    const [newName, setNewName] = useState('')
-    
-
+    // const [newName, setNewName] = useState('')
+    const resUsers = useSelector(state => state.users) 
+    const getStatus = useSelector(state => state.users.status)
     const isPortrait = () => {
         const dim = Dimensions.get('window');
         return dim.height <= dim.width;
     };
+
     const [orientation, setOrientation] = useState(isPortrait())
     Dimensions.addEventListener('change', () => {setOrientation(isPortrait())});
 
@@ -77,47 +75,65 @@ export default function Profile({navigation, route}) {
         }
     };
 
-    const changeImage = () => {     
-        // updateUser({user:{id:user._id, oldName: user.name}, name: newName})
-        launchImageLibrary({}, response => {
-                console.log('request = ', response);
-                if (response.didCancel) {
-                        console.log('User cancelled image picker');
-                } else if (response.error) {
-                    console.log('ImagePicker Error: ', response.error);
-                } else if (response.customButton) {
-                    console.log('User tapped custom button: ', response.customButton);
-                    Alert.alert(response.customButton);
-                } else {
-            // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-                // const data = new FormData();
-                // data.append(image, {
-                    // uri:  Platform.OS === "android" ? response.uri : response.uri.replace("file://", ""), 
-                    // name: `dummy${Date.now()}.jpg`,
-                    // type: response.type
-                    // })
-                const img = {
-                    uri: response.uri,
-                    type: response.type,
-                    name: response.fileName||response.uri.substr(response.uri.lastIndexOf('/') + 1)
-                }
-                // setImageSource(img);
-                client.post('/api/user/photoupdate', {id:user.userId, photo: img}).then((res) => {
-                    console.log('response', res);
-                    setImageUri(res.data.img.data);
-                    console.log(res.data.img.data);
-                })
-            }
-          });
+    const returnDate = timestamp =>{
+        let date = new Date(timestamp)
+        let now = new Date()
+        let minutes = date.getMinutes();
+        let hours = date.getHours();
+        let day = date.getDay();
+        let month = date.getMonth();
+        let year = date.getFullYear()
+        let returnHours = (hours<10)?(`0${hours}:`):(`${hours}:`)
+        let returnMinutes = (minutes<10)?(`0${minutes}`):(minutes)
+        if(day == now.getDay()&&month == now.getMonth()&&year==now.getFullYear()){
+            return returnHours+returnMinutes
+        }
+        else{
+            let returnDay = (day<10)?(`0${day}/`):(`${day}/${year}`)
+            let returnMonth = (month<10)?(`0${month}/${year}`):(`${month}/${year}`);
+            return returnDay+returnMonth+' at '+returnHours+returnMinutes
+        } 
     }
 
+    const changeImage = () => {     
+        launchImageLibrary({}, response => {
+            // console.log('request = ', response);
+            if (response.didCancel) {
+                    console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+                Alert.alert(response.customButton);
+            } else {
+            const img = {
+                uri: response.uri,
+                type: response.type,
+                name: response.fileName||response.uri.substr(response.uri.lastIndexOf('/') + 1)
+            }
+            dispatch(updateUserPhoto({type:'photo',data:{id:user.userId, photo: img}})).then(()=>{
+                console.log('prev', imageUri);
+                console.log('new', img.uri);
+                setImageUri(img.uri);
+                console.log('------------------------------------------------------')
+            })     
+            // client.post('/api/user/photoupdate', ).then((res) => {
+            //     console.log('response', res);
+            //     setImageUri(res.data.img.data);
+            //     console.log(res.data.img.data);
+            // })
+            }
+        });
+    }
     useEffect(() => {
         readData()
         .then(data =>{
             setUser(data);
+            setImageUri(data.photo.img.data)
             console.log(data);
         })
-    }, [])
+        console.log(getStatus)
+    }, [getStatus])
       
     return(
         <ImageBackground source={require('../../img/paperBackground.png')} style={styles.image}>
@@ -153,9 +169,9 @@ export default function Profile({navigation, route}) {
                                 placeholder='Write new name'
                                 value={newName}
                                 onChangeText={setNewName}></TextInput> */}
-                        {/* <Text style={styles.mainGreyText}>{imageSource.uri}</Text> */}
-                        <Text style={{color: 'grey',fontSize: 30,fontWeight:'900',}}>{user.userName}</Text>
-                        {/* <Text style={styles.mainGreyText}>{user.userAge}  </Text> */}
+                        <Text style={{color:'grey', fontSize:30 ,fontWeight:'900'}}>{user.userName}</Text>
+                        <Text style={styles.mainGreyText}>Age: {user.userAge}  </Text>
+                        <Text style={{color:'grey', fontSize:20 ,fontWeight:'400'}}>Created:{returnDate(user.userRegDate) }  </Text>
                     </View>
                     <View style={{flex:1, justifyContent:'flex-end'}}>
                         <View style={(!orientation)?styles.buttonsContainer:styles.buttonsLandscapeContainer}>

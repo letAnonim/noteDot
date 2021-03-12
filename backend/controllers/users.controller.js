@@ -4,14 +4,6 @@ const multer = require('multer');
 // const buffer = require('buffer/').Buffer; ?????????
 // const { response } = require("express");
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads')
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now())
-    }
-});
  
 // const upload = multer({ storage: storage });
 
@@ -79,37 +71,66 @@ exports.findOne = (req, res) => {
 
 // Update a user photo by the userId in the request
 exports.photoUpdate = (req, res) => {
-	const photo = {
-		name: req.body.photo.name,
-		desc: (req.body.desc)?req.body.desc:undefined,
-		img: {
-			data: req.body.photo.uri,
-			contentType: req.body.photo.type
-		}
-	}
-	// console.log(photo);
-	Users.findByIdAndUpdate({_id: req.body.id},{photo: photo} ).then((user) => {
-		// console.log(user.photo.name, user.photo.desc, user.photo.img.data)
-		let resPhoto = {
-			name: user.photo.name,
-			desc: user.photo.desc,
+	// const photo = {
+	// 	name: req.body.photo.name,
+	// 	desc: (req.body.desc)?req.body.desc:undefined,
+	// 	img: {
+	// 		data: req.body.photo.uri,
+	// 		contentType: req.body.photo.type
+	// 	}
+	// }
+	// Users.findByIdAndUpdate({_id: req.body.id},{photo: photo} ).then((user) => {
+	// 	let resPhoto = {
+	// 		name: user.photo.name,
+	// 		desc: user.photo.desc,
+	// 		img: {
+	// 			data: Buffer.from(JSON.parse(JSON.stringify(user.photo.img.data)).data).toString('utf8'),
+	// 			contentType: user.photo.img.contentType
+	// 		}
+	// 	}
+	// 	console.log(photo)
+	// 	console.log(resPhoto)
+	// 	res.send(photo);
+	// })
+	// .catch((err) => {
+	// 	res.status(500).send({
+	// 		message:
+	// 			err.message ||
+	// 			"Some error occurred while retrieving users.",
+	// 	});
+	// });
+};
+
+exports.update = async(req, res) => {
+	if(req.body.type=='photo'){
+		const photo = {
+			name: req.body.data.photo.name,
+			desc: (req.body.data.desc)?req.body.desc:undefined,
 			img: {
-				data: Buffer.from(JSON.parse(JSON.stringify(user.photo.img.data)).data).toString('utf8'),
-				contentType: user.photo.img.contentType
+				data: req.body.data.photo.uri,
+				contentType: req.body.data.photo.type
 			}
 		}
-		// user.photo.img.data = Buffer.from(JSON.parse(JSON.stringify(user.photo.img.data)).data).toString('utf8');
-		console.log(resPhoto)
-		res.send(resPhoto);
-	})
-	.catch((err) => {
-		res.status(500).send({
-			message:
-				err.message ||
-				"Some error occurred while retrieving users.",
+		Users.findByIdAndUpdate({_id: req.body.data.id},{photo: photo} ).then(() => {
+			// let resPhoto = {
+			// 	name: user.photo.name,
+			// 	desc: user.photo.desc,
+			// 	img: {
+			// 		data: Buffer.from(JSON.parse(JSON.stringify(user.photo.img.data)).data).toString('utf8'),
+			// 		contentType: user.photo.img.contentType
+			// 	}
+			// }
+			res.send(photo);
+		})
+		.catch((err) => {
+			res.status(500).send({
+				message:
+					err.message ||
+					"Some error occurred while retrieving users.",
+			});
 		});
-	});
-};
+	}
+  };
 
 // delete note by note id
 exports.delete = (req, res) => {

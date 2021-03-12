@@ -59,10 +59,10 @@ export default function Authorisatio({navigation}){
             socket.emit('checkLog', loginValue, passwordValue )
             socket.on('answerLog', (data, user)=>{
                 if(data== true){
-                    saveData({isLogged: true, userData:{userId: user._id, userName: user.name, userAge: user.age, userRegDate: user.createdAt, photo:user.photo}})
+                    saveData({isLogged: true, userData:user})
                     navigation.navigate('home',{
                         screen: 'notes',
-                        params: { UserId:user._id}
+                        params: {UserId:user.UserId}
                     })
                     setPasswordValue('');
                     setLoginValue('');

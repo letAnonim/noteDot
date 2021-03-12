@@ -144,7 +144,7 @@ export function updateNoteText(data) {
   return async (dispatch) => {
     dispatch(updateNoteTextStarted());
     try {
-      await client.put(`/api/notes/text`, data).then((res) => {
+      await client.put('/api/notes/text', data).then((res) => {
         dispatch(updateNoteTextSuccess(res.data));
       });
     } catch (err) {
@@ -225,7 +225,7 @@ const findNoteFail = (error) => ({
   },
 });
 
-const updateNoteTextSuccess = (status) => ({
+const updateNoteTextSuccess = () => ({
   type: UPDATE_NOTE_TEXT_SUCCESS,
 
 });

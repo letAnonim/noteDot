@@ -15,7 +15,7 @@ module.exports = (app) => {
 	// app.post("/api/user/update", users.update);
 
 	// Update a client photo with clientId
-	app.post("/api/user/photoupdate", users.photoUpdate);
+	app.put("/api/user/photoupdate", users.update);
 
 	// Delete a client with clientId
 	app.delete("/api/users/:userId", users.delete);
