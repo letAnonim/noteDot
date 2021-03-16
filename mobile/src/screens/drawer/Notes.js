@@ -19,25 +19,38 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
 import {showMessage} from "react-native-flash-message";
 import Spinner from 'react-native-spinkit'
+import {connect} from 'react-redux'
 // import { NetworkInfo } from "react-native-network-info";
 
-export default function Notes({route,navigation}){
-    // NetworkInfo.getIPV4Address().then(ipv4Address => {
-    //     console.log(ipv4Address);
-    //   });
+const Notes = (props) => {
     const dispatch = useDispatch();
-    const resNotes = useSelector(state => state.notes) 
-    const getStatus = useSelector(state => state.notes.status)
-    const [notes, setNotes] = useState([]);
-    const { UserId } = route.params;
+    // console.log(props);
+    const resNotes = useSelector(state => state.notes);
+    const getNotesStatus = state => state.notes.status;
+    const resUserNotes = createSelector(
+        state => state, 
+        items=>{
+            return(items)
+        }
+    ) 
+    // const noteStatus = createSelector(
+    //     [getNotesStatus], item=>{
+    //         return(item),
+    //         console.log(item)
+    //     }
+    // ) 
+    const [notes, setNotes] = useState(props.notes.notes);
+    // console.log(notes)
+    const { UserId } = props.route.params;
     useEffect(() => {
-        if(getStatus ==='inactive'){dispatch(getNotes(UserId))} 
-        else if(getStatus==='deleteNoteSucceeded'||getStatus==='addNoteSucceeded'||getStatus==='findNoteSucceeded'){dispatch(updateNoteList(UserId))} 
-        else if(getStatus ==='gettingNotes'){setIsLoading(!isLoading)} 
-        else if(getStatus ==='getNoteSucceeded'){setNotes(resNotes.notes), setIsLoading(false)}
-        else if(getStatus ==='updateNoteListSucceeded'){setNotes(resNotes.notes)}
-        else if(getStatus === 'updatingNoteText'){}
-        else if(getStatus ==='findNoteFailed'){
+        // resUserNotes();
+        if(props.status ==='inactive'){dispatch(getNotes(UserId))} 
+        else if(props.status==='deleteNoteSucceeded'||props.status==='addNoteSucceeded'||props.status==='findNoteSucceeded'){dispatch(updateNoteList(UserId))} 
+        else if(props.status ==='gettingNotes'){setIsLoading(!isLoading)} 
+        else if(props.status ==='getNoteSucceeded'){setNotes(props.notes.notes), setIsLoading(false)}
+        else if(props.status ==='updateNoteListSucceeded'){setNotes(resUserNotes.notes)}
+        else if(props.status === 'updatingNoteText'){}
+        else if(props.status ==='findNoteFailed'){
             showMessage({
                 floating: true,
                 icon:'warning',
@@ -45,8 +58,9 @@ export default function Notes({route,navigation}){
                 type: 'danger',
                 color:'#FFFFFF',
             });}
-        console.log(getStatus)
-    },[getStatus]);   
+            // noteStatus();
+        // console.log(noteStatus)
+    },[props.notes.status]);   
     // navigation.navigate('qrscanner')
     // }, [notes]);
     // setNotes(resNotes.notes);
@@ -176,7 +190,7 @@ export default function Notes({route,navigation}){
                     </View>
                 </View>
             </Modal>
-            {/*///////////////////////////////modalCreate//////////////////////////////////////*/}
+            {/*////////////////////////////////modalCreate//////////////////////////////////////*/}
             {/*////////////////////////////////modalSearch//////////////////////////////////////*/}
             <Modal
                 animationType='fade'
@@ -209,17 +223,17 @@ export default function Notes({route,navigation}){
                     </View>
                 </View>
             </Modal>
-            {/*///////////////////////////////modalSearch//////////////////////////////////////*/}
+            {/*////////////////////////////////modalSearch//////////////////////////////////////*/}
             <View style ={styles.section1}>
                 <View style={styles.nawbarContainer}>
                     <View style={styles.nawbarContainerLeft}>
-                        <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{navigation.openDrawer()}}>
+                        <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{props.navigation.openDrawer()}}>
                             <Icon name="align-justify" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
                         <Text style={styles.nawbarTitle}>Notes.dot</Text>
                     </View>
                     <View style={styles.nawbarContainerRight}>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{navigation.navigate('qrscanner', {userId: UserId})}}>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{props.navigation.navigate('qrscanner', {userId: UserId})}}>
                             <Icon1 name="qrcode-scan" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalSearchVisible(!modalSearchVisible)}>
@@ -235,11 +249,11 @@ export default function Notes({route,navigation}){
             </View>
             <View style={styles.section2}>
             
-                {(isLoading===true)?(<Spinner style={{flex:1, alignSelf:'center', justifyContent:'center'}} isVisible={isLoading} size={80} type='Wave' color='white'/>):(notes[0] !== undefined)?(
+                {(isLoading===true)?(<Spinner style={{flex:1, alignSelf:'center', justifyContent:'center'}} isVisible={isLoading} size={80} type='Wave' color='white'/>):(notes[0] !== undefined||notes !== undefined)?(
                     <ScrollView>{notes.map(note=>{
                     return (
                         <View key={note._id}>
-                            <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note})}} style={styles.noteListContaiter}>
+                            <TouchableOpacity  onPress={()=>{props.navigation.navigate('note', {aNote: note})}} style={styles.noteListContaiter}>
                                 <View style={{flex:1,backgroundColor:`rgba(${note.color}, 0.5)`, 
                                     borderLeftWidth:12, 
                                     borderLeftColor:`rgba(${note.color}, 1)`
@@ -285,3 +299,10 @@ export default function Notes({route,navigation}){
     </ImageBackground>
     )
 }
+
+const mapStateToProps = (state)=>({notes:state.notes, status:state.notes.status})
+
+const mapDispatchToProps = (dispatch) => ({getNotes:(data)=>dispatch(getNotes('602e923c548d904a68f5b010'))})
+
+const connectComponent = connect(mapStateToProps, mapDispatchToProps);
+export default connectComponent(Notes)

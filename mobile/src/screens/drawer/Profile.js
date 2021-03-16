@@ -7,15 +7,16 @@ import {
     ImageBackground,
     Alert,
     NativeModules,
-    Dimensions
+    Dimensions 
 } from 'react-native';
-// import { connect, useSelector, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import {styles} from '../../styles'
-import {getUsers, updateUserPhoto} from '../../redux/actions/users.actions.js'
+import { updateUserPhoto} from '../../redux/actions/users.actions.js'
 import axios from 'axios';
 import {useDispatch, useSelector} from 'react-redux';
 import {lightIconColor} from '../../styles'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {createSelector} from 'reselect'
 // const client = axios.create({
 //     baseURL: 'http://192.168.1.105:6666/',
 //     responseType: 'json',
@@ -25,14 +26,21 @@ const ImagePicker = NativeModules.ImageCropPicker
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchImageLibrary} from 'react-native-image-picker';
 
-export default function Profile({navigation, route}) {
+const Profile = (props) => {
+    console.log(props)
     const dispatch = useDispatch();
     const [user, setUser] = useState({});
     const [imageSource, setImageSource] = useState('')
     const [imageUri, setImageUri] = useState('')
     // const [newName, setNewName] = useState('')
-    const resUsers = useSelector(state => state.users) 
-    const getStatus = useSelector(state => state.users.status)
+    const getUserStatus = state => state.users.status
+    const userStatus = createSelector(
+        [getUserStatus],
+        item => {
+            return item,
+            console.log(item)
+        }
+        )
     const isPortrait = () => {
         const dim = Dimensions.get('window');
         return dim.height <= dim.width;
@@ -49,7 +57,7 @@ export default function Profile({navigation, route}) {
                 {text: "Cancel", style: "cancel"},
                 { text: "OK", onPress: () =>{
                     saveData({isLogged: false, userData: null});
-                    navigation.navigate('authorisation')
+                    props.navigation.navigate('authorisation')
                 }}
             ]
         )
@@ -129,11 +137,10 @@ export default function Profile({navigation, route}) {
         readData()
         .then(data =>{
             setUser(data);
-            setImageUri(data.photo.img.data)
-            console.log(data);
+            setImageUri(data.photo.img.data);
+            userStatus
         })
-        console.log(getStatus)
-    }, [getStatus])
+    }, [])
       
     return(
         <ImageBackground source={require('../../img/paperBackground.png')} style={styles.image}>
@@ -142,7 +149,7 @@ export default function Profile({navigation, route}) {
                 height:50,
                 flexDirection:'row'}}>
                 <View style={styles.nawbarContainerLeft}>
-                    <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{navigation.openDrawer()}}>
+                    <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{props.navigation.openDrawer()}}>
                         <Icon name="align-justify" color={lightIconColor} size={35} style={{margin: 7}}/>
                     </TouchableOpacity>
                     <Text style={styles.nawbarTitle}>Profile</Text>   
@@ -187,15 +194,10 @@ export default function Profile({navigation, route}) {
         
     )      
 }
+const mapStateToProps = (state)=>({user:state.users, status:state.users.status})
 
-// function mapStateToProps(state){
-//     return {
-//       users: state.users,
-//       notes: state.notes
-//     }
-//   }
-//   function mapDispatchToProps(dispatch){
-//     return bindActionCreators({getUsers, getNotes}, dispatch)
-//   }
-  
-//   export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+const mapDispatchToProps = (dispatch) => ({updateUserPhoto:(data)=>dispatch(updateUserPhoto(data))})
+
+const connectComponent = connect(mapStateToProps, mapDispatchToProps);
+export default connectComponent(Profile)
+
