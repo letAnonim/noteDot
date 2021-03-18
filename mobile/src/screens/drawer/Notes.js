@@ -12,14 +12,13 @@ import {
 import {RadioButton} from 'react-native-paper'
 import {MainColour,lightIconColor, styles} from '../../styles';
 import { ScrollView } from 'react-native-gesture-handler';
-import {useDispatch, useSelector} from 'react-redux'
+import {useDispatch, useSelector, connect} from 'react-redux'
 import {createSelector} from 'reselect'
 import {getNotes, addNote, deleteNote, findNote, updateNoteList} from '../../redux/actions/notes.actions'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
 import {showMessage} from "react-native-flash-message";
 import Spinner from 'react-native-spinkit'
-import {connect} from 'react-redux'
 // import { NetworkInfo } from "react-native-network-info";
 
 const Notes = (props) => {

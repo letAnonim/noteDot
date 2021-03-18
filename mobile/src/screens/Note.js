@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, {Component, useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 // import { NavigationContainer } from '@react-navigation/native';
 // import { createStackNavigator } from '@react-navigation/stack';
 import {
@@ -13,8 +13,8 @@ import {
 import {styles} from '../styles'
 import '../img/paperBackground.png'
 import axios from 'axios';
-import {useDispatch, useSelector} from 'react-redux';
-import {updateNoteText} from '../redux/actions/notes.actions';
+import {useDispatch, useSelector, connect} from 'react-redux';
+import {updateNoteText} from '../redux/actions/note.actions';
 import {lightIconColor} from '../styles'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -26,16 +26,14 @@ const client = axios.create({
   });
 
 
-export default function Note({route, navigation}){
+const Note = (props) => {
     const dispatch = useDispatch();
     // const resNotes = useSelector(state => state.notes); 
-    const { aNote } = route.params;
+    const { aNote } = props.route.params;
     const [note, setNote] = useState(aNote)
     const [text, setText] = useState(`${note.text}`)
     const [user, setUser] = useState({})
-    const resNotes = useSelector(state => state.notes) 
-    const getStatus = useSelector(state => state.notes.status)
-    const getLoading = useSelector(state => state.notes.loading)
+
     const readData = async () => {
         try {
             const jsonValue =  await AsyncStorage.getItem('isLoggedIn');
@@ -72,7 +70,7 @@ export default function Note({route, navigation}){
     }
     useEffect(() => {
         readData();
-        if(getStatus ==='updateNoteTextSucceeded'){
+        if(props.status ==='updateNoteTextSucceeded'){
             showMessage({
                 floating: true,
                 icon:'success',
@@ -80,7 +78,7 @@ export default function Note({route, navigation}){
                 type: 'success',
                 color:'#FFFFFF',
             })}
-        else if(getStatus ==='updateNoteTextFailed'){
+        else if(props.status ==='updateNoteTextFailed'){
             showMessage({
                 floating: true,
                 icon:'warning',
@@ -88,7 +86,7 @@ export default function Note({route, navigation}){
                 type: 'danger',
                 color:'#FFFFFF',
             });}
-        console.log(getStatus)
+
     }, []);
     return(
         <View style={styles.mainNoteContainer}>
@@ -97,7 +95,7 @@ export default function Note({route, navigation}){
                     height:50,
                     flexDirection:'row'}}>
                     <View style={styles.nawbarContainerLeft}>
-                        <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{navigation.navigate('notes')}}>
+                        <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{props.navigation.navigate('notes')}}>
                             <Icon name="list" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
                         <Text style={styles.nawbarTitle} numberOfLines={1}>{note.title}</Text>   
@@ -106,7 +104,7 @@ export default function Note({route, navigation}){
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={pressHendler}>
                             <Icon name="save" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{navigation.navigate('chat', {aNote:note})}}>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{props.navigation.navigate('chat', {aNote:note})}}>
                             <Icon1 name="message-circle" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
                     </View>
@@ -128,3 +126,10 @@ export default function Note({route, navigation}){
         </View>
     )      
 }
+
+const mapStateToProps = (state)=>({note:state.note, status:state.note.status, loading:state.notes.loading})
+
+const mapDispatchToProps = (dispatch) => ({getNotes:(data)=>dispatch(getNotes(data))})
+
+const connectComponent = connect(mapStateToProps, mapDispatchToProps);
+export default connectComponent(Note)

@@ -3,9 +3,6 @@ import {
   GET_USERS_SUCCESS,
   GET_USERS_FAIL,
   GET_USERS_STARTED,
-  UPDATE_USER_PHOTO_SUCCESS,
-  UPDATE_USER_PHOTO_FAIL,
-  UPDATE_USER_PHOTO_STARTED,
 } from '../constants';
 import axios from 'axios';
 import {TouchableHighlight} from 'react-native';
@@ -74,30 +71,6 @@ export function addUser(user) {
   };
 }
 
-export function updateUserPhoto(data) {
-  console.log(data);
-  return async (dispatch) => {
-    dispatch(updateUserPhotoStarted());
-    try {
-        await client.put("/api/user/photoupdate", data).then((res) => {
-          dispatch(updateUserPhotoSuccess(res.data));
-          console.log('response', res.data);  
-        });
-    } catch (err) {
-      if (err.response) {
-        console.log(err.response);
-        console.log(err.response.status);
-        console.log(err.response.headers);
-      } else if (err.request) {
-        console.log(err.request);
-      } else {
-        console.error('Error:', err.message);
-      }
-      dispatch(updateUserPhotoFail(err.message));
-    }
-  };
-}
-  
       // await axios.post({
       //   uri: `http://192.168.1.104:6666/api/user`,
       //   // responseType: 'json',
@@ -108,10 +81,6 @@ export function updateUserPhoto(data) {
       //     'Content-Type': 'multipart/form-data'
       //   }
       // }, user)
-      
-
-
-
 
 const getUsersSuccess = (users) => ({
   type: GET_USERS_SUCCESS,
@@ -142,22 +111,6 @@ const addUserSuccess = (users) => ({
 
 const addUserFail = (error) => ({
   type: ADD_USER_FAIL,
-  payload: {
-    error,
-  },
-});
-
-const updateUserPhotoStarted = () => ({
-  type: UPDATE_USER_PHOTO_STARTED,
-});
-
-const updateUserPhotoSuccess = (users) => ({
-  type: UPDATE_USER_PHOTO_SUCCESS,
-  payload: users,
-});
-
-const updateUserPhotoFail = (error) => ({
-  type: UPDATE_USER_PHOTO_FAIL,
   payload: {
     error,
   },

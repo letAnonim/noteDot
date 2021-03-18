@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import {styles} from '../../styles'
-import { updateUserPhoto} from '../../redux/actions/users.actions.js'
+import { updateUserPhoto } from '../../redux/actions/user.actions.js'
 import axios from 'axios';
 import {useDispatch, useSelector} from 'react-redux';
 import {lightIconColor} from '../../styles'
@@ -194,7 +194,7 @@ const Profile = (props) => {
         
     )      
 }
-const mapStateToProps = (state)=>({user:state.users, status:state.users.status})
+const mapStateToProps = (state)=>({user:state.user, status:state.user.status})
 
 const mapDispatchToProps = (dispatch) => ({updateUserPhoto:(data)=>dispatch(updateUserPhoto(data))})
 

@@ -11,9 +11,6 @@ import {
     FIND_NOTE_STARTED,
     FIND_NOTE_SUCCESS,
     FIND_NOTE_FAIL,
-    UPDATE_NOTE_TEXT_STARTED,
-    UPDATE_NOTE_TEXT_SUCCESS,
-    UPDATE_NOTE_TEXT_FAIL, 
     UPDATE_NOTE_LIST_STARTED,
     UPDATE_NOTE_LIST_SUCCESS,
     UPDATE_NOTE_LIST_FAIL,
@@ -23,7 +20,7 @@ export default function notesReducer(state = initialState, action){
     switch (action.type) {
         case GET_NOTES_STARTED:
             return {
-              ...state, 
+              ...state,
               status:"gettingNotes",
               loading:true
             };
@@ -118,27 +115,6 @@ export default function notesReducer(state = initialState, action){
             return { 
                 ...state, 
                 status:"findNoteFailed", 
-                loading:false,
-                error: action.payload.error
-            };
-        case UPDATE_NOTE_TEXT_STARTED: 
-            return {
-                ...state,
-                status:"updatingNoteText",
-                loading:true
-
-        }
-        case UPDATE_NOTE_TEXT_SUCCESS: 
-            return {
-                ...state,
-                status:"updateNoteTextSucceeded",
-                loading:false,
-                // notes: state.notes.concat(action.payload)
-            }
-        case UPDATE_NOTE_TEXT_FAIL:
-            return { 
-                ...state, 
-                status:"updateNoteTextFailed",
                 loading:false,
                 error: action.payload.error
             };

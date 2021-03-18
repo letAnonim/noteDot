@@ -123,15 +123,13 @@ exports.update = async(req, res) => {
       }
       Notes.findById(req.body.noteId)
       .then((note) => {
-        // console.log(notes)
         if (!note) {
           return res.status(404).send({
             message: "Note not found with id " + req.body.userId,
           });
-        }
+        }else
         res.send(note);
       })
-      console.log(note)
     }).catch((err) => {
       if (err.kind === "ObjectId") {
         return res.status(404).send({
