@@ -21,6 +21,8 @@ import SplashScreen from 'react-native-splash-screen';
 import {Provider, connect} from 'react-redux';
 import store from './src/redux/store/store';
 import FlashMessage from "react-native-flash-message";
+import MainTab from './src/screens/MainTab';
+import Calendar from './src/screens/Calendar';
 
 export default class App extends Component {
   componentDidMount() {
@@ -41,6 +43,8 @@ export default class App extends Component {
             <Stack.Screen name="chat" component={Chat} />
             <Stack.Screen name="note" component={Note} />
             <Stack.Screen name="qrscanner" component={QRCodeScanner}/>
+            <Stack.Screen name="main" component={MainTab}/>
+            <Stack.Screen name="test" component={Calendar}/>
           </Stack.Navigator>
         </NavigationContainer>
         <FlashMessage position="top"/>

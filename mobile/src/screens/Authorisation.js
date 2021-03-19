@@ -40,8 +40,11 @@ export default function Authorisatio({navigation}) {
       if (jsonValue != null) {
         if (JSON.parse(jsonValue).isLogged == true)
           navigation.navigate('home', {
-            screen: 'notes',
-            params: {UserId: JSON.parse(jsonValue).userData.userId},
+            screen: 'main',
+            params: {
+              screen: 'notes',
+              params: {UserId: JSON.parse(jsonValue).userData.userId},
+            },
           });
       }
     } catch (e) {
