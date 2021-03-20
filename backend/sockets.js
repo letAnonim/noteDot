@@ -16,7 +16,21 @@ module.exports = io =>{
               if(!err){
                 if(user != null){
                   bcrypt.compare(password, user.password).then(function(result) {
-                    (result ==false )?(socket.emit('answerLog', false)):(socket.emit('answerLog', true, user))
+                    (result ==false )?(socket.emit('answerLog', false, undefined)):(
+                      socket.emit('answerLog', true, {
+                        userId:user._id,
+                        userName:user.name,
+                        userAge:user.age,
+                        userRegDate:user.createdAt,
+                        photo:{
+                          name: user.photo.name,
+                          desc: user.photo.desc,
+                          img: {
+                            data: Buffer.from(JSON.parse(JSON.stringify(user.photo.img.data)).data).toString('utf8'),
+                            contentType: user.photo.img.contentType
+                          }
+                        }
+                      }))
                   });
                   
                 }
@@ -60,60 +74,6 @@ module.exports = io =>{
           console.error(err)
         }
       })
-      socket.on('getNotes',noteId=>{
-        try{Notes
-          .find({connectedUsers:noteId})
-          .exec((err, notes)=>{
-            if(!err){
-                socket.emit('notes', notes)
-            }
-        })
-        }catch(err){
-          console.error(err)
-        }
-      })
-      socket.on('addNote', data=>{
-        try{
-          Notes
-            .create(data)
-        }catch(err){
-          console.error(err)
-        }
-      })
-      socket.on('deleteNote', noteId=>{
-        try{
-          Notes.findByIdAndDelete(noteId, (err)=>{if(!err){
-            socket.emit('deleteResponse', `A note with id: ${noteId} was deleted`)
-          }})
-          // .findOne({_id: noteId})
-          //   .exec((err, note)=>{
-          //     if(!err){
-          //       socket.emit('note', note)
-          //     }
-          //   })
-            
-        }catch(err){
-          console.error(err)
-        }
-        
-      }) 
-      socket.on('findNote', async(userId, noteId)=>{
-        let arr = []
-        try{
-          await Notes
-          .findById(noteId, (err, note)=>{
-            if(!err){
-              if(note == null){socket.emit('ToNote', false)}
-              else{arr = [ ...note.connectedUsers, userId ];
-                // console.log(arr)
-                socket.emit('ToNote', arr)}
-              }})
-
-          await Notes.findByIdAndUpdate(noteId, {connectedUsers:arr})
-        }catch(err){
-          // console.error(err)
-        }
-      })
       socket.on('addMessage', data=>{
         try{
           Messages
@@ -135,38 +95,5 @@ module.exports = io =>{
         }
       })
 
-      socket.on('saveNoteText', (recivedText, noteId)=>{
-        try {
-          Notes
-            .findByIdAndUpdate(noteId, {text:recivedText})
-            .exec((err, note)=>{
-              if(!err){
-                // console.log(noteId, note)  
-            }
-          })
-        } catch (error) {
-          console.error(error)
-        }
-      })
-
-      socket.on('getNote', noteId=>{
-        try {
-          Notes
-            .findById(noteId)
-        } catch (error) {
-          console.error(error)
-        }
-      })
-      socket.on('getConnectedUsers', conUsers=>{
-        try {
-          // console.log(conUsers)
-          Users.find().where('_id').in(conUsers).exec((err, data) => {if(!err){
-            socket.emit('conUsers', data)
-          }});
-            
-        } catch (error) {
-          console.error(error)
-        }
-      })
     })
   }

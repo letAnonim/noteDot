@@ -11,19 +11,49 @@ import {
   FIND_NOTE_SUCCESS,
   FIND_NOTE_STARTED,
   FIND_NOTE_FAIL,
+  UPDATE_NOTE_TEXT_STARTED,
+  UPDATE_NOTE_TEXT_SUCCESS,
+  UPDATE_NOTE_TEXT_FAIL,
+  UPDATE_NOTE_LIST_STARTED,
+  UPDATE_NOTE_LIST_SUCCESS,
+  UPDATE_NOTE_LIST_FAIL,
 } from '../constants';
 import axios from 'axios';
 import {TouchableHighlight} from 'react-native';
 const client = axios.create({
-  baseURL: 'http://192.168.1.101:6666/',
+  baseURL: 'http://192.168.1.105:6666/',
   responseType: 'json',
 });
-export function getAllNotes() {
+
+//update user notes list
+export function updateNoteList(user) {
+  return async (dispatch) => {
+    dispatch(updateNoteListStarted());
+    try {
+      await client.get(`/api/notes/${user}`).then((res) => {
+        dispatch(updateNoteListSuccess(res.data));
+      });
+    } catch (err) {
+      if (err.response) {
+        console.log(err.response.data);
+        console.log(err.response.status);
+        console.log(err.response.headers);
+      } else if (err.request) {
+        console.log(err.request);
+      } else {
+        console.error('Error:', err.message);
+      }
+      dispatch(updateNoteListFail(err.message));
+    }
+  };
+}
+
+//отримуємо нотатки певного юзера
+export function getNotes(user) {
   return async (dispatch) => {
     dispatch(getNotesStarted());
     try {
-      await client.get('/api/notes').then((res) => {
-        //   console.log(res)
+      await client.get(`/api/notes/${user}`).then((res) => {
         dispatch(getNotesSuccess(res.data));
       });
     } catch (err) {
@@ -41,30 +71,8 @@ export function getAllNotes() {
   };
 }
 
-export function getNotes(user) {
-  return async (dispatch) => {
-    dispatch(getNotesStarted());
-    try {
-      await client.get(`/api/notes/${user}`).then((res) => {
-        //   console.log(res)
-        dispatch(getNotesSuccess(res.data));
-      });
-    } catch (err) {
-      if (err.response) {
-        console.log(err.response.data);
-        console.log(err.response.status);
-        console.log(err.response.headers);
-      } else if (err.request) {
-        console.log(err.request);
-      } else {
-        console.error('Error:', err.message);
-      }
-      dispatch(getNotesFail(err.message));
-    }
-  };
-}
+//додати нотатку
 export function addNote(note) {
-  console.log(note);
   return async (dispatch) => {
     dispatch(addNoteStarted());
     try {
@@ -83,16 +91,14 @@ export function addNote(note) {
       }
       dispatch(addNoteFail(err.message));
     }
-    request.then(({data}) => {});
   };
 }
-
+//видалити нотатку
 export function deleteNote(user, note) {
   return async (dispatch) => {
     dispatch(deleteNoteStarted());
     try {
       await client.delete(`/api/notes/${user}/${note}`).then((res) => {
-        //   console.log(res)
         dispatch(deleteNoteSuccess(res.data));
       });
     } catch (err) {
@@ -110,12 +116,12 @@ export function deleteNote(user, note) {
   };
 }
 
+//знайти і додати ноттаку за id 
 export function findNote(user_id, note_id) {
   return async (dispatch) => {
     dispatch(findNoteStarted());
     try {
       await client.put(`/api/notes/${note_id}/${user_id}`).then((res) => {
-        //   console.log(res)
         dispatch(findNoteSuccess(res.data));
       });
     } catch (err) {
@@ -133,6 +139,7 @@ export function findNote(user_id, note_id) {
   };
 }
 
+
 const getNotesSuccess = (notes) => ({
   type: GET_NOTES_SUCCESS,
   payload: notes,
@@ -140,7 +147,6 @@ const getNotesSuccess = (notes) => ({
 
 const getNotesStarted = () => ({
   type: GET_NOTES_STARTED,
-
 });
 
 const getNotesFail = (error) => ({
@@ -192,6 +198,22 @@ const findNoteStarted = () => ({
 
 const findNoteFail = (error) => ({
   type: FIND_NOTE_FAIL,
+  payload: {
+    error,
+  },
+});
+
+const updateNoteListStarted = (notes) => ({
+  type: UPDATE_NOTE_LIST_STARTED
+});
+
+const updateNoteListSuccess = (notes) => ({
+  type: UPDATE_NOTE_LIST_SUCCESS,
+  payload: notes
+});
+
+const updateNoteListFail = (error) => ({
+  type: UPDATE_NOTE_LIST_FAIL,
   payload: {
     error,
   },

@@ -82,7 +82,11 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
-
+// apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+// project.ext.vectoricons = [
+// 	iconFontNames: ['MaterialCommunityIcons.ttf'] // Add fonts needed
+// ]
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 /**
  * Set this to true to create two separate APKs instead of one:
  *   - An APK that only works on ARM devices
@@ -130,10 +134,12 @@ android {
 
     defaultConfig {
         applicationId "com.notedot"
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion 21
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
+        missingDimensionStrategy 'react-native-camera', 'general'
     }
     splits {
         abi {

@@ -3,22 +3,20 @@ import {
   GET_USERS_SUCCESS,
   GET_USERS_FAIL,
   GET_USERS_STARTED,
-  ADD_USER_STARTED,
-  ADD_USER_SUCCESS,
-  ADD_USER_FAIL,
 } from '../constants';
 import axios from 'axios';
 import {TouchableHighlight} from 'react-native';
 const client = axios.create({
-  baseURL: 'http://192.168.1.101:6666/',
+  baseURL: 'http://192.168.1.105:6666/',
   responseType: 'json',
 });
+
 export function getUsers() {
   return async (dispatch) => {
     dispatch(getUsersStarted());
     try {
       await client.get('/api/users').then((res) => {
-        //   console.log(res)
+
         dispatch(getUsersSuccess(res.data));
       });
     } catch (err) {
@@ -48,7 +46,6 @@ export function getUser(user) {
   };
 }
 
-
 export function addUser(user) {
   console.log(user);
   return async (dispatch) => {
@@ -73,6 +70,18 @@ export function addUser(user) {
     // })
   };
 }
+
+      // await axios.post({
+      //   uri: `http://192.168.1.104:6666/api/user`,
+      //   // responseType: 'json',
+      //   method: 'POST',
+      //   // data: formData,
+      //   headers: {
+      //     Accept: 'application/json',
+      //     'Content-Type': 'multipart/form-data'
+      //   }
+      // }, user)
+
 const getUsersSuccess = (users) => ({
   type: GET_USERS_SUCCESS,
   payload: {
@@ -94,6 +103,7 @@ const getUsersFail = (error) => ({
 const addUserStarted = () => ({
   type: ADD_USER_STARTED,
 });
+
 const addUserSuccess = (users) => ({
   type: ADD_USER_SUCCESS,
   payload: users,

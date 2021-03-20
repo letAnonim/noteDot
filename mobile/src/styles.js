@@ -1,6 +1,9 @@
 import React from 'react'
 import { StyleSheet  
   } from 'react-native';
+  export const MainColour = "#FFBA51";
+  export const red = '#E04536';
+  export const lightIconColor = '#C4C4C4'
 export const styles = StyleSheet.create({
     body:{
       flex: 1
@@ -9,7 +12,7 @@ export const styles = StyleSheet.create({
       width: '100%'
     },
     nawbarContainer:{
-      backgroundColor:'orange', 
+      backgroundColor:MainColour, 
       height:50,
       flexDirection:'row'
     },
@@ -43,7 +46,7 @@ export const styles = StyleSheet.create({
     input:{
         borderWidth:2,
         borderRadius:7,
-        borderColor:'orange',
+        borderColor:MainColour,
         fontSize:20,
     },
     section1__button:{
@@ -56,17 +59,22 @@ export const styles = StyleSheet.create({
     mainContainer:{
       flex: 1,
       justifyContent: 'center',
-      alignItems:'center',
+      // alignItems:'center',
     },
     mainText:{
       color: 'white',
       fontSize: 24,
       fontWeight: '600',
     },
+    mainGreyText:{
+      color: 'grey',
+      fontSize: 24,
+      fontWeight: '600',
+    },
     higlightText:{
       fontWeight: 'bold',
       fontSize: 26,
-      color: 'orange'
+      color: MainColour
     },
     
     aboutText:{
@@ -107,12 +115,13 @@ export const styles = StyleSheet.create({
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
+      backgroundColor: "rgba(0, 0, 0, 0.5)"
     },
     modalView: {
       margin: 20,
       backgroundColor: "white",
       borderRadius: 4,
-      padding: 50,      
+      padding: 30,      
       shadowColor: "#000",
       // shadowOffset: {
       //   width: 10,
@@ -140,7 +149,7 @@ export const styles = StyleSheet.create({
     },
 
     openButton: {
-      backgroundColor: 'orange',
+      backgroundColor: MainColour,
       borderRadius: 5,
       padding: 10,
       elevation: 2,
@@ -157,21 +166,46 @@ export const styles = StyleSheet.create({
       textAlign: "center",
       fontSize: 18
     },
-    closeButton:{
-      backgroundColor: 'red',
-      borderRadius: 5,
-      padding: 5,
-      elevation: 2,
-      margin: 10
+    SmallCloseButton:{
+      backgroundColor:red,
+      margin:5,
+      padding:5,
+      borderRadius:5,
+      height:40,
+      // width:150,
+      alignItems:'center',
+      justifyContent:'center'
+    },
+    smallDefaultButton:{
+      backgroundColor:MainColour,
+      margin:5,
+      padding:5,
+      borderRadius:5,
+      height:40,
+      // width:150,
+      alignItems:'center',
+      justifyContent:'center'
+    },
+    defaultCloseButton:{
+      backgroundColor:red,
+      margin:10,
+      padding:5,
+      borderRadius:5,
+      height:40,
+      width:260,
+      alignItems:'center',
+      justifyContent:'center'
     },
     section2:{
       flex:1,
+      marginTop:3
     },
     noteListContaiter:{
       height: 80,
-      width: '97%',
+      // width: '100%',
       margin: 2,
-      marginLeft:5
+      marginLeft:5,
+      marginRight:5
     },
     mainNoteContainer:{
       flex: 1,
@@ -210,7 +244,7 @@ export const styles = StyleSheet.create({
       backgroundColor:'rgba(255,255,255, 0.5)',
       minWidth:'97%',
       alignItems:'flex-start',
-      borderColor:'orange',
+      borderColor:MainColour,
       borderLeftWidth:8,
       fontSize:20,
       padding:2,
@@ -261,24 +295,47 @@ export const styles = StyleSheet.create({
     },
     messageInput:{
       flex:1,
-      borderTopRightRadius:10,
-      borderBottomRightRadius:10,
+      borderTopRightRadius:30,
+      borderBottomRightRadius:30,
       backgroundColor:'rgba(255,255,255, 0.5)',
-      minWidth:'80%',
+      minWidth:'75%',
       alignItems:'flex-start',
-      borderColor:'orange',
+      borderColor:MainColour,
       borderLeftWidth:8,
       fontSize:20,
       padding:2,
       paddingLeft:10,
       margin: 5,
-      height:45
+      maxHeight:'100%'
     },
     sendSmallButton:{
       maxHeight:30,
       maxWidth:30,
       margin:8,
       marginRight:3
+    },
+    defaultButton:{
+      backgroundColor:MainColour,
+      margin:10,
+      padding:5,
+      borderRadius:5,
+      height:40,
+      width:260,
+      alignItems:'center',
+      justifyContent:'center'
+    },
+    buttonsContainer:{
+      flex:1,
+      alignItems:'center',
+      justifyContent:'flex-end',
+      margin:20,
+      flexDirection:'column'
+    },
+    buttonsLandscapeContainer:{
+      flex:1,
+      alignItems:'center',
+      justifyContent:'center',
+      flexDirection:'row'
     },
     talkBubble: {
       backgroundColor: 'transparent'
@@ -342,15 +399,76 @@ export const styles = StyleSheet.create({
       shadowRadius: 1.78,
       elevation: 10,
     },
-    bigAvatar:{
+    bigAvatarContainer:{
+      alignItems:'center',
+      marginTop:20,
+      marginBottom: -40,
+      zIndex: 2,
+    },
+    bigLandscapeAvatarContainer:{
+      alignItems:'flex-start',
+      marginTop:20,
+      marginLeft:20,
+      marginBottom: -70,
+      zIndex: 2,
+    },
+    BigAvatar:{
+      zIndex: 1,
       shadowColor: "#000",
       shadowOffset: {
         width: 0,
-        height: 6,
+        height: 9,
       },
-      shadowOpacity: 0.39,
-      shadowRadius: 8.30,
-      elevation: 13,
-    }
+      shadowOpacity: 0.50,
+      shadowRadius: 12.35,
+      elevation: 19,
+      width:150, 
+      height:150, 
+      borderRadius:100
+    },
+    avatarImage:{
+      width:150, height:150, borderRadius:100
+    },
+    BigLandscapeAvatar:{
+      zIndex: 1,
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 9,
+      },
+      shadowOpacity: 0.50,
+      shadowRadius: 12.35,
+      elevation: 19,
+      backgroundColor:'white',
+      width:150, 
+      height:150, 
+      borderRadius:100
+    },
+
+    underAvatarContainer:{
+      zIndex: 0,
+      backgroundColor:'white',
+      flex:1,
+      borderTopRightRadius: 20,
+      borderTopLeftRadius: 20,
+    },
+
+    profileText:{
+      flex:1,
+      marginTop:40, 
+      alignItems:'center'
+    },
+    profileLandscapeText:{
+      flex:1,
+      marginLeft:200,
+      marginTop:10, 
+      alignItems:'flex-start'
+
+    },
+
+    
+
+    
+
   });
   

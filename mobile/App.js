@@ -10,33 +10,30 @@ import {createStackNavigator} from '@react-navigation/stack';
 //   Image,
 // } from 'react-native';
 
-import Profile from './src/screens/drawer/Profile';
+// import Profile from './src/screens/drawer/Profile';
 import Authorisation from './src/screens/Authorisation';
 import Registration from './src/screens/Registaration';
 import Home from './src/screens/Home';
 import Chat from './src/screens/Chat';
 import Note from './src/screens/Note';
+import QRCodeScanner from './src/screens/drawer/qrCodeScanner'
 import SplashScreen from 'react-native-splash-screen';
-import socketIO from 'socket.io-client';
 import {Provider, connect} from 'react-redux';
-import {createStore, applyMiddleware} from 'redux';
 import store from './src/redux/store/store';
-import {StackNavigator, TabNavigator} from 'react-navigation';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import FlashMessage from "react-native-flash-message";
+import MainTab from './src/screens/MainTab';
+import Calendar from './src/screens/Calendar';
 
 export default class App extends Component {
   componentDidMount() {
     SplashScreen.hide();
   }
-
   render() {
     const Stack = createStackNavigator();
     return (
       <Provider store={store}>
         <NavigationContainer>
           <Stack.Navigator
-            // initialRouteName={(isLog.isLogged == false)?('authorisation'):('home')}
             screenOptions={{
               headerShown: false,
             }}>
@@ -45,8 +42,12 @@ export default class App extends Component {
             <Stack.Screen name="home" component={Home} />
             <Stack.Screen name="chat" component={Chat} />
             <Stack.Screen name="note" component={Note} />
+            <Stack.Screen name="qrscanner" component={QRCodeScanner}/>
+            <Stack.Screen name="main" component={MainTab}/>
+            <Stack.Screen name="test" component={Calendar}/>
           </Stack.Navigator>
         </NavigationContainer>
+        <FlashMessage position="top"/>
       </Provider>
     );
   }

@@ -8,43 +8,55 @@ import {
   TextInput,
   ScrollView,
   Modal,
-  TouchableHighlight,
-  Clipboard,
 } from 'react-native';
-// import usersModel from '../../../backend/models/users.model';
-import {styles} from '../styles';
+import Clipboard from '@react-native-community/clipboard';
+import {showMessage} from "react-native-flash-message";
+import {lightIconColor, MainColour, styles} from '../styles';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon1 from 'react-native-vector-icons/Feather';
+import Icon2 from 'react-native-vector-icons/AntDesign';
+import QRCode from 'react-native-qrcode-svg';
+
 
 export default function Chat({route, navigation}) {
   const {aNote} = route.params;
   const {aUser} = route.params;
-  const {Asocket} = route.params;
+  // const {Asocket} = route.params;
   const [messageValue, setMessageValue] = useState('');
   const [messages, setMessages] = useState([]);
   const [modalUsersVisible, setModalUsersVisible] = useState(false);
+  const [modalQRVisible, setModalQRVisible] = useState(false);
   const [conUsers, setConUsers] = useState([]);
 
   useEffect(() => {
-    Asocket.emit('getMessages', aNote._id);
-    Asocket.on('messages', (data) => {
-      setMessages(data);
-    });
+    // Asocket.emit('getMessages', aNote._id);
+    // Asocket.on('messages', (data) => {
+    //   setMessages(data);
+    // });
   }, [messages]);
   async function addMessage(text) {
-    await Asocket.emit('addMessage', {
-      text: text,
-      author: aUser._id,
-      authorName: aUser.name,
-      port: aNote._id,
-    });
-    messages.push({
-      text: text,
-      author: aUser._id,
-      authorName: aUser.name,
-      port: aNote._id,
-    });
+    // await Asocket.emit('addMessage', {
+    //   text: text,
+    //   author: aUser._id,
+    //   authorName: aUser.name,
+    //   port: aNote._id,
+    // });
+    // messages.push({
+    //   text: text,
+    //   author: aUser._id,
+    //   authorName: aUser.name,
+    //   port: aNote._id,
+    // });
   }
   const copyToClipboard = () => {
     Clipboard.setString(aNote._id);
+    showMessage({
+      floating: true,
+      icon:'success',
+      message: "Invite link copied",
+      type: "success",
+      color:'#FFFFFF', // text color
+    });
   };
   const pressHandler = () => {
     addMessage(messageValue);
@@ -77,60 +89,71 @@ export default function Chat({route, navigation}) {
   };
   return (
     <ImageBackground
-      source={require('../img/paperBackground.png')}
-      style={styles.image}>
+    source={require('../img/paperBackground.png')}
+    style={styles.image}>
       {/*////////////////////////////////modalUsers//////////////////////////////////////*/}
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={modalUsersVisible}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Users:</Text>
+           { (conUsers>1)?(
             <View>
-              {conUsers.map((user) => {
-                return (
-                  <View key={user._id} style={{flexDirection: 'row'}}>
-                    <Text>Name:{user.name} </Text>
-                    <Text>Age:{user.age}</Text>
-                  </View>
-                );
-              })}
-            </View>
-            <TouchableHighlight
-              style={styles.openButton}
-              onPress={() => {
-                copyToClipboard();
-              }}>
+              <Text style={styles.modalText}>Users:</Text>
+              <View>
+                {conUsers.map((user) => {
+                  return (
+                    <View key={user._id} style={{flexDirection: 'row'}}>
+                      <Text>Name:{user.name} </Text>
+                      <Text>Age:{user.age}</Text>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>):(
+            <View>
+              <Text style={styles.modalText}>No users here yet...</Text>
+            </View> )}
+            <TouchableOpacity style={styles.smallDefaultButton} onPress={copyToClipboard}>
               <Text style={styles.textStyle}>Copy invite link</Text>
-            </TouchableHighlight>
-            <TouchableHighlight
-              style={styles.closeButton}
-              onPress={() => {
-                setModalUsersVisible(!modalUsersVisible);
-              }}>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.smallDefaultButton} onPress={()=>{setModalUsersVisible(!modalUsersVisible); setModalQRVisible(!modalQRVisible)}}>
+              <Text style={styles.textStyle}>Generate invite QR code</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.SmallCloseButton} onPress={()=>setModalUsersVisible(!modalUsersVisible)}>
               <Text style={styles.textStyle}>close</Text>
-            </TouchableHighlight>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
       {/*///////////////////////////////modalUsers//////////////////////////////////////*/}
+      {/*///////////////////////////////ModalQRcode/////////////////////////////////////*/}
+      <Modal animationType="fade" transparent={true} visible={modalQRVisible}>
+      <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+              <QRCode
+                value={aNote._id}
+                size={200}
+                enableLinearGradient={true}
+                linearGradient={['#FFBA51','grey']}
+                // logoSize={30}
+                // logoBackgroundColor='transparent'
+                />
+              <TouchableOpacity style={styles.SmallCloseButton} onPress={()=>setModalQRVisible(!modalQRVisible)}>
+                <Text style={styles.textStyle}>close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>      
+      </Modal>
+      {/*///////////////////////////////ModalQRcode/////////////////////////////////////*/}
       <View
-        style={{
-          backgroundColor: `rgba(${aNote.color}, 1)`,
-          height: 50,
-          flexDirection: 'row',
-        }}>
+        style={{backgroundColor: `rgba(${aNote.color}, 1)`,height: 50,flexDirection: 'row'}}>
         <View style={styles.nawbarContainerLeft}>
           <TouchableOpacity
             style={styles.smallButtonContainer}
-            onPress={() => {
-              navigation.navigate('note');
-            }}>
-            <Image
-              style={styles.addSmallButton}
-              source={require('../img/menu.png')}
-            />
+            onPress={() => {navigation.navigate('note')}}>
+            <Icon2 name="back" color={lightIconColor} size={35} style={{margin: 7}}/>
           </TouchableOpacity>
           <Text style={styles.nawbarTitle}>Chat</Text>
         </View>
@@ -139,25 +162,19 @@ export default function Chat({route, navigation}) {
             style={styles.smallButtonContainer}
             onPress={() => {
               setModalUsersVisible(!modalUsersVisible);
-              Asocket.emit('getConnectedUsers', aNote.connectedUsers);
-              Asocket.on('conUsers', (data) => {
-                setConUsers(data);
-              });
+              // Asocket.emit('getConnectedUsers', aNote.connectedUsers);
+              // Asocket.on('conUsers', (data) => {
+              //   setConUsers(data);
+              // });
             }}>
-            <Image
-              style={styles.addSmallButton}
-              source={require('../img/users.png')}
-            />
+            <Icon name="users" color={lightIconColor} size={35} style={{margin: 7}}/>
           </TouchableOpacity>
         </View>
       </View>
       <View style={styles.chatMessagesContainer}>
         {messages[0] !== undefined ? (
-          <ScrollView
-            ref={scrollViewRef}
-            onContentSizeChange={() =>
-              scrollViewRef.current.scrollToEnd({animated: true})
-            }>
+          <ScrollView ref={scrollViewRef}
+            onContentSizeChange={() => scrollViewRef.current.scrollToEnd({animated: true})}>
             {messages.map((mes) => {
               return (
                 <View key={Math.random()} style={{flex: 1}}>
@@ -165,25 +182,15 @@ export default function Chat({route, navigation}) {
                     <TouchableOpacity onPress={() => {}}>
                       <View style={styles.messageOvner}>
                         <Text style={{fontSize: 20}}>{mes.text}</Text>
-                        <Text
-                          style={{
-                            flex: 1,
-                            alignSelf: 'flex-end',
-                            fontSize: 10,
-                          }}>
+                        <Text style={{flex: 1,alignSelf: 'flex-end',fontSize: 10,}}>
                           {returnDate(mes.updatedAt)}
                         </Text>
                       </View>
                     </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity onPress={() => {}}>
+                  ):(<TouchableOpacity onPress={() => {}}>
                       <View style={styles.messageSender}>
                         <Text
-                          style={{
-                            flex: 1,
-                            alignSelf: 'flex-start',
-                            fontSize: 13,
-                          }}>
+                          style={{flex: 1,alignSelf: 'flex-start',fontSize: 13,}}>
                           {mes.authorName}
                         </Text>
                         <Text style={{fontSize: 20}}>{mes.text}</Text>
@@ -196,24 +203,19 @@ export default function Chat({route, navigation}) {
                 </View>
               );
             })}
-          </ScrollView>
-        ) : (
+          </ScrollView>):(
           <View style={styles.addnoteBigButtonContainer}>
-            <Image
-              style={styles.addBigButton}
-              source={require('../img/chat.png')}
-            />
+            <Icon1 name="message-circle" color='white' size={100}/>
             <Text>No messages here yet...</Text>
           </View>
         )}
       </View>
       <View
-        style={{
-          flex: 1,
+        style={{flex: 1,
           alignItems: 'flex-start',
           // justifyContent:'center',
           flexDirection: 'row',
-          maxHeight: 60,
+          maxHeight: 50,
           maxWidth: '100%',
           backgroundColor: `rgba(${aNote.color}, 1)`,
         }}>
@@ -230,10 +232,7 @@ export default function Chat({route, navigation}) {
           onPress={() => {
             pressHandler();
           }}>
-          <Image
-            style={styles.sendSmallButton}
-            source={require('../img/upload.png')}
-          />
+          <Icon name="send" color={lightIconColor} size={25} style={{marginRight: 12, marginTop:5}}/>
         </TouchableOpacity>
       </View>
     </ImageBackground>

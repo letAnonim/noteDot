@@ -4,41 +4,65 @@ import {
     TextInput,
     View,
     TouchableOpacity,
-    Image,
     Modal,
     Text,
     Alert, 
-    ImageBackground
-} from 'react-native';
+    ImageBackground, 
+}from 'react-native';
 import {RadioButton} from 'react-native-paper'
-import {styles} from '../../styles';
+import {MainColour,lightIconColor, styles} from '../../styles';
 import { ScrollView } from 'react-native-gesture-handler';
-import {useDispatch, useSelector} from 'react-redux'
-import {getNotes, addNote, deleteNote, findNote} from '../../redux/actions/notes.actions'
-// import { createDrawerNavigator } from '@react-navigation/drawer';
-// import { NavigationContainer } from '@react-navigation/native';
-// import socketIOClient from 'socket.io-client';
-// import io from 'socket.io-client'
+import {useDispatch, useSelector, connect} from 'react-redux'
+import {createSelector} from 'reselect'
+import {getNotes, addNote, deleteNote, findNote, updateNoteList} from '../../redux/actions/notes.actions'
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
+import {showMessage} from "react-native-flash-message";
+import Spinner from 'react-native-spinkit'
+// import { NetworkInfo } from "react-native-network-info";
 
-
-export default function Notes({route,navigation}){
-
+const Notes = (props) => {
     const dispatch = useDispatch();
-    const resNotes = useSelector(state => state.notes) 
-    const getStatus = useSelector(state => state.notes.status )
-    const [notes, setNotes] = useState([]);
-    const { UserId } = route.params;
-    // console.log(resNotes.notes);
+    // console.log(props);
+    const resNotes = useSelector(state => state.notes);
+    const getNotesStatus = state => state.notes.status;
+    const resUserNotes = createSelector(
+        state => state, 
+        items=>{
+            return(items)
+        }
+    ) 
+    // const noteStatus = createSelector(
+    //     [getNotesStatus], item=>{
+    //         return(item),
+    //         console.log(item)
+    //     }
+    // ) 
+    const [notes, setNotes] = useState(props.notes.notes);
+    // console.log(notes)
+    const { UserId } = props.route.params;
     useEffect(() => {
-        if(getStatus === 'inactive'){
-            dispatch(getNotes(UserId));
-            
-        } 
-        if(getStatus==='succeeded'){setNotes(resNotes.notes), console.log('fvruvrv')}
-    },[getStatus, dispatch]);   
-
+        // resUserNotes();
+        if(props.status ==='inactive'){dispatch(getNotes(UserId))} 
+        else if(props.status==='deleteNoteSucceeded'||props.status==='addNoteSucceeded'||props.status==='findNoteSucceeded'){dispatch(updateNoteList(UserId))} 
+        else if(props.status ==='gettingNotes'){setIsLoading(!isLoading)} 
+        else if(props.status ==='getNoteSucceeded'){setNotes(props.notes.notes), setIsLoading(false)}
+        else if(props.status ==='updateNoteListSucceeded'){setNotes(resUserNotes.notes)}
+        else if(props.status === 'updatingNoteText'){}
+        else if(props.status ==='findNoteFailed'){
+            showMessage({
+                floating: true,
+                icon:'warning',
+                message: "Incorrect invite link!!!",
+                type: 'danger',
+                color:'#FFFFFF',
+            });}
+            // noteStatus();
+        // console.log(noteStatus)
+    },[props.notes.status]);   
+    // navigation.navigate('qrscanner')
     // }, [notes]);
-    // setNotes(resNotes.notes)
+    // setNotes(resNotes.notes);
     async function addOneNote(title, color) {   
         await dispatch(addNote({
             title: title,
@@ -55,53 +79,59 @@ export default function Notes({route,navigation}){
     }
     const pressSearch = () =>{
         dispatch(findNote(UserId, noteIdValue))
-        }  
-        const returnDate = timestamp =>{
-            let date = new Date(timestamp)
-            let now = new Date()
-            let minutes = date.getMinutes();
-            let hours = date.getHours();
-            let day = date.getDay();
-            let month = date.getMonth();
-            let year = date.getFullYear()
-            
-            let returnHours = (hours<10)?(`0${hours}:`):(`${hours}:`)
-            let returnMinutes = (minutes<10)?(`0${minutes}`):(minutes)
-            
-            if(day == now.getDay()&&month == now.getMonth()&&year==now.getFullYear()){
-                return returnHours+returnMinutes
-            }
-            else{
-                let returnDay = (day<10)?(`0${day}/`):(`${day}/${year}`)
-                let returnMonth = (month<10)?(`0${month}/${year}`):(`${month}/${year}`);
-                return returnDay+returnMonth+' at '+returnHours+returnMinutes
-            } 
+    }  
+    const returnDate = timestamp =>{
+        let date = new Date(timestamp)
+        let now = new Date()
+        let minutes = date.getMinutes();
+        let hours = date.getHours();
+        let day = date.getDay();
+        let month = date.getMonth();
+        let year = date.getFullYear()
+        let returnHours = (hours<10)?(`0${hours}:`):(`${hours}:`)
+        let returnMinutes = (minutes<10)?(`0${minutes}`):(minutes)
+        if(day == now.getDay()&&month == now.getMonth()&&year==now.getFullYear()){
+            return returnHours+returnMinutes
         }
+        else{
+            let returnDay = (day<10)?(`0${day}/`):(`${day}/${year}`)
+            let returnMonth = (month<10)?(`0${month}/${year}`):(`${month}/${year}`);
+            return returnDay+returnMonth+' at '+returnHours+returnMinutes
+        } 
+    }
         
-        const [modalCreateVisible, setModalCreateVisible] = useState(false);
-        const [modalSearchVisible, setModalSearchVisible] = useState(false);
-        const [titleValue, setTitleValue] = useState('');
-        const [colorValue, setColorValue] = useState('250, 228, 60');
-        const [noteIdValue, setNoteIdValue] = useState('');
-        const confirmAlert =id=>{
-            Alert.alert(
-                'This note will be deleted!!',
-                'Are you sure?',
-                [
-                    {text: "Cancel", style: "cancel"},
-                    { text: "OK", onPress: () =>{
-                        dispatch(deleteNote(UserId, id))
-                        // dispatch(getNotes(UserId));
-                    }}
+    const confirmAlert =id=>{
+        Alert.alert(
+            'This note will be deleted!!',
+            'Are you sure?',
+            [
+                {text: "Cancel", style: "cancel"},
+                { text: "OK", onPress: () =>{
+                    dispatch(deleteNote(UserId, id))
+                    showMessage({
+                        floating: true,
+                        icon:'success',
+                        message: "Note deleted successfully",
+                        type: 'success',
+                        color:'#FFFFFF', // text color
+                      });
+                }}
             ]
         )
     }
+    const [modalCreateVisible, setModalCreateVisible] = useState(false);
+    const [modalSearchVisible, setModalSearchVisible] = useState(false);
+    const [titleValue, setTitleValue] = useState('');
+    const [colorValue, setColorValue] = useState('250, 228, 60');
+    const [noteIdValue, setNoteIdValue] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    
     return(
         <ImageBackground source={require('../../img/paperBackground.png')} style={styles.image}>
-        <View style={styles.body}>
+            <View style={styles.body}>
             {/*////////////////////////////////modalCreate//////////////////////////////////////*/}
             <Modal
-                animationType='slide'
+                animationType='fade'
                 transparent={true}
                 visible={modalCreateVisible}>
                 <View style={styles.centeredView}>
@@ -142,26 +172,27 @@ export default function Notes({route,navigation}){
                             </RadioButton.Group>     
                         </View>
                         <TouchableOpacity
-                            style={styles.openButton}
+                            style={styles.smallDefaultButton}
                             onPress={() => {
                                 (!titleValue)?(Alert.alert('Pleace write the title!!')
-                                ):(pressHandler(), setModalCreateVisible(!modalCreateVisible))
+                                ):(pressHandler(), setModalCreateVisible(!modalCreateVisible), setColorValue('250, 228, 60'))
                                 }}>  
                             <Text style={styles.textStyle}>Create note!</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={styles.closeButton}
+                            style={styles.SmallCloseButton}
                             onPress={() => {
-                                setModalCreateVisible(!modalCreateVisible)}}>  
+                                setModalCreateVisible(!modalCreateVisible)
+                                setColorValue('250, 228, 60')}}>  
                             <Text style={styles.textStyle}>close</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
-            {/*///////////////////////////////modalCreate//////////////////////////////////////*/}
+            {/*////////////////////////////////modalCreate//////////////////////////////////////*/}
             {/*////////////////////////////////modalSearch//////////////////////////////////////*/}
             <Modal
-                animationType='slide'
+                animationType='fade'
                 transparent={true}
                 visible={modalSearchVisible}>
                 <View style={styles.centeredView}>
@@ -175,7 +206,7 @@ export default function Notes({route,navigation}){
                         <View style={styles.modalRadioContainer}>    
                         </View>
                         <TouchableOpacity
-                            style={styles.openButton}
+                            style={styles.smallDefaultButton}
                             onPress={() => {
                                 (!noteIdValue)?(Alert.alert('Pleace write the id!!')
                                 ):(pressSearch(),setModalSearchVisible(!modalSearchVisible))
@@ -183,7 +214,7 @@ export default function Notes({route,navigation}){
                             <Text style={styles.textStyle}>Connect to note!</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={styles.closeButton}
+                            style={styles.SmallCloseButton}
                             onPress={() => {
                                 setModalSearchVisible(!modalSearchVisible)}}>  
                             <Text style={styles.textStyle}>close</Text>
@@ -191,44 +222,47 @@ export default function Notes({route,navigation}){
                     </View>
                 </View>
             </Modal>
-            {/*///////////////////////////////modalSearch//////////////////////////////////////*/}
+            {/*////////////////////////////////modalSearch//////////////////////////////////////*/}
             <View style ={styles.section1}>
                 <View style={styles.nawbarContainer}>
                     <View style={styles.nawbarContainerLeft}>
-                        <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{navigation.openDrawer()}}>
-                            <Image style={styles.addSmallButton} source={require('../../img/menu.png')}/>
+                        <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{props.navigation.openDrawer()}}>
+                            <Icon name="align-justify" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
-                        <Text style={styles.nawbarTitle}>Notes.dot</Text>   
+                        <Text style={styles.nawbarTitle}>Notes.dot</Text>
                     </View>
                     <View style={styles.nawbarContainerRight}>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalSearchVisible(!modalSearchVisible)}>
-                            <Image style={styles.addSmallButton} source={require('../../img/search.png')}/>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{props.navigation.navigate('qrscanner', {userId: UserId})}}>
+                            <Icon1 name="qrcode-scan" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=> 
-                            // dispatch(getNotes(UserId))
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalSearchVisible(!modalSearchVisible)}>
+                            <Icon name="search-plus" color={lightIconColor} size={35} style={{margin: 7}}/>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>
                             setModalCreateVisible(!modalCreateVisible)
                             }>
-                            <Image style={styles.addSmallButton} source={require('../../img/add.png')}/>
+                            <Icon name="plus" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
                     </View>
                  </View> 
             </View>
-
             <View style={styles.section2}>
-                {(notes[0] !== undefined)?(<ScrollView>{notes.map(note=>{
+            
+                {(isLoading===true)?(<Spinner style={{flex:1, alignSelf:'center', justifyContent:'center'}} isVisible={isLoading} size={80} type='Wave' color='white'/>):(notes[0] !== undefined||notes !== undefined)?(
+                    <ScrollView>{notes.map(note=>{
                     return (
-                        <View key={Date.now()}>
-                            <TouchableOpacity  onPress={()=>{navigation.navigate('note', {aNote: note, Userid:UserId})}} style={styles.noteListContaiter}>
+                        <View key={note._id}>
+                            <TouchableOpacity  onPress={()=>{props.navigation.navigate('note', {aNote: note})}} style={styles.noteListContaiter}>
                                 <View style={{flex:1,backgroundColor:`rgba(${note.color}, 0.5)`, 
                                     borderLeftWidth:12, 
                                     borderLeftColor:`rgba(${note.color}, 1)`
                                 }}>
                                     <View style={{flex:1, flexDirection:'row'}}>
-                                        <View style={{flex:1, flexDirection:'column'}}>     
+                                        <View style={{flex:1, flexDirection:'column'}}>
                                             <Text   style={{margin:3,fontSize:18, color:'black', width:180}}  numberOfLines={1}>
                                                 <Text style={{fontSize:19,fontWeight:'bold',}}  numberOfLines={1}>Title:</Text> 
                                                 {note.title}
-                                            </Text>           
+                                            </Text>
                                             <View style={{marginLeft:3, flex:1, flexDirection:'column'}}>
                                                 <Text style={{fontSize:17, maxWidth:200}} numberOfLines={1}>Text:{note.text}</Text>
                                                 <Text style={{fontSize:15, maxWidth:200}} numberOfLines={1}>Number of users:{note.connectedUsers.length} </Text>
@@ -242,9 +276,10 @@ export default function Notes({route,navigation}){
                                                 {(UserId == note.owner)?(<TouchableOpacity onPress={()=>{
                                                     confirmAlert(note._id)
                                                 }}>
-                                                    <Image style={styles.deleteSmallButton} source={require('../../img/delete.png')} />
+                                                    <Icon name="remove" color={lightIconColor} size={35} style={{margin: 7}}/>
                                                 </TouchableOpacity>):(<View/>)}
-                                            </View>                     
+                                            </View>
+                                            
                                         </View>
                                     </View>
                                 </View>
@@ -254,13 +289,19 @@ export default function Notes({route,navigation}){
                     })}</ScrollView>):(
                     <View style={styles.addnoteBigButtonContainer}>
                         <TouchableOpacity  onPress={()=>setModalCreateVisible(true)}>
-                            <Image style={styles.addBigButton} source={require('../../img/add.png')}/>
+                            <Icon name="plus" color='white' size={120}/>
                         </TouchableOpacity>
                     </View>
-                )}             
+                )}
             </View>
         </View>
     </ImageBackground>
-    )      
+    )
 }
 
+const mapStateToProps = (state)=>({notes:state.notes, status:state.notes.status})
+
+const mapDispatchToProps = (dispatch) => ({getNotes:(data)=>dispatch(getNotes('602e923c548d904a68f5b010'))})
+
+const connectComponent = connect(mapStateToProps, mapDispatchToProps);
+export default connectComponent(Notes)
