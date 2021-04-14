@@ -14,7 +14,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import socketIOClient from 'socket.io-client';
 
 export default function Registration({navigation}){
-    const socket = socketIOClient('http://192.168.1.105:6666', {      
+    const socket = socketIOClient('http://192.168.1.107:6666', {      
         transports: ['websocket'], jsonp: false }); 
     async function addUser() {
         if(nameValue == ''||ageValue ==''||passwordValue == ''||confirmPassword==''){

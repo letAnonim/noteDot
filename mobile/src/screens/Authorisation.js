@@ -17,7 +17,7 @@ import socketIOClient from 'socket.io-client';
 import {useSelector, useDispatch} from 'react-redux';
 
 export default function Authorisatio({navigation}) {
-  const socket = socketIOClient('http://192.168.1.105:6666', {
+  const socket = socketIOClient('http://192.168.1.107:6666', {
     transports: ['websocket'],
     jsonp: false,
   });
