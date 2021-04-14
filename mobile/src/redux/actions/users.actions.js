@@ -7,7 +7,7 @@ import {
 import axios from 'axios';
 import {TouchableHighlight} from 'react-native';
 const client = axios.create({
-  baseURL: 'http://192.168.1.105:6666/',
+  baseURL: 'http://192.168.1.107:6666/',
   responseType: 'json',
 });
 

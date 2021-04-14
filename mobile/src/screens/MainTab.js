@@ -1,19 +1,19 @@
-import React from 'react';
-import {
-  View,
-  Text
-} from 'react-native';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import * as React from 'react';
+import {View, Text} from 'react-native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Notes from './drawer/Notes';
-import {DrawerContent} from './DrawerContent'
 import Calendar from './Calendar';
+import AddButton from './components/AddButton.js';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function MainTab({navigation, route}){
-  const Tab = createMaterialTopTabNavigator();
-  return(
-    <Tab.Navigator tabBarPosition='bottom'>
-        <Tab.Screen name="notes" component={Notes}/>
-        <Tab.Screen name="calendar" component={Calendar}/>
+const nullFuction = () => null
+export default function MainTab({navigation, route}) {
+  const Tab = createBottomTabNavigator();
+  return (
+    <Tab.Navigator>
+      <Tab.Screen name="notes" component={Notes} options={{ title: () => <Icon style={{marginBottom:10}} size={30} name='list' />}}/>
+      <Tab.Screen name="add" component={nullFuction} options={{ title: () => <AddButton/>}}/>
+      <Tab.Screen name="calendar" component={Calendar} options={{ title: () => <Icon style={{marginBottom:10}} size={30} name='calendar' />}}/>
     </Tab.Navigator>
-  )      
+  );
 }

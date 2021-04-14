@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import {
     TextInput,
     View,
@@ -7,7 +7,8 @@ import {
     Modal,
     Text,
     Alert, 
-    ImageBackground, 
+    ImageBackground,
+    Animated
 }from 'react-native';
 import {RadioButton} from 'react-native-paper'
 import {MainColour,lightIconColor, styles} from '../../styles';
@@ -23,9 +24,9 @@ import Spinner from 'react-native-spinkit'
 
 const Notes = (props) => {
     const dispatch = useDispatch();
-    // console.log(props);
-    const resNotes = useSelector(state => state.notes);
-    const getNotesStatus = state => state.notes.status;
+    const mode = new Animated.Value(0);
+    const buttonSize = new Animated.Value(1);
+    const fadeAnim = useRef(new Animated.Value(0)).current;
     const resUserNotes = createSelector(
         state => state, 
         items=>{
@@ -39,10 +40,8 @@ const Notes = (props) => {
     //     }
     // ) 
     const [notes, setNotes] = useState(props.notes.notes);
-    // console.log(notes)
     const { UserId } = props.route.params;
     useEffect(() => {
-        // resUserNotes();
         if(props.status ==='inactive'){dispatch(getNotes(UserId))} 
         else if(props.status==='deleteNoteSucceeded'||props.status==='addNoteSucceeded'||props.status==='findNoteSucceeded'){dispatch(updateNoteList(UserId))} 
         else if(props.status ==='gettingNotes'){setIsLoading(!isLoading)} 
@@ -56,11 +55,9 @@ const Notes = (props) => {
                 message: "Incorrect invite link!!!",
                 type: 'danger',
                 color:'#FFFFFF',
-            });}
-            // noteStatus();
-        // console.log(noteStatus)
-    },[props.notes.status]);   
-    // navigation.navigate('qrscanner')
+            });
+        }
+    },[props.notes.status]);    
     // }, [notes]);
     // setNotes(resNotes.notes);
     async function addOneNote(title, color) {   
@@ -71,7 +68,6 @@ const Notes = (props) => {
             text: '',
             connectedUsers: [UserId],
         }))
-        // await dispatch(getNotes(UserId)); 
     }
     const pressHandler=()=>{
         addOneNote(titleValue, colorValue );
@@ -99,7 +95,6 @@ const Notes = (props) => {
             return returnDay+returnMonth+' at '+returnHours+returnMinutes
         } 
     }
-        
     const confirmAlert =id=>{
         Alert.alert(
             'This note will be deleted!!',
@@ -226,28 +221,25 @@ const Notes = (props) => {
             <View style ={styles.section1}>
                 <View style={styles.nawbarContainer}>
                     <View style={styles.nawbarContainerLeft}>
-                        <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{props.navigation.openDrawer()}}>
+                        <TouchableOpacity  onPress={()=>{props.navigation.openDrawer()}}>
                             <Icon name="align-justify" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
                         <Text style={styles.nawbarTitle}>Notes.dot</Text>
                     </View>
                     <View style={styles.nawbarContainerRight}>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{props.navigation.navigate('qrscanner', {userId: UserId})}}>
+                        <TouchableOpacity  onPress={()=>{props.navigation.navigate('qrscanner', {userId: UserId})}}>
                             <Icon1 name="qrcode-scan" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalSearchVisible(!modalSearchVisible)}>
+                        <TouchableOpacity  onPress={()=>setModalSearchVisible(!modalSearchVisible)}>
                             <Icon name="search-plus" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>
-                            setModalCreateVisible(!modalCreateVisible)
-                            }>
+                        <TouchableOpacity  onPress={()=>setModalCreateVisible(!modalCreateVisible)}>
                             <Icon name="plus" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
                     </View>
                  </View> 
             </View>
             <View style={styles.section2}>
-            
                 {(isLoading===true)?(<Spinner style={{flex:1, alignSelf:'center', justifyContent:'center'}} isVisible={isLoading} size={80} type='Wave' color='white'/>):(notes[0] !== undefined||notes !== undefined)?(
                     <ScrollView>{notes.map(note=>{
                     return (
