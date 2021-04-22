@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, {Component, useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
     TextInput,
@@ -8,35 +8,33 @@ import {
     Text,
     ImageBackground
 } from 'react-native';
-import {RadioButton} from 'react-native-paper'
 import {styles} from '../styles';
-import { ScrollView } from 'react-native-gesture-handler';
-import socketIOClient from 'socket.io-client';
+// import { ScrollView } from 'react-native-gesture-handler';
+import {useDispatch, connect} from 'react-redux';
+import {regUser, setDefault} from '../redux/actions/user.actions'
 
-export default function Registration({navigation}){
-    const socket = socketIOClient('http://192.168.1.107:6666', {      
-        transports: ['websocket'], jsonp: false }); 
+const Registration = (props) => {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        if(props.response == 1) alert('This name is already in use!');
+        else if(props.response == 2) alert('Incorrect age value!');
+        else if(props.response == 3) alert('Passwords dont match each other!');
+        else if(props.response == 4) {
+            alert('Registred success');
+            props.navigation.navigate('authorisation');
+            dispatch(setDefault());
+        }
+    }, [props.response]);
     async function addUser() {
         if(nameValue == ''||ageValue ==''||passwordValue == ''||confirmPassword==''){
             alert('pleace fill all fields')
         }
-        else{
-            await socket.emit('regUser',{name:nameValue, age:ageValue, password:passwordValue, conPassword:confirmPassword})
-            await socket.on('answerReg',(data)=>{
-                if(data ==1) alert('This name is already in use!');
-                else if(data == 2) alert('Incorrect age value!');
-                else if(data == 3) alert('Passwords dont match each other!');
-                else navigation.navigate('authorisation')
-                
-            })    
-        }
+        else await dispatch(regUser({name:nameValue, age:ageValue, password:passwordValue, conPassword:confirmPassword}))
     } 
     const [nameValue, setNameValue] = useState('')
     const [ageValue, setAgeValue] = useState('')
     const [passwordValue, setPasswordValue] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-    // useEffect(() => {
-    // }, []);
 
     return(
         <View style={{flex:1}}>
@@ -92,15 +90,17 @@ export default function Registration({navigation}){
                     <View style={styles.buttonsContainer}>
                         <TouchableOpacity style={styles.defaultButton} onPress={addUser}
                         ><Text style={styles.mainText}>Register</Text></TouchableOpacity>
-                        <TouchableOpacity style={styles.defaultButton} onPress={()=>{        
-                            navigation.navigate('authorisation')
+                        <TouchableOpacity style={styles.defaultButton} onPress={()=>{      
+                            props.navigation.navigate('authorisation'); 
+                            dispatch(setDefault());
                         }}><Text style={styles.mainText} >log in</Text></TouchableOpacity>
                     </View>
-                </View>
-                <View style={styles.registerContainer}>
-
                 </View>
             </ImageBackground>
         </View>
     )   
 }
+const mapStateToProps = (state)=>({user:state.user, response:state.user.response})
+
+const connectComponent = connect(mapStateToProps);
+export default connectComponent(Registration)

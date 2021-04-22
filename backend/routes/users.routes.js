@@ -3,7 +3,10 @@ module.exports = (app) => {
     const users = require("../controllers/users.controller");
 
 	// Create a new client
-	app.post("/api/users", users.create);
+	app.post("/api/user/reg", users.create);
+
+	// Check login
+	app.post("/api/user/log", users.logging);
 
 	// Retrieve all Users
 	app.get("/api/users", users.findAll);

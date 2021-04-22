@@ -13,7 +13,6 @@ import {RadioButton} from 'react-native-paper'
 import {MainColour,lightIconColor, styles} from '../../styles';
 import { ScrollView } from 'react-native-gesture-handler';
 import {useDispatch, useSelector, connect} from 'react-redux'
-import {createSelector} from 'reselect'
 import {getNotes, addNote, deleteNote, findNote, updateNoteList} from '../../redux/actions/notes.actions'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -23,31 +22,17 @@ import Spinner from 'react-native-spinkit'
 
 const Notes = (props) => {
     const dispatch = useDispatch();
-    // console.log(props);
-    const resNotes = useSelector(state => state.notes);
-    const getNotesStatus = state => state.notes.status;
-    const resUserNotes = createSelector(
-        state => state, 
-        items=>{
-            return(items)
-        }
-    ) 
-    // const noteStatus = createSelector(
-    //     [getNotesStatus], item=>{
-    //         return(item),
-    //         console.log(item)
-    //     }
-    // ) 
     const [notes, setNotes] = useState(props.notes.notes);
     // console.log(notes)
     const { UserId } = props.route.params;
+    console.log(UserId)
     useEffect(() => {
         // resUserNotes();
         if(props.status ==='inactive'){dispatch(getNotes(UserId))} 
         else if(props.status==='deleteNoteSucceeded'||props.status==='addNoteSucceeded'||props.status==='findNoteSucceeded'){dispatch(updateNoteList(UserId))} 
         else if(props.status ==='gettingNotes'){setIsLoading(!isLoading)} 
         else if(props.status ==='getNoteSucceeded'){setNotes(props.notes.notes), setIsLoading(false)}
-        else if(props.status ==='updateNoteListSucceeded'){setNotes(resUserNotes.notes)}
+        else if(props.status ==='updateNoteListSucceeded'){setNotes(props.notes.notes)}
         else if(props.status === 'updatingNoteText'){}
         else if(props.status ==='findNoteFailed'){
             showMessage({
@@ -57,12 +42,8 @@ const Notes = (props) => {
                 type: 'danger',
                 color:'#FFFFFF',
             });}
-            // noteStatus();
-        // console.log(noteStatus)
     },[props.notes.status]);   
-    // navigation.navigate('qrscanner')
-    // }, [notes]);
-    // setNotes(resNotes.notes);
+
     async function addOneNote(title, color) {   
         await dispatch(addNote({
             title: title,
@@ -301,7 +282,7 @@ const Notes = (props) => {
 
 const mapStateToProps = (state)=>({notes:state.notes, status:state.notes.status})
 
-const mapDispatchToProps = (dispatch) => ({getNotes:(data)=>dispatch(getNotes('602e923c548d904a68f5b010'))})
+// const mapDispatchToProps = (dispatch) => ({getNotes:(data)=>dispatch(getNotes('60314435695d2b3764fbedcc'))})
 
-const connectComponent = connect(mapStateToProps, mapDispatchToProps);
+const connectComponent = connect(mapStateToProps);
 export default connectComponent(Notes)
