@@ -9,7 +9,7 @@ import {
   CHECK_USER_STARTED,
   CHECK_USER_SUCCESS,
   CHECK_USER_FAIL,
-  SET_DEFAULT_STATE,
+  SET_DEFAULT_USER_STATE,
 } from '../constants';
 
 const initialState = {
@@ -23,7 +23,7 @@ const initialState = {
 
 export default function userReducer(state = initialState, action) {
   switch (action.type) {
-    case SET_DEFAULT_STATE:
+    case SET_DEFAULT_USER_STATE:
       return {
         ...state,
         status: initialState.status,

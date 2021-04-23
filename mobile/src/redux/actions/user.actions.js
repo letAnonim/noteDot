@@ -1,4 +1,5 @@
 import {
+  baseIp,
   UPDATE_USER_PHOTO_SUCCESS,
   UPDATE_USER_PHOTO_FAIL,
   UPDATE_USER_PHOTO_STARTED,
@@ -8,23 +9,21 @@ import {
   CHECK_USER_STARTED,
   CHECK_USER_SUCCESS,
   CHECK_USER_FAIL,
-  SET_DEFAULT_STATE
+  SET_DEFAULT_USER_STATE
 } from '../constants';
 import axios from 'axios';
 
 const client = axios.create({
-  baseURL: 'http://192.168.1.107:6666/',
+  baseURL: baseIp,
   responseType: 'json',
 });
 
 export function updateUserPhoto(data) {
-  console.log(data);
   return async (dispatch) => {
     dispatch(updateUserPhotoStarted());
     try {
-      await client.put('/api/user/photoupdate', data).then((res) => {
-        dispatch(updateUserPhotoSuccess(res.data));
-        console.log('response', res.data);
+      await client.put('/api/user/photoupdate', data).then(() => {
+        dispatch(updateUserPhotoSuccess());
       });
     } catch (err) {
       if (err.response) {
@@ -89,10 +88,9 @@ export function setDefault(){
   return dispatch => {
     dispatch(setDefaultState())
   }
-
 }
 const setDefaultState = () => ({
-  type: SET_DEFAULT_STATE,
+  type: SET_DEFAULT_USER_STATE,
 });
 
 const updateUserPhotoStarted = () => ({

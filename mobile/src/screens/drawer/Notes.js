@@ -12,22 +12,18 @@ import {
 import {RadioButton} from 'react-native-paper'
 import {MainColour,lightIconColor, styles} from '../../styles';
 import { ScrollView } from 'react-native-gesture-handler';
-import {useDispatch, useSelector, connect} from 'react-redux'
+import {useDispatch, connect} from 'react-redux'
 import {getNotes, addNote, deleteNote, findNote, updateNoteList} from '../../redux/actions/notes.actions'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
 import {showMessage} from "react-native-flash-message";
 import Spinner from 'react-native-spinkit'
-// import { NetworkInfo } from "react-native-network-info";
 
 const Notes = (props) => {
     const dispatch = useDispatch();
     const [notes, setNotes] = useState(props.notes.notes);
-    // console.log(notes)
     const { UserId } = props.route.params;
-    console.log(UserId)
     useEffect(() => {
-        // resUserNotes();
         if(props.status ==='inactive'){dispatch(getNotes(UserId))} 
         else if(props.status==='deleteNoteSucceeded'||props.status==='addNoteSucceeded'||props.status==='findNoteSucceeded'){dispatch(updateNoteList(UserId))} 
         else if(props.status ==='gettingNotes'){setIsLoading(!isLoading)} 
@@ -41,9 +37,9 @@ const Notes = (props) => {
                 message: "Incorrect invite link!!!",
                 type: 'danger',
                 color:'#FFFFFF',
-            });}
+            });
+        }
     },[props.notes.status]);   
-
     async function addOneNote(title, color) {   
         await dispatch(addNote({
             title: title,
@@ -52,7 +48,6 @@ const Notes = (props) => {
             text: '',
             connectedUsers: [UserId],
         }))
-        // await dispatch(getNotes(UserId)); 
     }
     const pressHandler=()=>{
         addOneNote(titleValue, colorValue );
@@ -106,7 +101,6 @@ const Notes = (props) => {
     const [colorValue, setColorValue] = useState('250, 228, 60');
     const [noteIdValue, setNoteIdValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    
     return(
         <ImageBackground source={require('../../img/paperBackground.png')} style={styles.image}>
             <View style={styles.body}>
@@ -228,8 +222,7 @@ const Notes = (props) => {
                  </View> 
             </View>
             <View style={styles.section2}>
-            
-                {(isLoading===true)?(<Spinner style={{flex:1, alignSelf:'center', justifyContent:'center'}} isVisible={isLoading} size={80} type='Wave' color='white'/>):(notes[0] !== undefined||notes !== undefined)?(
+                {(isLoading===true)?(<Spinner style={{flex:1, alignSelf:'center', justifyContent:'center'}} isVisible={isLoading} size={80} type='Wave' color='white'/>):(notes[0]!==undefined&&notes !== undefined)?(
                     <ScrollView>{notes.map(note=>{
                     return (
                         <View key={note._id}>
@@ -281,8 +274,6 @@ const Notes = (props) => {
 }
 
 const mapStateToProps = (state)=>({notes:state.notes, status:state.notes.status})
-
-// const mapDispatchToProps = (dispatch) => ({getNotes:(data)=>dispatch(getNotes('60314435695d2b3764fbedcc'))})
 
 const connectComponent = connect(mapStateToProps);
 export default connectComponent(Notes)

@@ -91,15 +91,14 @@ exports.logging = async(req, res) => {
 							userName:user.name,
 							userAge:user.age,
 							userRegDate:user.createdAt,
-							photo:{
+							photo:(!user.photo.name)?({}):({
 								name: user.photo.name,
 								desc: user.photo.desc,
-								img: (user.photo.img)?({}):({
+								img:{
 									data: Buffer.from(JSON.parse(JSON.stringify(user.photo.img.data)).data).toString('utf8'),
 									contentType: user.photo.img.contentType
-								})
-								
-							}
+								}	
+							})
 						}})
 					)
 				});
@@ -125,17 +124,7 @@ exports.update = async(req, res) => {
 				contentType: req.body.data.photo.type
 			}
 		}
-		Users.findByIdAndUpdate({_id: req.body.data.id},{photo: photo} ).then(() => {
-			// let resPhoto = {
-			// 	name: user.photo.name,
-			// 	desc: user.photo.desc,
-			// 	img: {
-			// 		data: Buffer.from(JSON.parse(JSON.stringify(user.photo.img.data)).data).toString('utf8'),
-			// 		contentType: user.photo.img.contentType
-			// 	}
-			// }
-			res.send(photo);
-		})
+		Users.findByIdAndUpdate({_id: req.body.data.id},{photo: photo})
 		.catch((err) => {
 			res.status(500).send({
 				message:

@@ -10,7 +10,8 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {styles} from '../styles';
 import {useDispatch, connect} from 'react-redux';
-import {checkUser} from '../redux/actions/user.actions';
+import {checkUser, setDefault} from '../redux/actions/user.actions';
+import { setDefaultNotes } from '../redux/actions/notes.actions';
 
 const Authorisation = (props) => {
     const dispatch = useDispatch();
@@ -18,10 +19,10 @@ const Authorisation = (props) => {
     const [passwordValue, setPasswordValue] = useState('');
     const saveData = async (value) => {
         try {
-        const jsonValue = JSON.stringify(value);
-        await AsyncStorage.setItem('isLoggedIn', jsonValue);
+            const jsonValue = JSON.stringify(value);
+            await AsyncStorage.setItem('isLoggedIn', jsonValue);
         } catch (e) {
-        console.error(e);
+            console.error(e);
         }
     };
     const readData = async () => {
@@ -45,8 +46,9 @@ const Authorisation = (props) => {
     };
     useEffect(() => {
         if (props.access == true) {
-            console.log(props.user.user)
+            console.log(props.user.user);
             saveData({isLogged: true, userData: props.user.user});
+            dispatch(setDefaultNotes())
             props.navigation.navigate('home', {
                 screen: 'main',
                 params: {
@@ -54,12 +56,12 @@ const Authorisation = (props) => {
                     params: {UserId: props.user.user.userId},
                 },
             });
-            console.log(props.user.user.userId)
             setPasswordValue('');
             setLoginValue('');
         } else if (props.access == false){
             alert('Wrong login or password!');
             setPasswordValue('');
+            dispatch(setDefault())
         }
     }, [props.access]);
     const pressHandler = async() => {
