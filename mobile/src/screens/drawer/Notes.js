@@ -24,21 +24,44 @@ import Spinner from 'react-native-spinkit'
 
 const Notes = (props) => {
     const dispatch = useDispatch();
-    const mode = new Animated.Value(0);
-    const buttonSize = new Animated.Value(1);
-    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const [rotVal, setRotVal]=useState(0);
+    const [sAnimVal, setSAnimValm]=useState(0);
+    const buttonSize = useRef(new Animated.Value(1)).current;
+    const mode = useRef(new Animated.Value(rotVal)).current;
+    const sAnim = useRef(new Animated.Value(sAnimVal)).current;
     const resUserNotes = createSelector(
         state => state, 
         items=>{
             return(items)
         }
-    ) 
-    // const noteStatus = createSelector(
-    //     [getNotesStatus], item=>{
-    //         return(item),
-    //         console.log(item)
-    //     }
-    // ) 
+    )
+    useEffect(() => {
+        Animated.timing(mode, {
+            toValue: rotVal,
+            duration: 400,
+            useNativeDriver: true,
+        }).start();
+    },[rotVal]);
+    useEffect(() => {
+        Animated.sequence([
+            Animated.timing(buttonSize, {
+                toValue: 0.93,
+                duration: 50,
+                useNativeDriver: true,
+            }),
+            Animated.timing(sAnim, {
+                toValue: sAnimVal,
+                duration: 600,
+                useNativeDriver: true,
+            }),
+            Animated.timing(buttonSize, {
+                toValue: 1,
+                duration: 50,
+                useNativeDriver: true,
+            })
+        ]).start();
+    }, [sAnimVal]);
+
     const [notes, setNotes] = useState(props.notes.notes);
     const { UserId } = props.route.params;
     useEffect(() => {
@@ -58,8 +81,17 @@ const Notes = (props) => {
             });
         }
     },[props.notes.status]);    
-    // }, [notes]);
-    // setNotes(resNotes.notes);
+
+    const rotation = mode.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '315deg'],
+    });
+
+    const smallRot = sAnim.interpolate({
+        inputRange: [0, 0.2, 0.8, 1],
+        outputRange: ['0deg', '-45deg', '45deg', '0deg'],
+    });
+
     async function addOneNote(title, color) {   
         await dispatch(addNote({
             title: title,
@@ -178,7 +210,9 @@ const Notes = (props) => {
                             style={styles.SmallCloseButton}
                             onPress={() => {
                                 setModalCreateVisible(!modalCreateVisible)
-                                setColorValue('250, 228, 60')}}>  
+                                setColorValue('250, 228, 60')
+                                setRotVal(0);
+                            }}>  
                             <Text style={styles.textStyle}>close</Text>
                         </TouchableOpacity>
                     </View>
@@ -211,7 +245,9 @@ const Notes = (props) => {
                         <TouchableOpacity
                             style={styles.SmallCloseButton}
                             onPress={() => {
-                                setModalSearchVisible(!modalSearchVisible)}}>  
+                                setModalSearchVisible(!modalSearchVisible)
+                                setSAnimValm(0);    
+                            }}>  
                             <Text style={styles.textStyle}>close</Text>
                         </TouchableOpacity>
                     </View>
@@ -230,11 +266,25 @@ const Notes = (props) => {
                         <TouchableOpacity  onPress={()=>{props.navigation.navigate('qrscanner', {userId: UserId})}}>
                             <Icon1 name="qrcode-scan" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
-                        <TouchableOpacity  onPress={()=>setModalSearchVisible(!modalSearchVisible)}>
-                            <Icon name="search-plus" color={lightIconColor} size={35} style={{margin: 7}}/>
-                        </TouchableOpacity>
-                        <TouchableOpacity  onPress={()=>setModalCreateVisible(!modalCreateVisible)}>
-                            <Icon name="plus" color={lightIconColor} size={35} style={{margin: 7}}/>
+                        <Animated.View style={{transform: [{scale: buttonSize}],}}>
+                            <TouchableOpacity
+                                onPress={()=>{
+                                    setSAnimValm(1);
+                                    setModalSearchVisible(!modalSearchVisible)
+                                }}>
+                                <Animated.View style={{transform: [{rotate: smallRot}]}}>
+                                    <Icon name="search-plus"size={35} color={lightIconColor} style={{margin: 7}}/>
+                                </Animated.View>
+                            </TouchableOpacity>
+                        </Animated.View>
+                        <TouchableOpacity
+                            onPress={()=>{
+                                setRotVal(1);
+                                setModalCreateVisible(!modalCreateVisible)
+                            }}>
+                            <Animated.View style={{transform: [{rotate: rotation}]}}>
+                                <Icon name="plus" size={35} color={lightIconColor} style={{margin: 7}}/>
+                            </Animated.View>
                         </TouchableOpacity>
                     </View>
                  </View> 

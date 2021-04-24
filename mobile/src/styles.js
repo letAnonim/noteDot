@@ -234,10 +234,9 @@ export const styles = StyleSheet.create({
   rowText: {
     fontSize: 16,
   },
-  logRow: {},
   rowInput: {
     flex: 1,
-    maxHeight: 50,
+    maxHeight: 40,
     backgroundColor: 'rgba(255,255,255, 0.5)',
     minWidth: '97%',
     alignItems: 'flex-start',
@@ -321,7 +320,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonsContainer: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-end',
     margin: 20,

@@ -1,16 +1,17 @@
 import 'react-native-gesture-handler';
 import React, {Component, useState, useEffect} from 'react';
 
+
+
 import {
     TextInput,
     View,
     TouchableOpacity,
     Text,
-    ImageBackground
+    ImageBackground,
 } from 'react-native';
 import {RadioButton} from 'react-native-paper'
 import {styles} from '../styles';
-import { ScrollView } from 'react-native-gesture-handler';
 import socketIOClient from 'socket.io-client';
 
 export default function Registration({navigation}){
@@ -35,9 +36,6 @@ export default function Registration({navigation}){
     const [ageValue, setAgeValue] = useState('')
     const [passwordValue, setPasswordValue] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-    // useEffect(() => {
-    // }, []);
-
     return(
         <View style={{flex:1}}>
             <ImageBackground source={require('../img/paperShadowBackground.png')} style={styles.image}>
@@ -96,9 +94,6 @@ export default function Registration({navigation}){
                             navigation.navigate('authorisation')
                         }}><Text style={styles.mainText} >log in</Text></TouchableOpacity>
                     </View>
-                </View>
-                <View style={styles.registerContainer}>
-
                 </View>
             </ImageBackground>
         </View>

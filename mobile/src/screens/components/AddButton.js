@@ -28,7 +28,6 @@ export default AddButtonClass  = (props) => {
                 useNativeDriver: true,
             }),
         ]).start();
-        console.log(rotVal)
     }, [rotVal]);
     
 
