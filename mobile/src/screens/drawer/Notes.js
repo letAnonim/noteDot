@@ -39,7 +39,7 @@ const Notes = (props) => {
                 color:'#FFFFFF',
             });
         }
-    },[props.notes.status]);   
+    },[props.notes.status, props.note.status]);   
     async function addOneNote(title, color) {   
         await dispatch(addNote({
             title: title,
@@ -273,7 +273,7 @@ const Notes = (props) => {
     )
 }
 
-const mapStateToProps = (state)=>({notes:state.notes, status:state.notes.status})
+const mapStateToProps = (state)=>({notes:state.notes, status:state.notes.status, note:state.note})
 
 const connectComponent = connect(mapStateToProps);
 export default connectComponent(Notes)

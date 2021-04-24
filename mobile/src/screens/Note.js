@@ -16,6 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/Feather';
 import {showMessage} from "react-native-flash-message";
+import { updateNoteList } from '../redux/actions/notes.actions';
 
 const Note = (props) => {
     const dispatch = useDispatch();
@@ -65,7 +66,12 @@ const Note = (props) => {
                 message: "Saved!",
                 type: 'success',
                 color:'#FFFFFF',
-            })}
+            });
+            console.log(props.note.note.text);
+            dispatch(updateNoteList(props.note.note.owner))
+            setText(props.note.note.text)
+        
+        }
         else if(props.status ==='updateNoteTextFailed'){
             showMessage({
                 floating: true,
