@@ -1,147 +1,132 @@
 import 'react-native-gesture-handler';
-import React, {Component, useState, useEffect} from 'react';
-import {bindActionCreators} from 'redux';
-import {getNotes} from '../redux/actions/notes.actions';
-
+import React, {useState, useEffect} from 'react';
 import {
-  TextInput,
-  View,
-  TouchableOpacity,
-  Text,
-  ImageBackground,
+    TextInput,
+    View,
+    TouchableOpacity,
+    Text,
+    ImageBackground
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {styles} from '../styles';
-import socketIOClient from 'socket.io-client';
+import {useDispatch, connect} from 'react-redux';
+import {checkUser, setDefault} from '../redux/actions/user.actions';
+import { setDefaultNotes } from '../redux/actions/notes.actions';
 
-import {useSelector, useDispatch} from 'react-redux';
-
-export default function Authorisatio({navigation}) {
-  const socket = socketIOClient('http://192.168.1.107:6666', {
-    transports: ['websocket'],
-    jsonp: false,
-  });
-  const user = useSelector((state) => state.users);
-  const notes = useSelector((state) => state.notes);
-  const dispatch = useDispatch();
-  const [loginValue, setLoginValue] = useState('');
-  const [passwordValue, setPasswordValue] = useState('');
-  const saveData = async (value) => {
-    try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem('isLoggedIn', jsonValue);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-  const readData = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem('isLoggedIn');
-      if (jsonValue != null) {
-        if (JSON.parse(jsonValue).isLogged == true)
-          navigation.navigate('home', {
-            screen: 'main',
-            params: {
-              screen: 'notes',
-              params: {UserId: JSON.parse(jsonValue).userData.userId},
-            },
-          });
-      }
-    } catch (e) {
-      console.erro(e);
-    }
-  };
-  // useEffect(() => {
-  //     socket.connect();
-
-  //     socket.on('users', msg=>{
-  //         setUsers(msg)
-  //     })
-  // }, []);
-  const pressHandler = () => {
-    if (loginValue != '' && passwordValue != '') {
-      socket.connect();
-      socket.emit('checkLog', loginValue, passwordValue);
-      socket.on('answerLog', (data, user) => {
-        if (data == true) {
-          saveData({isLogged: true, userData: user});
-          navigation.navigate('home', {
-            screen: 'notes',
-            params: {UserId: user.UserId},
-          });
-          setPasswordValue('');
-          setLoginValue('');
-        } else {
-          alert('Wrong login or password!');
-          setPasswordValue('');
+const Authorisation = (props) => {
+    const dispatch = useDispatch();
+    const [loginValue, setLoginValue] = useState('');
+    const [passwordValue, setPasswordValue] = useState('');
+    const saveData = async (value) => {
+        try {
+            const jsonValue = JSON.stringify(value);
+            await AsyncStorage.setItem('isLoggedIn', jsonValue);
+        } catch (e) {
+            console.error(e);
         }
-      });
-    } else alert('Pleace fill all fields!');
-  };
-  readData();
-  return (
-    <View style={{flex: 1}}>
-      <ImageBackground
-        source={require('../img/paperShadowBackground.png')}
-        style={styles.image}>
-        <View style={styles.logInContainer}>
-          <View style={styles.logInContainer}>
-            <Text style={styles.higlightText}>Hello!</Text>
-            <Text style={styles.logText}>
-              {' '}
-              Pleace authorise to start working :)
-            </Text>
-            <View style={styles.logRow}>
-              <Text style={styles.rowText}>Login:</Text>
-              <TextInput
-                style={styles.rowInput}
-                allowFontScaling={false}
-                autoCapitalize="none"
-                autoCorrect={false}
-                placeholder="Write your name..."
-                value={loginValue}
-                onChangeText={setLoginValue}></TextInput>
+    };
+    const readData = async () => {
+        try {
+        const jsonValue = await AsyncStorage.getItem('isLoggedIn');
+        if (jsonValue != null) {
+            if (JSON.parse(jsonValue).isLogged == true)
+            props.navigation.navigate('home', {
+                screen: 'main',
+                params: {
+                    screen: 'notes',
+                    params: {UserId: JSON.parse(jsonValue).userData.userId},
+                },
+            });
+        }else{
+            console.log('new')
+        }
+        } catch (e) {
+        console.error(e);
+        }
+    };
+    useEffect(() => {
+        if (props.access == true) {
+            console.log(props.user.user);
+            saveData({isLogged: true, userData: props.user.user});
+            dispatch(setDefaultNotes())
+            props.navigation.navigate('home', {
+                screen: 'main',
+                params: {
+                    screen: 'notes',
+                    params: {UserId: props.user.user.userId},
+                },
+            });
+            setPasswordValue('');
+            setLoginValue('');
+        } else if (props.access == false){
+            alert('Wrong login or password!');
+            setPasswordValue('');
+            dispatch(setDefault())
+        }
+    }, [props.access]);
+    const pressHandler = async() => {
+        if (loginValue != '' && passwordValue != '') {
+            await dispatch(checkUser({login:loginValue, password:passwordValue})) 
+        } else alert('Pleace fill all fields!');
+    };
+    readData();
+    return (
+        <View style={{flex: 1}}>
+        <ImageBackground
+            source={require('../img/paperShadowBackground.png')}
+            style={styles.image}>
+            <View style={styles.logInContainer}>
+            <View style={styles.logInContainer}>
+                <Text style={styles.higlightText}>Hello!</Text>
+                <Text style={styles.logText}>
+                {' '}
+                Pleace authorise to start working :)
+                </Text>
+                <View style={styles.logRow}>
+                <Text style={styles.rowText}>Login:</Text>
+                <TextInput
+                    style={styles.rowInput}
+                    allowFontScaling={false}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    placeholder="Write your name..."
+                    value={loginValue}
+                    onChangeText={setLoginValue}></TextInput>
+                </View>
+                <View style={styles.logRow}>
+                <Text style={styles.rowText}>Password:</Text>
+                <TextInput
+                    style={styles.rowInput}
+                    allowFontScaling={false}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    secureTextEntry={true}
+                    placeholder="Write password..."
+                    value={passwordValue}
+                    onChangeText={setPasswordValue}></TextInput>
+                </View>
             </View>
-            <View style={styles.logRow}>
-              <Text style={styles.rowText}>Password:</Text>
-              <TextInput
-                style={styles.rowInput}
-                allowFontScaling={false}
-                autoCapitalize="none"
-                autoCorrect={false}
-                secureTextEntry={true}
-                placeholder="Write password..."
-                value={passwordValue}
-                onChangeText={setPasswordValue}></TextInput>
+            <View style={styles.buttonsContainer}>
+                <TouchableOpacity
+                style={styles.defaultButton}
+                onPress={pressHandler}>
+                <Text style={styles.mainText}>Log in</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                style={styles.defaultButton}
+                onPress={() => {
+                    props.navigation.navigate('registration');
+                }}>
+                <Text style={styles.mainText}>Register</Text>
+                </TouchableOpacity>
             </View>
-          </View>
-          <View style={styles.buttonsContainer}>
-            <TouchableOpacity
-              style={styles.defaultButton}
-              onPress={pressHandler}>
-              <Text style={styles.mainText}>Log in</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.defaultButton}
-              onPress={() => {
-                navigation.navigate('registration');
-              }}>
-              <Text style={styles.mainText}>Register</Text>
-            </TouchableOpacity>
-          </View>
+            </View>
+            <View style={styles.registerContainer}></View>
+        </ImageBackground>
         </View>
-        <View style={styles.registerContainer}></View>
-      </ImageBackground>
-    </View>
-  );
+    );
 }
-// function mapStateToProps(state){
-//     return {
-//       users: state.users,
-//       notes: state.notes
-//     }
-//   }
-//   function mapDispatchToProps(dispatch){
-//     return bindActionCreators({getNotes}, dispatch)
-//   }
-//   export default connect(mapStateToProps, mapDispatchToProps)(Authorisation);
+const  mapStateToProps = (state) =>({user: state.user, access: state.user.access})
+
+const connectComponent = connect(mapStateToProps);
+export default connectComponent(Authorisation);

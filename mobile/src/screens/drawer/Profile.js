@@ -6,41 +6,24 @@ import {
     Image, 
     ImageBackground,
     Alert,
-    NativeModules,
     Dimensions 
 } from 'react-native';
 import { connect } from 'react-redux';
 import {styles} from '../../styles'
-import { updateUserPhoto } from '../../redux/actions/user.actions.js'
-import axios from 'axios';
-import {useDispatch, useSelector} from 'react-redux';
+import { updateUserPhoto, setDefault} from '../../redux/actions/user.actions.js'
+import {useDispatch} from 'react-redux';
 import {lightIconColor} from '../../styles'
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {createSelector} from 'reselect'
-// const client = axios.create({
-//     baseURL: 'http://192.168.1.105:6666/',
-//     responseType: 'json',
-//   });
-const ImagePicker = NativeModules.ImageCropPicker
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchImageLibrary} from 'react-native-image-picker';
+import { setDefaultNotes } from '../../redux/actions/notes.actions';
 
 const Profile = (props) => {
-    console.log(props)
     const dispatch = useDispatch();
     const [user, setUser] = useState({});
-    const [imageSource, setImageSource] = useState('')
     const [imageUri, setImageUri] = useState('')
-    // const [newName, setNewName] = useState('')
-    const getUserStatus = state => state.users.status
-    const userStatus = createSelector(
-        [getUserStatus],
-        item => {
-            return item,
-            console.log(item)
-        }
-        )
+
     const isPortrait = () => {
         const dim = Dimensions.get('window');
         return dim.height <= dim.width;
@@ -57,7 +40,9 @@ const Profile = (props) => {
                 {text: "Cancel", style: "cancel"},
                 { text: "OK", onPress: () =>{
                     saveData({isLogged: false, userData: null});
-                    props.navigation.navigate('authorisation')
+                    props.navigation.navigate('authorisation');
+                    dispatch(setDefault());
+
                 }}
             ]
         )
@@ -105,7 +90,6 @@ const Profile = (props) => {
 
     const changeImage = () => {     
         launchImageLibrary({}, response => {
-            // console.log('request = ', response);
             if (response.didCancel) {
                     console.log('User cancelled image picker');
             } else if (response.error) {
@@ -119,26 +103,16 @@ const Profile = (props) => {
                 type: response.type,
                 name: response.fileName||response.uri.substr(response.uri.lastIndexOf('/') + 1)
             }
-            dispatch(updateUserPhoto({type:'photo',data:{id:user.userId, photo: img}})).then(()=>{
-                console.log('prev', imageUri);
-                console.log('new', img.uri);
-                setImageUri(img.uri);
-                console.log('------------------------------------------------------')
-            })     
-            // client.post('/api/user/photoupdate', ).then((res) => {
-            //     console.log('response', res);
-            //     setImageUri(res.data.img.data);
-            //     console.log(res.data.img.data);
-            // })
+            dispatch(updateUserPhoto({type:'photo',data:{id:user.userId, photo: img}}))
+            setImageUri(img.uri);
             }
         });
     }
     useEffect(() => {
-        readData()
-        .then(data =>{
+        readData().then(data =>{
+            console.log(data);
             setUser(data);
-            setImageUri(data.photo.img.data);
-            userStatus
+            (!data.photo.img)?({}):(setImageUri(data.photo.img.data))        
         })
     }, [])
       
@@ -163,19 +137,13 @@ const Profile = (props) => {
             <View style={styles.mainContainer}>
                 <View style={(!orientation)?styles.bigAvatarContainer:styles.bigLandscapeAvatarContainer}>
                     <View style={styles.BigAvatar}>
-                        {(imageUri=='')?(<Image style={styles.avatarImage}source={require('../../img/defaultAvatar.png')}/>):(
+                        
+                        {(imageUri == '')?(<Image style={styles.avatarImage}source={require('../../img/defaultAvatar.png')}/>):(
                             <Image style={styles.avatarImage} source={{uri: imageUri}}/>)}
                     </View>
                 </View>
                 <View style={styles.underAvatarContainer}>
                     <View style={(!orientation)?styles.profileText:styles.profileLandscapeText}>
-                        {/* <TextInput style={styles.rowInput}
-                                allowFontScaling={false}
-                                autoCapitalize='none'
-                                autoCorrect={false}  
-                                placeholder='Write new name'
-                                value={newName}
-                                onChangeText={setNewName}></TextInput> */}
                         <Text style={{color:'grey', fontSize:30 ,fontWeight:'900'}}>{user.userName}</Text>
                         <Text style={styles.mainGreyText}>Age: {user.userAge}  </Text>
                         <Text style={{color:'grey', fontSize:20 ,fontWeight:'400'}}>Created:{returnDate(user.userRegDate) }  </Text>
@@ -196,8 +164,7 @@ const Profile = (props) => {
 }
 const mapStateToProps = (state)=>({user:state.user, status:state.user.status})
 
-const mapDispatchToProps = (dispatch) => ({updateUserPhoto:(data)=>dispatch(updateUserPhoto(data))})
 
-const connectComponent = connect(mapStateToProps, mapDispatchToProps);
+const connectComponent = connect(mapStateToProps);
 export default connectComponent(Profile)
 

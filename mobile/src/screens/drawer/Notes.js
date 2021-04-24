@@ -13,14 +13,12 @@ import {
 import {RadioButton} from 'react-native-paper'
 import {MainColour,lightIconColor, styles} from '../../styles';
 import { ScrollView } from 'react-native-gesture-handler';
-import {useDispatch, useSelector, connect} from 'react-redux'
-import {createSelector} from 'reselect'
+import {useDispatch, connect} from 'react-redux'
 import {getNotes, addNote, deleteNote, findNote, updateNoteList} from '../../redux/actions/notes.actions'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
 import {showMessage} from "react-native-flash-message";
 import Spinner from 'react-native-spinkit'
-// import { NetworkInfo } from "react-native-network-info";
 
 const Notes = (props) => {
     const dispatch = useDispatch();
@@ -29,12 +27,7 @@ const Notes = (props) => {
     const buttonSize = useRef(new Animated.Value(1)).current;
     const mode = useRef(new Animated.Value(rotVal)).current;
     const sAnim = useRef(new Animated.Value(sAnimVal)).current;
-    const resUserNotes = createSelector(
-        state => state, 
-        items=>{
-            return(items)
-        }
-    )
+
     useEffect(() => {
         Animated.timing(mode, {
             toValue: rotVal,
@@ -69,7 +62,7 @@ const Notes = (props) => {
         else if(props.status==='deleteNoteSucceeded'||props.status==='addNoteSucceeded'||props.status==='findNoteSucceeded'){dispatch(updateNoteList(UserId))} 
         else if(props.status ==='gettingNotes'){setIsLoading(!isLoading)} 
         else if(props.status ==='getNoteSucceeded'){setNotes(props.notes.notes), setIsLoading(false)}
-        else if(props.status ==='updateNoteListSucceeded'){setNotes(resUserNotes.notes)}
+        else if(props.status ==='updateNoteListSucceeded'){setNotes(props.notes.notes)}
         else if(props.status === 'updatingNoteText'){}
         else if(props.status ==='findNoteFailed'){
             showMessage({
@@ -152,7 +145,6 @@ const Notes = (props) => {
     const [colorValue, setColorValue] = useState('250, 228, 60');
     const [noteIdValue, setNoteIdValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    
     return(
         <ImageBackground source={require('../../img/paperBackground.png')} style={styles.image}>
             <View style={styles.body}>
@@ -290,7 +282,7 @@ const Notes = (props) => {
                  </View> 
             </View>
             <View style={styles.section2}>
-                {(isLoading===true)?(<Spinner style={{flex:1, alignSelf:'center', justifyContent:'center'}} isVisible={isLoading} size={80} type='Wave' color='white'/>):(notes[0] !== undefined||notes !== undefined)?(
+                {(isLoading===true)?(<Spinner style={{flex:1, alignSelf:'center', justifyContent:'center'}} isVisible={isLoading} size={80} type='Wave' color='white'/>):(notes[0]!==undefined&&notes !== undefined)?(
                     <ScrollView>{notes.map(note=>{
                     return (
                         <View key={note._id}>
@@ -341,9 +333,7 @@ const Notes = (props) => {
     )
 }
 
-const mapStateToProps = (state)=>({notes:state.notes, status:state.notes.status})
+const mapStateToProps = (state)=>({notes:state.notes, status:state.notes.status, note:state.note})
 
-const mapDispatchToProps = (dispatch) => ({getNotes:(data)=>dispatch(getNotes('602e923c548d904a68f5b010'))})
-
-const connectComponent = connect(mapStateToProps, mapDispatchToProps);
+const connectComponent = connect(mapStateToProps);
 export default connectComponent(Notes)

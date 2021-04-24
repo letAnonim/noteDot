@@ -2,17 +2,25 @@ import {
     UPDATE_NOTE_TEXT_STARTED,
     UPDATE_NOTE_TEXT_SUCCESS,
     UPDATE_NOTE_TEXT_FAIL,
+    SET_DEFAULT_NOTE_STATE,
+    baseIp,
   } from '../constants';
   import axios from 'axios';
   import {TouchableHighlight} from 'react-native';
   const client = axios.create({
-    baseURL: 'http://192.168.1.105:6666/',
+    baseURL: baseIp,
     responseType: 'json',
   });
 
+export function setDefaultNote(){
+  return dispatch => {
+    dispatch(setDefaultNoteState())
+  }
+}
   // оновити дані про нотатку (текст)
 export function updateNoteText(data) {
-    return async (dispatch) => {
+  
+  return async (dispatch) => {
       dispatch(updateNoteTextStarted());
       try {
         await client.put('/api/notes/text', data).then((res) => {
@@ -31,7 +39,7 @@ export function updateNoteText(data) {
         dispatch(updateNoteTextFail(err.message));
       }
     };
-  }
+}
 
 const updateNoteTextSuccess = (note) => ({
     type: UPDATE_NOTE_TEXT_SUCCESS,
@@ -47,4 +55,8 @@ const updateNoteTextFail = (error) => ({
     payload: {
         error,
     },
+});
+
+const setDefaultNoteState = () => ({
+  type: SET_DEFAULT_NOTE_STATE,
 });

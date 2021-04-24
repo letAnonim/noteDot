@@ -11,19 +11,24 @@ import {
   FIND_NOTE_SUCCESS,
   FIND_NOTE_STARTED,
   FIND_NOTE_FAIL,
-  UPDATE_NOTE_TEXT_STARTED,
-  UPDATE_NOTE_TEXT_SUCCESS,
-  UPDATE_NOTE_TEXT_FAIL,
   UPDATE_NOTE_LIST_STARTED,
   UPDATE_NOTE_LIST_SUCCESS,
   UPDATE_NOTE_LIST_FAIL,
+  SET_DEFAULT_NOTES_STATE,
+  baseIp
 } from '../constants';
 import axios from 'axios';
-import {TouchableHighlight} from 'react-native';
 const client = axios.create({
-  baseURL: 'http://192.168.1.107:6666/',
+  baseURL: baseIp,
   responseType: 'json',
 });
+
+
+export function setDefaultNotes(){
+  return dispatch => {
+    dispatch(setDefaultNotesState())
+  }
+}
 
 //update user notes list
 export function updateNoteList(user) {
@@ -139,6 +144,11 @@ export function findNote(user_id, note_id) {
   };
 }
 
+
+
+const setDefaultNotesState = () => ({
+  type: SET_DEFAULT_NOTES_STATE,
+});
 
 const getNotesSuccess = (notes) => ({
   type: GET_NOTES_SUCCESS,

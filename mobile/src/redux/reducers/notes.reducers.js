@@ -14,10 +14,21 @@ import {
     UPDATE_NOTE_LIST_STARTED,
     UPDATE_NOTE_LIST_SUCCESS,
     UPDATE_NOTE_LIST_FAIL,
+    SET_DEFAULT_NOTES_STATE
 } from '../constants';
-const initialState = {status:"inactive", loading:false, error:null, notes: []};
+const initialState = {
+    status:"inactive", 
+    loading:false, 
+    error:null, 
+    notes: []};
 export default function notesReducer(state = initialState, action){
     switch (action.type) {
+        case SET_DEFAULT_NOTES_STATE:
+        return {
+            ...state,
+            status: initialState.status,
+            loading: initialState.loading,
+        };
         case GET_NOTES_STARTED:
             return {
               ...state,

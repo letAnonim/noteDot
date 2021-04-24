@@ -1,7 +1,5 @@
 import 'react-native-gesture-handler';
 import React, {useState, useEffect} from 'react';
-// import { NavigationContainer } from '@react-navigation/native';
-// import { createStackNavigator } from '@react-navigation/stack';
 import {
     TextInput,
     View,
@@ -12,23 +10,17 @@ import {
 } from 'react-native';
 import {styles} from '../styles'
 import '../img/paperBackground.png'
-import axios from 'axios';
-import {useDispatch, useSelector, connect} from 'react-redux';
-import {updateNoteText} from '../redux/actions/note.actions';
+import {useDispatch, connect} from 'react-redux';
+import {updateNoteText, setDefaultNote} from '../redux/actions/note.actions';
 import {lightIconColor} from '../styles'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/Feather';
 import {showMessage} from "react-native-flash-message";
-const client = axios.create({
-    baseURL: 'http://192.168.1.105:6666/',
-    responseType: 'json',
-  });
-
+import { updateNoteList } from '../redux/actions/notes.actions';
 
 const Note = (props) => {
     const dispatch = useDispatch();
-    // const resNotes = useSelector(state => state.notes); 
     const { aNote } = props.route.params;
     const [note, setNote] = useState(aNote)
     const [text, setText] = useState(`${note.text}`)
@@ -45,9 +37,7 @@ const Note = (props) => {
         }
     };
     const pressHendler=()=>{
-        setText(text);
         dispatch(updateNoteText({type:"text", textValue:text, noteId:aNote._id}))
-        // client.put(`/api/notes/text`, {type:"text", textValue:text, noteId:aNote._id}).then((res) => {console.log(res.data);setNote(res.data)})
     }
     const returnDate = timestamp =>{
         let date = new Date(timestamp)
@@ -77,7 +67,12 @@ const Note = (props) => {
                 message: "Saved!",
                 type: 'success',
                 color:'#FFFFFF',
-            })}
+            });
+            console.log(props.note.note.text);
+            dispatch(updateNoteList(props.note.note.owner))
+            setText(props.note.note.text)
+        
+        }
         else if(props.status ==='updateNoteTextFailed'){
             showMessage({
                 floating: true,
@@ -85,9 +80,10 @@ const Note = (props) => {
                 message: "Failed to update note text",
                 type: 'danger',
                 color:'#FFFFFF',
-            });}
+            })}
 
-    }, []);
+    }, [props.status]);
+
     return(
         <View style={styles.mainNoteContainer}>
             <ImageBackground source={require('../img/paperBackground.png')} style={styles.image}>
@@ -95,7 +91,10 @@ const Note = (props) => {
                     height:50,
                     flexDirection:'row'}}>
                     <View style={styles.nawbarContainerLeft}>
-                        <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{props.navigation.navigate('notes')}}>
+                        <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{
+                                props.navigation.navigate('notes');
+                                dispatch(setDefaultNote())
+                            }}>
                             <Icon name="list" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
                         <Text style={styles.nawbarTitle} numberOfLines={1}>{note.title}</Text>   
@@ -104,7 +103,10 @@ const Note = (props) => {
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={pressHendler}>
                             <Icon name="save" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{props.navigation.navigate('chat', {aNote:note})}}>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{
+                                props.navigation.navigate('chat', {aNote:note});
+                                dispatch(setDefaultNote())
+                            }}>
                             <Icon1 name="message-circle" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
                     </View>
@@ -127,9 +129,7 @@ const Note = (props) => {
     )      
 }
 
-const mapStateToProps = (state)=>({note:state.note, status:state.note.status, loading:state.notes.loading})
+const mapStateToProps = (state)=>({note:state.note, status:state.note.status})
 
-const mapDispatchToProps = (dispatch) => ({getNotes:(data)=>dispatch(getNotes(data))})
-
-const connectComponent = connect(mapStateToProps, mapDispatchToProps);
+const connectComponent = connect(mapStateToProps);
 export default connectComponent(Note)

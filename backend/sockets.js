@@ -6,7 +6,7 @@ const Messages = require('./models/messages.model.js');
 // const { ObjectId } = require('mongodb');
 module.exports = io =>{ 
     io.on('connection', socket=>{
-      console.log('user connected')
+      // console.log('user connected')
       socket.on('checkLog', (login, password)=>{
         // console.log(login, password)
         try{
@@ -69,7 +69,7 @@ module.exports = io =>{
                 }
               }   
             })
-        
+
         }catch(err){
           console.error(err)
         }
