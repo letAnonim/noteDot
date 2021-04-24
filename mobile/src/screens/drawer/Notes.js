@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import {
     TextInput,
     View,
@@ -7,7 +7,8 @@ import {
     Modal,
     Text,
     Alert, 
-    ImageBackground, 
+    ImageBackground,
+    Animated
 }from 'react-native';
 import {RadioButton} from 'react-native-paper'
 import {MainColour,lightIconColor, styles} from '../../styles';
@@ -23,26 +24,47 @@ import Spinner from 'react-native-spinkit'
 
 const Notes = (props) => {
     const dispatch = useDispatch();
-    // console.log(props);
-    const resNotes = useSelector(state => state.notes);
-    const getNotesStatus = state => state.notes.status;
+    const [rotVal, setRotVal]=useState(0);
+    const [sAnimVal, setSAnimValm]=useState(0);
+    const buttonSize = useRef(new Animated.Value(1)).current;
+    const mode = useRef(new Animated.Value(rotVal)).current;
+    const sAnim = useRef(new Animated.Value(sAnimVal)).current;
     const resUserNotes = createSelector(
         state => state, 
         items=>{
             return(items)
         }
-    ) 
-    // const noteStatus = createSelector(
-    //     [getNotesStatus], item=>{
-    //         return(item),
-    //         console.log(item)
-    //     }
-    // ) 
+    )
+    useEffect(() => {
+        Animated.timing(mode, {
+            toValue: rotVal,
+            duration: 400,
+            useNativeDriver: true,
+        }).start();
+    },[rotVal]);
+    useEffect(() => {
+        Animated.sequence([
+            Animated.timing(buttonSize, {
+                toValue: 0.93,
+                duration: 50,
+                useNativeDriver: true,
+            }),
+            Animated.timing(sAnim, {
+                toValue: sAnimVal,
+                duration: 600,
+                useNativeDriver: true,
+            }),
+            Animated.timing(buttonSize, {
+                toValue: 1,
+                duration: 50,
+                useNativeDriver: true,
+            })
+        ]).start();
+    }, [sAnimVal]);
+
     const [notes, setNotes] = useState(props.notes.notes);
-    // console.log(notes)
     const { UserId } = props.route.params;
     useEffect(() => {
-        // resUserNotes();
         if(props.status ==='inactive'){dispatch(getNotes(UserId))} 
         else if(props.status==='deleteNoteSucceeded'||props.status==='addNoteSucceeded'||props.status==='findNoteSucceeded'){dispatch(updateNoteList(UserId))} 
         else if(props.status ==='gettingNotes'){setIsLoading(!isLoading)} 
@@ -56,13 +78,20 @@ const Notes = (props) => {
                 message: "Incorrect invite link!!!",
                 type: 'danger',
                 color:'#FFFFFF',
-            });}
-            // noteStatus();
-        // console.log(noteStatus)
-    },[props.notes.status]);   
-    // navigation.navigate('qrscanner')
-    // }, [notes]);
-    // setNotes(resNotes.notes);
+            });
+        }
+    },[props.notes.status]);    
+
+    const rotation = mode.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '315deg'],
+    });
+
+    const smallRot = sAnim.interpolate({
+        inputRange: [0, 0.2, 0.8, 1],
+        outputRange: ['0deg', '-45deg', '45deg', '0deg'],
+    });
+
     async function addOneNote(title, color) {   
         await dispatch(addNote({
             title: title,
@@ -71,7 +100,6 @@ const Notes = (props) => {
             text: '',
             connectedUsers: [UserId],
         }))
-        // await dispatch(getNotes(UserId)); 
     }
     const pressHandler=()=>{
         addOneNote(titleValue, colorValue );
@@ -99,7 +127,6 @@ const Notes = (props) => {
             return returnDay+returnMonth+' at '+returnHours+returnMinutes
         } 
     }
-        
     const confirmAlert =id=>{
         Alert.alert(
             'This note will be deleted!!',
@@ -183,7 +210,9 @@ const Notes = (props) => {
                             style={styles.SmallCloseButton}
                             onPress={() => {
                                 setModalCreateVisible(!modalCreateVisible)
-                                setColorValue('250, 228, 60')}}>  
+                                setColorValue('250, 228, 60')
+                                setRotVal(0);
+                            }}>  
                             <Text style={styles.textStyle}>close</Text>
                         </TouchableOpacity>
                     </View>
@@ -216,7 +245,9 @@ const Notes = (props) => {
                         <TouchableOpacity
                             style={styles.SmallCloseButton}
                             onPress={() => {
-                                setModalSearchVisible(!modalSearchVisible)}}>  
+                                setModalSearchVisible(!modalSearchVisible)
+                                setSAnimValm(0);    
+                            }}>  
                             <Text style={styles.textStyle}>close</Text>
                         </TouchableOpacity>
                     </View>
@@ -226,28 +257,39 @@ const Notes = (props) => {
             <View style ={styles.section1}>
                 <View style={styles.nawbarContainer}>
                     <View style={styles.nawbarContainerLeft}>
-                        <TouchableOpacity  style={styles.smallButtonContainer}onPress={()=>{props.navigation.openDrawer()}}>
+                        <TouchableOpacity  onPress={()=>{props.navigation.openDrawer()}}>
                             <Icon name="align-justify" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
                         <Text style={styles.nawbarTitle}>Notes.dot</Text>
                     </View>
                     <View style={styles.nawbarContainerRight}>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{props.navigation.navigate('qrscanner', {userId: UserId})}}>
+                        <TouchableOpacity  onPress={()=>{props.navigation.navigate('qrscanner', {userId: UserId})}}>
                             <Icon1 name="qrcode-scan" color={lightIconColor} size={35} style={{margin: 7}}/>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalSearchVisible(!modalSearchVisible)}>
-                            <Icon name="search-plus" color={lightIconColor} size={35} style={{margin: 7}}/>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>
-                            setModalCreateVisible(!modalCreateVisible)
-                            }>
-                            <Icon name="plus" color={lightIconColor} size={35} style={{margin: 7}}/>
+                        <Animated.View style={{transform: [{scale: buttonSize}],}}>
+                            <TouchableOpacity
+                                onPress={()=>{
+                                    setSAnimValm(1);
+                                    setModalSearchVisible(!modalSearchVisible)
+                                }}>
+                                <Animated.View style={{transform: [{rotate: smallRot}]}}>
+                                    <Icon name="search-plus"size={35} color={lightIconColor} style={{margin: 7}}/>
+                                </Animated.View>
+                            </TouchableOpacity>
+                        </Animated.View>
+                        <TouchableOpacity
+                            onPress={()=>{
+                                setRotVal(1);
+                                setModalCreateVisible(!modalCreateVisible)
+                            }}>
+                            <Animated.View style={{transform: [{rotate: rotation}]}}>
+                                <Icon name="plus" size={35} color={lightIconColor} style={{margin: 7}}/>
+                            </Animated.View>
                         </TouchableOpacity>
                     </View>
                  </View> 
             </View>
             <View style={styles.section2}>
-            
                 {(isLoading===true)?(<Spinner style={{flex:1, alignSelf:'center', justifyContent:'center'}} isVisible={isLoading} size={80} type='Wave' color='white'/>):(notes[0] !== undefined||notes !== undefined)?(
                     <ScrollView>{notes.map(note=>{
                     return (

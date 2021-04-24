@@ -8,7 +8,7 @@ import {
     Text,
     ImageBackground, 
     TouchableOpacity,
-    Image,
+    Animated
 } from 'react-native';
 import {styles} from '../styles'
 import '../img/paperBackground.png'
