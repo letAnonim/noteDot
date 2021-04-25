@@ -6,45 +6,44 @@ import {
   Animated,
   TouchableOpacity,
 } from 'react-native';
-import {styles} from '../styles';
+import {styles, MainColour} from '../styles';
+import {CalendarList, Agenda} from 'react-native-calendars';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function Calendar() {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const FadeIn = () => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start();
-  };
-  const FadeOut = () => {
-    Animated.timing(fadeAnim, {
-      toValue: 0,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start();
-  };
-  const FadeInView = (props) => {
-    return (
-      <Animated.View style={{...props.style, opacity: fadeAnim}}>
-        {props.children}
-      </Animated.View>
-    );
-  };
-  FadeIn();
+export default function CalendarComponenet() {
+
   return (
     <ImageBackground
       source={require('../../img/paperBackground.png')}
       style={styles.image}>
       <View style={styles.mainContainer}>
-        <Text style={styles.mainText}>CALENDAR</Text>
-        <FadeInView style={{width: 250, height: 50, backgroundColor: 'powderblue'}}>
-          <TouchableOpacity onPress={FadeOut()}>
-            <Text style={{fontSize: 28, textAlign: 'center', margin: 10}}>
-              Fading in
-            </Text>
-          </TouchableOpacity>
-        </FadeInView>
+        <View>
+          <CalendarList 
+            pagingEnabled={true}
+            horizontal={true}
+            onDayPress={(day) => {console.log('selected day', day)}}
+            renderArrow={(direction) => ((direction=='right')?(<Icon name='arrow-right' size={20} color={MainColour}/>):(<Icon name='arrow-left' size={20} color={MainColour}/>))}
+            enableSwipeMonths={true}
+            markedDates={{
+              '2021-05-16': {selected: true, marked: true, selectedColor: 'red'},
+              '2012-05-17': {marked: true},
+              '2012-05-18': {marked: true, dotColor: 'red', activeOpacity: 0},
+              '2012-05-19': {disabled: true, disableTouchEvent: true}
+            }}
+            theme={{
+              dayNameColor:'red',
+              calendarBackground:'rgba(0,0,0,0)',
+              todayTextColor:'red',
+              monthTextColor:MainColour,
+              selectedDayTextColor:MainColour,
+              textDayHeaderFontWeight: '800',
+              textDayStyle:{
+                color:"black"
+              }
+
+          }}
+          />
+        </View>
       </View>
     </ImageBackground>
   );
