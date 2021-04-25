@@ -95,7 +95,7 @@ const Notes = (props) => {
         }))
     }
     const pressHandler=()=>{
-        addOneNote(titleValue, colorValue );
+        addOneNote(titleValue, colorValue);
         setTitleValue('')
     }
     const pressSearch = () =>{

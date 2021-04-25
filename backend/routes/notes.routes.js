@@ -17,6 +17,6 @@ module.exports = (app) => {
 	app.put("/api/notes/:noteId/:userId", notes.connectToNote);
 
 	// update a note with noteId
-	app.put("/api/notes/text", notes.update);
+	app.put("/api/notes/update", notes.update);
 	
 };
