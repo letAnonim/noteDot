@@ -9,7 +9,7 @@ import {
   CHECK_USER_STARTED,
   CHECK_USER_SUCCESS,
   CHECK_USER_FAIL,
-  SET_DEFAULT_USER_STATE
+  SET_DEFAULT_USER_STATE,
 } from '../constants';
 import axios from 'axios';
 
@@ -84,10 +84,10 @@ export function checkUser(data) {
   };
 }
 
-export function setDefault(){
-  return dispatch => {
-    dispatch(setDefaultState())
-  }
+export function setDefault() {
+  return (dispatch) => {
+    dispatch(setDefaultState());
+  };
 }
 const setDefaultState = () => ({
   type: SET_DEFAULT_USER_STATE,

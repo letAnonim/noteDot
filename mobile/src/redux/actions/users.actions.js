@@ -15,7 +15,6 @@ export function getUsers() {
     dispatch(getUsersStarted());
     try {
       await client.get('/api/users').then((res) => {
-
         dispatch(getUsersSuccess(res.data));
       });
     } catch (err) {
@@ -62,4 +61,3 @@ const getUsersFail = (error) => ({
     error,
   },
 });
-

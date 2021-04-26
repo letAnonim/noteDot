@@ -1,4 +1,4 @@
-import { ActionSheetIOS } from 'react-native';
+import {ActionSheetIOS} from 'react-native';
 import {
   UPDATE_USER_PHOTO_SUCCESS,
   UPDATE_USER_PHOTO_FAIL,
@@ -77,12 +77,12 @@ export default function userReducer(state = initialState, action) {
         loading: true,
       };
     case CHECK_USER_SUCCESS:
-    return {
+      return {
         ...state,
         status: 'checkUserSuccess',
         access: action.payload.access,
         user: action.payload.data,
-        loading: false
+        loading: false,
       };
     case CHECK_USER_FAIL:
       return {

@@ -36,7 +36,7 @@ export default function usersReducer(state = initialState, action) {
       };
     case GET_USER:
       return {...state, loading: false, user: action.user};
-    
+
     default:
       return state;
   }

@@ -15,7 +15,7 @@ import {
   UPDATE_NOTE_LIST_SUCCESS,
   UPDATE_NOTE_LIST_FAIL,
   SET_DEFAULT_NOTES_STATE,
-  baseIp
+  baseIp,
 } from '../constants';
 import axios from 'axios';
 const client = axios.create({
@@ -23,11 +23,10 @@ const client = axios.create({
   responseType: 'json',
 });
 
-
-export function setDefaultNotes(){
-  return dispatch => {
-    dispatch(setDefaultNotesState())
-  }
+export function setDefaultNotes() {
+  return (dispatch) => {
+    dispatch(setDefaultNotesState());
+  };
 }
 
 //update user notes list
@@ -121,7 +120,7 @@ export function deleteNote(user, note) {
   };
 }
 
-//знайти і додати ноттаку за id 
+//знайти і додати ноттаку за id
 export function findNote(user_id, note_id) {
   return async (dispatch) => {
     dispatch(findNoteStarted());
@@ -143,8 +142,6 @@ export function findNote(user_id, note_id) {
     }
   };
 }
-
-
 
 const setDefaultNotesState = () => ({
   type: SET_DEFAULT_NOTES_STATE,
@@ -193,8 +190,8 @@ const deleteNoteSuccess = (notes) => ({
 const deleteNoteFail = (error) => ({
   type: DELETE_NOTE_FAIL,
   payload: {
-    error
-  }
+    error,
+  },
 });
 
 const findNoteSuccess = (notes) => ({
@@ -214,12 +211,12 @@ const findNoteFail = (error) => ({
 });
 
 const updateNoteListStarted = (notes) => ({
-  type: UPDATE_NOTE_LIST_STARTED
+  type: UPDATE_NOTE_LIST_STARTED,
 });
 
 const updateNoteListSuccess = (notes) => ({
   type: UPDATE_NOTE_LIST_SUCCESS,
-  payload: notes
+  payload: notes,
 });
 
 const updateNoteListFail = (error) => ({
