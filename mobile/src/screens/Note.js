@@ -1,12 +1,13 @@
 import 'react-native-gesture-handler';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
     TextInput,
     View,
     Text,
     ImageBackground, 
     TouchableOpacity,
-    Modal
+    Modal,
+    Animated
 } from 'react-native';
 import {RadioButton} from 'react-native-paper';
 import {styles} from '../styles'
@@ -26,9 +27,36 @@ const Note = (props) => {
     const [note, setNote] = useState(aNote)
     const [text, setText] = useState(`${note.text}`)
     const [user, setUser] = useState();
+    const [rotVal, setRotVal]=useState(0);
+    const rot = useRef(new Animated.Value(rotVal)).current;
+    const squize = useRef(new Animated.Value(0)).current;
     const [titleValue, setTitleValue] = useState(note.title);
     const [colorValue, setColorValue] = useState(note.color);
     const [modalEditVisible, setModalEditVisible] = useState(false);
+    
+    useEffect(() => {
+        Animated.timing(rot, {
+            toValue: rotVal,
+            duration: 400,
+            useNativeDriver: true,
+        }).start();
+    },[rotVal]);
+
+    const squizeAnim = () => {
+        Animated.sequence([
+            Animated.timing(squize, {
+                toValue: 1,
+                duration: 200,
+                useNativeDriver: true,
+            }),
+            Animated.timing(squize, {
+                toValue: 0,
+                duration: 200,
+                useNativeDriver: true,
+            }),
+        ]).start();
+    }
+        
 
     const readData = async () => {
         try {
@@ -41,7 +69,8 @@ const Note = (props) => {
         }
     };
     const pressHendler = ()=>{
-        dispatch(updateNoteText({type:"text", textValue:text, noteId:aNote._id}))
+        dispatch(updateNoteText({type:"text", textValue:text, noteId:aNote._id}));
+        squizeAnim()
     }
     const editNoteParams = () => {
         if(titleValue === note.title && colorValue === note.color){
@@ -54,10 +83,12 @@ const Note = (props) => {
                 message: "Nothing changed!",
                 color:'#FFFFFF',
             })
+            setRotVal(0)
         }
         else if(titleValue&&colorValue){
             setModalEditVisible(!modalEditVisible); 
             dispatch(updateNoteParams({type:"params", title:titleValue, color:colorValue,  noteId:note._id}))
+            setRotVal(0)
         }
     }
 
@@ -120,6 +151,20 @@ const Note = (props) => {
 
     }, [props.status]);
 
+    const rotation = rot.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '315deg'],
+    });
+
+    const squizeX = squize.interpolate({
+        inputRange: [0, 1],
+        outputRange: [1, 0.8],
+    });
+    const squizeY = squize.interpolate({
+        inputRange: [0, 1],
+        outputRange: [1, 1.3],
+    });
+
     return(
         <View style={styles.mainNoteContainer}>
             <ImageBackground source={require('../img/paperBackground.png')} style={styles.image}>
@@ -172,7 +217,8 @@ const Note = (props) => {
                             <TouchableOpacity
                                 style={styles.SmallCloseButton}
                                 onPress={() => {
-                                    setModalEditVisible(!modalEditVisible)
+                                    setModalEditVisible(!modalEditVisible);
+                                    setRotVal(0)
                                 }}>  
                                 <Text style={styles.textStyle}>close</Text>
                             </TouchableOpacity>
@@ -191,11 +237,15 @@ const Note = (props) => {
                         <Text style={styles.nawbarTitle} numberOfLines={1}>{note.title}</Text>   
                     </View>
                     <View style={styles.nawbarContainerRight}>
-                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>setModalEditVisible(!modalEditVisible)}>
-                            <Icon name="gear" color={lightIconColor} size={35} style={{margin: 7}}/>
+                        <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{setModalEditVisible(!modalEditVisible); setRotVal(1)}}>
+                            <Animated.View style={{transform: [{rotate: rotation}]}}>
+                                <Icon name="gear" color={lightIconColor} size={35} style={{margin: 7}}/>
+                            </Animated.View>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={pressHendler}>
-                            <Icon name="save" color={lightIconColor} size={35} style={{margin: 7}}/>
+                            <Animated.View style={{transform:[{scaleX:squizeX},{scaleY:squizeY}]}}>
+                                <Icon name="save" color={lightIconColor} size={35} style={{margin: 7}}/>
+                            </Animated.View>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.smallButtonContainer} onPress={()=>{
                                 props.navigation.navigate('chat', {aNote:note});

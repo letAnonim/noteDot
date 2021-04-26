@@ -194,7 +194,7 @@ const Notes = (props) => {
                             style={styles.smallDefaultButton}
                             onPress={() => {
                                 (!titleValue)?(Alert.alert('Pleace write the title!!')
-                                ):(pressHandler(), setModalCreateVisible(!modalCreateVisible), setColorValue('250, 228, 60'))
+                                ):(pressHandler(), setModalCreateVisible(!modalCreateVisible), setColorValue('250, 228, 60'), setRotVal(0))
                                 }}>  
                             <Text style={styles.textStyle}>Create note!</Text>
                         </TouchableOpacity>
@@ -230,7 +230,7 @@ const Notes = (props) => {
                             style={styles.smallDefaultButton}
                             onPress={() => {
                                 (!noteIdValue)?(Alert.alert('Pleace write the id!!')
-                                ):(pressSearch(),setModalSearchVisible(!modalSearchVisible))
+                                ):(pressSearch(),setModalSearchVisible(!modalSearchVisible), setSAnimValm(0))
                                 }}>  
                             <Text style={styles.textStyle}>Connect to note!</Text>
                         </TouchableOpacity>
@@ -310,7 +310,7 @@ const Notes = (props) => {
                                                 {(UserId == note.owner)?(<TouchableOpacity onPress={()=>{
                                                     confirmAlert(note._id)
                                                 }}>
-                                                    <Icon name="remove" color={lightIconColor} size={35} style={{margin: 7}}/>
+                                                    <Icon name="remove" color={lightIconColor} size={35} style={{marginRight: 7}}/>
                                                 </TouchableOpacity>):(<View/>)}
                                             </View>
                                             
