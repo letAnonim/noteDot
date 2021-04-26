@@ -113,7 +113,6 @@ exports.connectToNote = async(req, res) => {
 
 // Update a note identified by the noteId
 exports.update = async(req, res) => {
-  // console.log(req)
   if(req.body.type=='text'){
     await Notes.findByIdAndUpdate(req.body.noteId, {text:req.body.textValue}).then((note) => {
       if (!note) {
@@ -140,24 +139,34 @@ exports.update = async(req, res) => {
       });
     });
   }
+  else if(req.body.type=='params'){
+    await Notes.findByIdAndUpdate(req.body.noteId, {title:req.body.title, color:req.body.color}).then((note) => {
+      if (!note) {
+        return res.status(404).send({
+          message: "Note not found with id " + req.body.noteId,
+        });
+      }else{
+        Notes.findById(req.body.noteId)
+        .then((note) => {
+          if (!note) {
+            return res.status(404).send({
+              message: "Note not found with id " + req.body.userId,
+            });
+          }else
+          res.send(note);
+        })
+        }
+    }).catch((err) => {
+      if (err.kind === "ObjectId") {
+        return res.status(404).send({
+        message: "note not found with id " + req.body.noteId,
+      })}
+      return res.status(500).send({
+        message: "Error updating note with id " + req.body.noteId,
+      });
+    });
+  }
+  else(res.status(500).send({
+    message: `Request type is invalid( ${req.body.type} )`
+  }))
 };
-
-//     Notes.findByIdAndUpdate(req.params.noteId, req.body, { new: true })
-//     .then((note) => {
-//       if (!note) {
-//         return res.status(404).send({
-//           message: "note not found with id " + req.params.noteId,
-//         });
-//       }
-//       res.send(note);
-//     })
-//     .catch((err) => {
-//       if (err.kind === "ObjectId") {
-//         return res.status(404).send({
-//         message: "note not found with id " + req.params.noteId,
-//       });
-//     }
-//     return res.status(500).send({
-//       message: "Error updating note with id " + req.params.noteId,
-//     });
-//   });
