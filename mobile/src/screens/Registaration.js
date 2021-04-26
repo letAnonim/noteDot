@@ -1,8 +1,6 @@
 import 'react-native-gesture-handler';
 import React, {useState, useEffect} from 'react';
-
-
-
+import {showMessage} from "react-native-flash-message";
 import {
     TextInput,
     View,
@@ -11,25 +9,54 @@ import {
     ImageBackground,
 } from 'react-native';
 import {styles} from '../styles';
-// import { ScrollView } from 'react-native-gesture-handler';
 import {useDispatch, connect} from 'react-redux';
 import {regUser, setDefault} from '../redux/actions/user.actions'
 
 const Registration = (props) => {
     const dispatch = useDispatch();
     useEffect(() => {
-        if(props.response == 1) alert('This name is already in use!');
-        else if(props.response == 2) alert('Incorrect age value!');
-        else if(props.response == 3) alert('Passwords dont match each other!');
+        if(props.response == 1) showMessage({
+            floating: true,
+            icon:'warning',
+            type: 'warning',
+            message: "This name is already in use!",
+            color:'#FFFFFF',
+        })
+        else if(props.response == 2) showMessage({
+            floating: true,
+            icon:'warning',
+            type: 'warning',
+            message: "Incorrect age value!",
+            color:'#FFFFFF',
+        })
+        else if(props.response == 3) showMessage({
+            floating: true,
+            icon:'warning',
+            type: 'warning',
+            message: "Passwords dont match each other!",
+            color:'#FFFFFF',
+        })
         else if(props.response == 4) {
-            alert('Registred success');
+            showMessage({
+                floating: true,
+                icon:'success',
+                type: 'success',
+                message: 'Registred success!',
+                color:'#FFFFFF',
+            })
             props.navigation.navigate('authorisation');
             dispatch(setDefault());
         }
     }, [props.response]);
     async function addUser() {
         if(nameValue == ''||ageValue ==''||passwordValue == ''||confirmPassword==''){
-            alert('pleace fill all fields')
+            showMessage({
+                floating: true,
+                icon:'warning',
+                type: 'warning',
+                message: "Pleace fill all fields!",
+                color:'#FFFFFF',
+            })
         }
         else await dispatch(regUser({name:nameValue, age:ageValue, password:passwordValue, conPassword:confirmPassword}))
     } 

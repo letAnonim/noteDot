@@ -12,6 +12,7 @@ import {styles} from '../styles';
 import {useDispatch, connect} from 'react-redux';
 import {checkUser, setDefault} from '../redux/actions/user.actions';
 import { setDefaultNotes } from '../redux/actions/notes.actions';
+import {showMessage} from "react-native-flash-message";
 
 const Authorisation = (props) => {
     const dispatch = useDispatch();
@@ -37,8 +38,6 @@ const Authorisation = (props) => {
                     params: {UserId: JSON.parse(jsonValue).userData.userId},
                 },
             });
-        }else{
-            console.log('new')
         }
         } catch (e) {
         console.error(e);
@@ -46,7 +45,6 @@ const Authorisation = (props) => {
     };
     useEffect(() => {
         if (props.access == true) {
-            console.log(props.user.user);
             saveData({isLogged: true, userData: props.user.user});
             dispatch(setDefaultNotes())
             props.navigation.navigate('home', {
@@ -59,7 +57,13 @@ const Authorisation = (props) => {
             setPasswordValue('');
             setLoginValue('');
         } else if (props.access == false){
-            alert('Wrong login or password!');
+            showMessage({
+                floating: true,
+                icon:'warning',
+                type: 'danger',
+                message: "Wrong login or password!",
+                color:'#FFFFFF',
+            });
             setPasswordValue('');
             dispatch(setDefault())
         }
@@ -67,7 +71,13 @@ const Authorisation = (props) => {
     const pressHandler = async() => {
         if (loginValue != '' && passwordValue != '') {
             await dispatch(checkUser({login:loginValue, password:passwordValue})) 
-        } else alert('Pleace fill all fields!');
+        } else showMessage({
+            floating: true,
+            icon:'warning',
+            type: 'warning',
+            message: "Pleace fill all fields!",
+            color:'#FFFFFF',
+        })
     };
     readData();
     return (
