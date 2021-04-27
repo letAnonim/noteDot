@@ -1,39 +1,40 @@
-import React, {useRef, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
-  Text,
   ImageBackground,
-  Animated,
-  TouchableOpacity,
+  Linking
 } from 'react-native';
 import {styles, MainColour} from '../styles';
-import {CalendarList, Agenda} from 'react-native-calendars';
+import {Calendar} from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function CalendarComponenet() {
+  const handlePress = async (data) => {
+    const splitData = data.split('-').reverse().join('.');
+    const url = `https://www.google.com/search?q=${splitData}`;
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
 
+      await Linking.openURL(url);
+    }else {
+      alert(`Don't know how to open this URL: ${url}`);
+    }
+  }
   return (
     <ImageBackground
       source={require('../../img/paperBackground.png')}
       style={styles.image}>
       <View style={styles.mainContainer}>
         <View>
-          <CalendarList 
+          <Calendar 
             pagingEnabled={true}
             horizontal={true}
-            onDayPress={(day) => {console.log('selected day', day)}}
+            onDayLongPress ={(day) => {handlePress(day.dateString)}}
             renderArrow={(direction) => ((direction=='right')?(<Icon name='arrow-right' size={20} color={MainColour}/>):(<Icon name='arrow-left' size={20} color={MainColour}/>))}
             enableSwipeMonths={true}
-            markedDates={{
-              '2021-05-16': {selected: true, marked: true, selectedColor: 'red'},
-              '2012-05-17': {marked: true},
-              '2012-05-18': {marked: true, dotColor: 'red', activeOpacity: 0},
-              '2012-05-19': {disabled: true, disableTouchEvent: true}
-            }}
             theme={{
-              dayNameColor:'red',
-              calendarBackground:'rgba(0,0,0,0)',
-              todayTextColor:'red',
+              calendarBackground:'rgba(0,0,0,0.1)',
+              todayTextColor:MainColour,
               monthTextColor:MainColour,
               selectedDayTextColor:MainColour,
               textDayHeaderFontWeight: '800',
