@@ -1,4 +1,4 @@
-export const baseIp = 'http://192.168.1.107:6666/'
+export const baseIp = 'http://192.168.0.112:6666/'
 
 export const GET_USERS_STARTED = 'GET_USERS_STARTED';
 export const GET_USERS_SUCCESS = 'GET_USERS_SUCCESS';
